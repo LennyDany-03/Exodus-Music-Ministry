@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState('/');
 
   // Navigation links
   const navLinks = [
@@ -30,28 +31,40 @@ const NavBar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu on window resize to prevent layout issues
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
+
   // Animation variants
   const logoVariants = {
-    hidden: { opacity: 0, x: -50 },
+    hidden: { opacity: 0, x: -20 },
     visible: { 
       opacity: 1, 
       x: 0,
       transition: { 
-        duration: 0.8, 
-        ease: "easeOut" 
+        duration: 0.6, 
+        ease: [0.6, 0.05, 0.01, 0.9]
       }
     }
   };
 
   const navItemVariants = {
-    hidden: { opacity: 0, y: -20 },
+    hidden: { opacity: 0, y: -10 },
     visible: i => ({ 
       opacity: 1, 
       y: 0,
       transition: { 
-        delay: i * 0.1 + 0.3,
-        duration: 0.5,
-        ease: "easeOut"
+        delay: i * 0.1,
+        duration: 0.4,
+        ease: [0.6, 0.05, 0.01, 0.9]
       }
     })
   };
@@ -59,29 +72,38 @@ const NavBar = () => {
   const mobileMenuVariants = {
     closed: { 
       opacity: 0,
-      y: -20,
+      height: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut",
+        ease: [0.6, 0.05, 0.01, 0.9],
         staggerChildren: 0.05,
-        staggerDirection: -1
+        staggerDirection: -1,
+        when: "afterChildren"
       }
     },
     open: { 
       opacity: 1,
-      y: 0,
+      height: 'auto',
       transition: {
-        duration: 0.3,
-        ease: "easeInOut",
+        duration: 0.4,
+        ease: [0.6, 0.05, 0.01, 0.9],
         staggerChildren: 0.1,
-        delayChildren: 0.2
+        delayChildren: 0.1,
+        when: "beforeChildren"
       }
     }
   };
 
   const mobileItemVariants = {
-    closed: { opacity: 0, x: -20 },
-    open: { opacity: 1, x: 0 }
+    closed: { opacity: 0, x: -10 },
+    open: { 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        duration: 0.4,
+        ease: [0.6, 0.05, 0.01, 0.9]
+      } 
+    }
   };
 
   // Toggle mobile menu
@@ -91,51 +113,71 @@ const NavBar = () => {
     <motion.nav 
       initial="hidden"
       animate="visible"
-      className={`fixed w-full z-50 ${
-        scrolled 
-          ? "bg-black bg-opacity-90 text-white shadow-lg py-2" 
-          : "bg-transparent text-white py-4"
-      } transition-all duration-300`}
+      className={`fixed w-full z-50 transition-all duration-300 ${
+        scrolled || isOpen
+          ? "bg-indigo-900/90 backdrop-blur-md shadow-lg py-3" 
+          : "bg-transparent py-4 md:py-6"
+      }`}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
         {/* Logo */}
         <motion.div 
           variants={logoVariants}
           className="flex items-center"
         >
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center" onClick={() => setActiveLink('/')}>
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-2xl md:text-3xl font-bold tracking-wider"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate"
             >
               <span className="text-yellow-400">EXODUS</span> 
-              <span className="ml-2">MUSIC</span>
+              <span className="ml-1 sm:ml-2 text-white">MUSIC</span>
             </motion.div>
           </Link>
         </motion.div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-4 lg:space-x-10">
           {navLinks.map((link, index) => (
             <motion.div
               key={link.title}
               custom={index}
               variants={navItemVariants}
-              whileHover={{ scale: 1.1, color: "#FBBF24" }}
-              whileTap={{ scale: 0.95 }}
             >
-              <Link to={link.path} className="font-medium tracking-wide hover:text-yellow-400 transition-colors">
+              <Link 
+                to={link.path} 
+                className={`text-sm lg:text-base font-medium tracking-wide transition-all duration-300 relative ${
+                  activeLink === link.path 
+                    ? "text-yellow-400" 
+                    : "text-gray-300 hover:text-yellow-400"
+                }`}
+                onClick={() => setActiveLink(link.path)}
+              >
                 {link.title}
+                {activeLink === link.path && (
+                  <motion.div 
+                    className="absolute -bottom-1 left-0 right-0 flex justify-center"
+                    layoutId="activeNavLine"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <span className="text-yellow-400 text-xs">♪</span>
+                  </motion.div>
+                )}
               </Link>
             </motion.div>
           ))}
           <motion.button
             variants={navItemVariants}
             custom={navLinks.length}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.05, 
+              boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)" 
+            }}
             whileTap={{ scale: 0.95 }}
-            className="bg-yellow-400 text-black px-6 py-2 rounded-full font-bold tracking-wide hover:bg-yellow-500 transition-colors"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-4 lg:px-6 py-2 rounded-full text-sm lg:text-base font-medium transition-all duration-300 shadow-md hover:from-yellow-400 hover:to-yellow-300"
           >
             Donate
           </motion.button>
@@ -149,35 +191,38 @@ const NavBar = () => {
         >
           <button 
             onClick={toggleMenu} 
-            className="focus:outline-none"
+            className="focus:outline-none text-yellow-400 p-2"
             aria-label="Toggle Menu"
           >
-            <motion.div
-              animate={isOpen ? "open" : "closed"}
-              className="w-8 h-8 flex flex-col justify-center items-center"
+            <svg 
+              viewBox="0 0 24 24" 
+              width="24" 
+              height="24" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              fill="none" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className={`${isOpen ? "hidden" : "block"}`}
             >
-              <motion.span
-                variants={{
-                  closed: { rotate: 0, y: 0 },
-                  open: { rotate: 45, y: 8 }
-                }}
-                className="w-6 h-0.5 bg-white mb-1.5 block"
-              ></motion.span>
-              <motion.span
-                variants={{
-                  closed: { opacity: 1 },
-                  open: { opacity: 0 }
-                }}
-                className="w-6 h-0.5 bg-white mb-1.5 block"
-              ></motion.span>
-              <motion.span
-                variants={{
-                  closed: { rotate: 0, y: 0 },
-                  open: { rotate: -45, y: -8 }
-                }}
-                className="w-6 h-0.5 bg-white block"
-              ></motion.span>
-            </motion.div>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <svg 
+              viewBox="0 0 24 24" 
+              width="24" 
+              height="24" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              fill="none" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className={`${isOpen ? "block" : "hidden"}`}
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </motion.div>
       </div>
@@ -190,36 +235,60 @@ const NavBar = () => {
             animate="open"
             exit="closed"
             variants={mobileMenuVariants}
-            className="md:hidden bg-black bg-opacity-95 absolute top-full left-0 right-0 overflow-hidden"
+            className="md:hidden bg-indigo-900/95 backdrop-blur-md overflow-hidden border-t border-indigo-800"
           >
-            <div className="container mx-auto px-4 py-4">
+            <div className="container mx-auto px-4 py-3">
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.title}
                   variants={mobileItemVariants}
-                  className="py-3 border-b border-gray-800"
+                  className="py-2 border-b border-indigo-800 last:border-b-0"
                 >
                   <Link 
                     to={link.path} 
-                    className="block font-medium text-lg hover:text-yellow-400 transition-colors"
-                    onClick={() => setIsOpen(false)}
+                    className={`block font-medium text-base ${
+                      activeLink === link.path 
+                        ? "text-yellow-400" 
+                        : "text-gray-300 hover:text-yellow-400"
+                    }`}
+                    onClick={() => {
+                      setActiveLink(link.path);
+                      setIsOpen(false);
+                    }}
                   >
-                    {link.title}
+                    <div className="flex items-center">
+                      {activeLink === link.path && <span className="text-yellow-400 mr-2">♪</span>}
+                      {link.title}
+                    </div>
                   </Link>
                 </motion.div>
               ))}
               <motion.div
                 variants={mobileItemVariants}
-                className="py-4"
+                className="py-3"
               >
-                <button className="w-full bg-yellow-400 text-black py-3 rounded-full font-bold tracking-wide hover:bg-yellow-500 transition-colors">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-black py-2 rounded-full font-medium shadow-md"
+                >
                   Donate
-                </button>
+                </motion.button>
               </motion.div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Bottom border on scroll */}
+      {scrolled && (
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 h-px bg-indigo-400/20"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.3 }}
+        ></motion.div>
+      )}
     </motion.nav>
   );
 };

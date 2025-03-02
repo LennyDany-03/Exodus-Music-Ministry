@@ -181,7 +181,7 @@ const Home = () => {
       <AnimatePresence>
         {isLoading && (
           <motion.div 
-            className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center"
+            className="fixed inset-0 bg-indigo-950 z-50 flex flex-col items-center justify-center"
             variants={loadingVariants}
             initial="hidden"
             exit="exit"
@@ -196,9 +196,12 @@ const Home = () => {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="w-20 h-20 mb-8"
+              className="w-20 h-20 mb-8 relative"
             >
               <div className="w-full h-full rounded-full border-t-4 border-b-4 border-yellow-400"></div>
+              <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-4xl">
+                ♪
+              </div>
             </motion.div>
             <motion.h2 
               className="text-white text-xl font-bold"
@@ -214,7 +217,7 @@ const Home = () => {
       {/* NavBar Component */}
       <NavBar />
       
-      <div className="overflow-x-hidden bg-gray-900 text-white">
+      <div className="overflow-x-hidden bg-indigo-950 text-white">
         {/* Hero Section */}
         <motion.section 
           className="h-screen relative flex items-center justify-center overflow-hidden"
@@ -229,7 +232,7 @@ const Home = () => {
         >
           {/* Background Animation */}
           <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
+            <div className="absolute inset-0 bg-indigo-950 opacity-60 z-10"></div>
             <motion.div
               initial={{ scale: 1.2 }}
               animate={{ scale: 1 }}
@@ -243,7 +246,7 @@ const Home = () => {
             {[...Array(20)].map((_, index) => (
               <motion.div
                 key={index}
-                className="absolute w-2 h-2 rounded-full bg-yellow-400 opacity-60"
+                className="absolute text-yellow-400 opacity-60"
                 initial={{ 
                   x: Math.random() * window.innerWidth, 
                   y: Math.random() * window.innerHeight 
@@ -257,7 +260,9 @@ const Home = () => {
                   repeat: Infinity,
                   repeatType: "reverse"
                 }}
-              />
+              >
+                {['♪', '♫', '♬', '♩'][Math.floor(Math.random() * 4)]}
+              </motion.div>
             ))}
           </div>
           
@@ -280,7 +285,7 @@ const Home = () => {
             </motion.h1>
             
             <motion.p 
-              className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-gray-300"
+              className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100"
               variants={fadeInUp}
             >
               Bringing souls closer to God through the power of anointed music
@@ -294,7 +299,7 @@ const Home = () => {
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-8 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
+                className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-8 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
               >
                 Watch Latest Worship
               </motion.button>
@@ -331,7 +336,7 @@ const Home = () => {
 
         {/* Our Mission Section */}
         <motion.section 
-          className="py-32 bg-gradient-to-b from-gray-900 to-black overflow-hidden relative"
+          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
           style={{ y: missionY, opacity: missionOpacity }}
         >
           {/* Background Elements */}
@@ -369,7 +374,7 @@ const Home = () => {
             >
               <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Mission</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
-              <p className="text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
+              <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
                 To create a worship experience that draws people closer to God, develops musical excellence, and fosters spiritual growth through the ministry of music.
               </p>
             </motion.div>
@@ -384,7 +389,7 @@ const Home = () => {
                   whileInView="visible"
                   whileHover="hover"
                   viewport={{ once: true }}
-                  className="bg-gray-800/60 backdrop-blur-sm p-10 rounded-2xl text-center border border-gray-700 shadow-xl"
+                  className="bg-indigo-800/60 backdrop-blur-sm p-10 rounded-2xl text-center border border-indigo-600 shadow-xl"
                 >
                   <motion.div 
                     className="text-5xl mb-6 mx-auto bg-gradient-to-r from-yellow-500 to-yellow-300 w-20 h-20 rounded-full flex items-center justify-center"
@@ -393,7 +398,7 @@ const Home = () => {
                     {item.icon}
                   </motion.div>
                   <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                  <p className="text-gray-300 text-lg">{item.description}</p>
+                  <p className="text-indigo-100 text-lg">{item.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -402,11 +407,11 @@ const Home = () => {
 
         {/* Upcoming Events Section */}
         <motion.section 
-          className="py-32 bg-black relative overflow-hidden"
+          className="py-32 bg-indigo-900 relative overflow-hidden"
           style={{ y: eventsY, opacity: eventsOpacity }}
         >
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-gray-900 to-transparent"></div>
+          <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-indigo-950 to-transparent"></div>
           
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
@@ -430,10 +435,10 @@ const Home = () => {
                   whileInView="visible"
                   whileHover="hover"
                   viewport={{ once: true }}
-                  className="bg-gray-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-gray-700 group"
+                  className="bg-indigo-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-indigo-700 group"
                 >
                   <motion.div 
-                    className="h-56 bg-gray-700 flex items-center justify-center overflow-hidden"
+                    className="h-56 bg-indigo-700 flex items-center justify-center overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                   >
                     <motion.div
@@ -442,12 +447,12 @@ const Home = () => {
                       transition={{ delay: 0.2, duration: 0.5 }}
                       className="relative w-full h-full"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70 z-10"></div>
-                      <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
+                      <div className="w-full h-full bg-indigo-800 flex items-center justify-center">
                         <span className="text-5xl text-yellow-400">🎵</span>
                       </div>
                       <div className="absolute bottom-4 left-4 z-20">
-                        <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-bold">
+                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
                           {event.date}
                         </span>
                       </div>
@@ -455,18 +460,18 @@ const Home = () => {
                   </motion.div>
                   <div className="p-8">
                     <h3 className="text-2xl font-bold mb-3 group-hover:text-yellow-400 transition-colors">{event.title}</h3>
-                    <p className="text-gray-400 mb-3 flex items-center">
+                    <p className="text-indigo-200 mb-3 flex items-center">
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       </svg>
                       {event.location}
                     </p>
-                    <p className="text-gray-300 mb-6 text-lg">{event.description}</p>
+                    <p className="text-indigo-100 mb-6 text-lg">{event.description}</p>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-black py-3 rounded-full font-bold shadow-lg"
+                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg"
                     >
                       Learn More
                     </motion.button>
@@ -499,7 +504,7 @@ const Home = () => {
 
         {/* Testimonials Section */}
         <motion.section 
-          className="py-32 bg-gradient-to-b from-black to-gray-900 overflow-hidden relative"
+          className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
           style={{ rotate: testimonialRotate }}
         >
           <div className="container mx-auto px-4 relative z-10">
@@ -524,19 +529,19 @@ const Home = () => {
                   whileInView="visible"
                   whileHover="hover"
                   viewport={{ once: true }}
-                  className="bg-gray-800/70 backdrop-blur-sm p-10 rounded-2xl relative border border-gray-700 shadow-xl"
+                  className="bg-indigo-800/70 backdrop-blur-sm p-10 rounded-2xl relative border border-indigo-700 shadow-xl"
                 >
                   <motion.div 
                     className="text-7xl text-yellow-400 opacity-20 absolute top-6 left-6"
                     animate={{ rotate: [-2, 2, -2] }}
                     transition={{ duration: 6, repeat: Infinity }}
                   >
-                    "
+                    ♪
                   </motion.div>
-                  <p className="text-gray-300 mb-8 relative z-10 text-lg leading-relaxed">"{testimonial.quote}"</p>
+                  <p className="text-indigo-100 mb-8 relative z-10 text-lg leading-relaxed">"{testimonial.quote}"</p>
                   <div className="flex items-center">
                     <motion.div 
-                      className="w-14 h-14 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-full flex items-center justify-center text-black font-bold text-xl"
+                      className="w-14 h-14 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded-full flex items-center justify-center text-indigo-950 font-bold text-xl"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
                       {testimonial.name.charAt(0)}
@@ -562,7 +567,7 @@ const Home = () => {
         >
           {/* Background */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-black opacity-80 z-10"></div>
+            <div className="absolute inset-0 bg-indigo-950 opacity-80 z-10"></div>
             <motion.div 
               animate={{ scale: [1, 1.05, 1], 
                          opacity: [0.5, 0.7, 0.5] 
@@ -585,7 +590,7 @@ const Home = () => {
               </motion.h2>
               
               <motion.p 
-                className="text-xl md:text-2xl mb-10 text-gray-300"
+                className="text-xl md:text-2xl mb-10 text-indigo-100"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -604,7 +609,7 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-10 py-5 rounded-full text-xl font-bold tracking-wide shadow-lg"
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-5 rounded-full text-xl font-bold tracking-wide shadow-lg"
                 >
                   Apply Now
                 </motion.button>
@@ -647,7 +652,7 @@ const Home = () => {
         </motion.section>
 
         {/* Footer */}
-        <footer className="bg-black py-20 relative overflow-hidden">
+        <footer className="bg-indigo-950 py-20 relative overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <div className="flex justify-center mb-10">
               <motion.div
@@ -694,7 +699,7 @@ const Home = () => {
                     color: "#FBBF24",
                     y: -5
                   }}
-                  className="text-gray-400 hover:text-white transition-colors w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700"
+                  className="text-gray-400 hover:text-white transition-colors w-12 h-12 rounded-full bg-indigo-800 flex items-center justify-center border border-indigo-700"
                 >
                   {social.name.charAt(0)}
                 </motion.a>
@@ -702,7 +707,7 @@ const Home = () => {
             </div>
             
             <motion.div 
-              className="text-center text-gray-500 text-sm"
+              className="text-center text-indigo-300 text-sm"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -725,7 +730,7 @@ const Home = () => {
                 repeatType: "mirror",
                 ease: "linear"
               }}
-              className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-yellow-600 to-yellow-800"
+              className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-indigo-600 to-indigo-800"
               style={{ backgroundSize: '400% 400%' }}
             />
           </div>
