@@ -120,7 +120,7 @@ const NavBar = () => {
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
-        {/* Logo */}
+        {/* Logo - REDUCED FONT SIZE */}
         <motion.div 
           variants={logoVariants}
           className="flex items-center"
@@ -129,10 +129,11 @@ const NavBar = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate"
+              className="font-bold tracking-tight flex flex-wrap items-center"
             >
-              <span className="text-yellow-400">EXODUS</span> 
-              <span className="ml-1 sm:ml-2 text-white">MUSIC</span>
+              <span className="text-base xs:text-lg sm:text-xl md:text-2xl text-yellow-400">EXODUS</span> 
+              <span className="ml-1 text-base xs:text-lg sm:text-xl md:text-2xl text-white">MUSIC</span>
+              <span className="ml-1 text-base xs:text-lg sm:text-xl md:text-2xl text-white">MINISTRIES</span>
             </motion.div>
           </Link>
         </motion.div>
@@ -227,7 +228,7 @@ const NavBar = () => {
         </motion.div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - CENTERED */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -237,12 +238,14 @@ const NavBar = () => {
             variants={mobileMenuVariants}
             className="md:hidden bg-indigo-900/95 backdrop-blur-md overflow-hidden border-t border-indigo-800"
           >
+            {/* Mobile Logo - Centered */}
+            
             <div className="container mx-auto px-4 py-3">
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.title}
                   variants={mobileItemVariants}
-                  className="py-2 border-b border-indigo-800 last:border-b-0"
+                  className="py-2 border-b border-indigo-800 last:border-b-0 text-center"
                 >
                   <Link 
                     to={link.path} 
@@ -256,7 +259,7 @@ const NavBar = () => {
                       setIsOpen(false);
                     }}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                       {activeLink === link.path && <span className="text-yellow-400 mr-2">♪</span>}
                       {link.title}
                     </div>
