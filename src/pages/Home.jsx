@@ -153,7 +153,8 @@ const Home = () => {
       date: "December 29, 2024",
       location: "Mylapore",
       description: "An evening of praise and worship to lift our spirits and connect with God.",
-      image: SundayEve ,
+      image: SundayEve,
+      url: "https://www.youtube.com/live/ITVjeqALSJ0?si=rcYiNaNygn-jkPcg&fbclid=IwY2xjawIxrNpleHRuA2FlbQIxMQABHbh-4KabQAxXlxjUjf7ln9UEEOtnUYmWCH-Jfk4LJtrnMm0H57R-D1SBNw_aem_W8VvXOh2pWlEfw6PYYSD7w"
     },
     {
       title: "Centenary Celebration",
@@ -161,15 +162,17 @@ const Home = () => {
       location: " IELC Ayanavaram",
       description: "The centenary celebration was truly blessed by God's grace.",
       image: Centenary,
+      url: "https://www.facebook.com/victor.exodus.9/videos/950779669841576"
     },
     {
       title: "Gospel Musical Night",
       date: "August 16, 2022",
       location: "Madurai",
       description: "Training and mentoring for young musicians and worship leaders.",
-      image: Gospel ,
+      image: Gospel,
+      url: "https://www.facebook.com/photo/?fbid=3201309720197618&set=a.1415500502111891"
     },
-  ]
+  ];
 
   const missionPoints = [
     {
@@ -608,7 +611,7 @@ const Home = () => {
                     </p>
                     <p className="text-indigo-100 mb-6 text-lg">{event.description}</p>
                     <motion.a
-                      href={`/event/${event.title.toLowerCase().replace(/\s+/g, '-')}`}
+                      href={event.url}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg flex items-center justify-center"
