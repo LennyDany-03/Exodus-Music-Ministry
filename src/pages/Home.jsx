@@ -8,6 +8,9 @@ import TeamPhoto from '../assets/Team Photo.jpg'
 import TeamSecondPhoto from '../assets/Team @.jpg'
 import Victor from '../assets/Victor1.jpg'
 import Team3rdPhoto from '../assets/Team3rdPhoto.jpg'
+import SundayEve from '../assets/SundayEVE.png'
+import Gospel from '../assets/GospelPoster.jpg'
+import Centenary from '../assets/Centenary.jpg'
 
 import React from "react"
 
@@ -146,25 +149,25 @@ const Home = () => {
 
   const upcomingEvents = [
     {
-      title: "Worship Night",
-      date: "March 15, 2025",
-      location: "Main Sanctuary",
+      title: "Sunday Eve/Special Service",
+      date: "December 29, 2024",
+      location: "Mylapore",
       description: "An evening of praise and worship to lift our spirits and connect with God.",
-      image: "worship-night.jpg",
+      image: SundayEve ,
     },
     {
-      title: "Easter Concert",
-      date: "April 5, 2025",
-      location: "Community Hall",
-      description: "Special resurrection celebration featuring our full choir and band.",
-      image: "easter-concert.jpg",
+      title: "Centenary Celebration",
+      date: "December 22, 2024",
+      location: " IELC Ayanavaram",
+      description: "The centenary celebration was truly blessed by God's grace.",
+      image: Centenary,
     },
     {
-      title: "Youth Worship Workshop",
-      date: "April 20, 2025",
-      location: "Youth Center",
+      title: "Gospel Musical Night",
+      date: "August 16, 2022",
+      location: "Madurai",
       description: "Training and mentoring for young musicians and worship leaders.",
-      image: "youth-workshop.jpg",
+      image: Gospel ,
     },
   ]
 
@@ -424,7 +427,8 @@ const Home = () => {
                     Ministry into a beacon of excellence in Christian worship.
                   </p>
 
-                  <motion.button
+                <a href="/fullbio">
+                <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="mt-6 bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg inline-flex items-center"
@@ -444,7 +448,7 @@ const Home = () => {
                         d="M14 5l7 7m0 0l-7 7m7-7H3"
                       ></path>
                     </svg>
-                  </motion.button>
+                  </motion.button></a>
                 </motion.div>
               </motion.div>
             </div>
@@ -539,10 +543,11 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Upcoming Events</h2>
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">Previous Events</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
             </motion.div>
 
+            {/* Replace this in the Upcoming Events section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {upcomingEvents.map((event, index) => (
                 <motion.div
@@ -566,9 +571,7 @@ const Home = () => {
                       className="relative w-full h-full"
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
-                      <div className="w-full h-full bg-indigo-800 flex items-center justify-center">
-                        <span className="text-5xl text-yellow-400">🎵</span>
-                      </div>
+                      <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${event.image})` }}></div>
                       <div className="absolute bottom-4 left-4 z-20">
                         <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
                           {event.date}
@@ -604,13 +607,14 @@ const Home = () => {
                       {event.location}
                     </p>
                     <p className="text-indigo-100 mb-6 text-lg">{event.description}</p>
-                    <motion.button
+                    <motion.a
+                      href={`/event/${event.title.toLowerCase().replace(/\s+/g, '-')}`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg"
+                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg flex items-center justify-center"
                     >
                       Learn More
-                    </motion.button>
+                    </motion.a>
                   </div>
                 </motion.div>
               ))}
