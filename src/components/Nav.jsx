@@ -170,18 +170,20 @@ const NavBar = () => {
               </Link>
             </motion.div>
           ))}
-          <motion.button
-            variants={navItemVariants}
-            custom={navLinks.length}
-            whileHover={{ 
-              scale: 1.05, 
-              boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)" 
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-4 lg:px-6 py-2 rounded-full text-sm lg:text-base font-medium transition-all duration-300 shadow-md hover:from-yellow-400 hover:to-yellow-300"
-          >
-            Donate
-          </motion.button>
+          <a href="/donate">
+            <motion.button
+              variants={navItemVariants}
+              custom={navLinks.length}
+              whileHover={{ 
+                scale: 1.05, 
+                boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)" 
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-4 lg:px-6 py-2 rounded-full text-sm lg:text-base font-medium transition-all duration-300 shadow-md hover:from-yellow-400 hover:to-yellow-300"
+            >
+              Donate
+            </motion.button>
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
