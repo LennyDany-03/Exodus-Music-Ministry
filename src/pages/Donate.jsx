@@ -3,6 +3,7 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
+import { supabase } from "../lib/supabaseClient"
 
 import TeamPhoto from "../assets/Team Photo.jpg"
 
@@ -38,6 +39,7 @@ const Donate = () => {
   })
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // Parallax effects
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
@@ -134,72 +136,121 @@ const Donate = () => {
     })
   }
 
+  // Save donation to Supabase
+  const saveDonationToSupabase = async (paymentData) => {
+    try {
+      const { data, error } = await supabase.from("donations").insert([
+        {
+          payment_id: paymentData.razorpay_payment_id,
+          amount: donationAmount === "custom" ? customAmount : donationAmount,
+          type: donationType,
+          donor_name: `${formData.firstName} ${formData.lastName}`,
+          donor_email: formData.email,
+          donor_phone: formData.phone || null,
+          payment_status: "completed",
+          donation_date: new Date().toISOString(),
+        },
+      ])
+
+      if (error) {
+        console.error("Error saving donation:", error)
+        throw new Error(error.message)
+      }
+
+      return data
+    } catch (err) {
+      console.error("Error in saveDonationToSupabase:", err)
+      throw err
+    }
+  }
+
   // Handle Razorpay payment
   const handlePayment = async () => {
-    const res = await initializeRazorpay()
-    if (!res) {
-      setError("Razorpay SDK failed to load")
-      return
-    }
+    try {
+      setIsProcessing(true)
+      const res = await initializeRazorpay()
+      if (!res) {
+        setError("Razorpay SDK failed to load")
+        setIsProcessing(false)
+        return
+      }
 
-    // Calculate final amount
-    const finalAmount = donationAmount === "custom" ? customAmount : donationAmount
+      // Calculate final amount
+      const finalAmount = donationAmount === "custom" ? customAmount : donationAmount
 
-    // Razorpay options
-    const options = {
-      key: "rzp_test_72S71RvJ1kSI1j", // Replace with your Razorpay key
-      amount: Number.parseInt(finalAmount) * 100, // Amount in paise
-      currency: "INR",
-      name: "Exodus Music Ministry",
-      description: `${donationType === "monthly" ? "Monthly" : "One-time"} Donation`,
-      handler: async (response) => {
-        try {
-          // Here you would typically send this data to your backend
-          console.log("Payment successful", response)
+      // Razorpay options
+      const options = {
+        key: "rzp_test_72S71RvJ1kSI1j", // Replace with your Razorpay key
+        amount: Number.parseInt(finalAmount) * 100, // Amount in paise
+        currency: "INR",
+        name: "Exodus Music Ministry",
+        description: `${donationType === "monthly" ? "Monthly" : "One-time"} Donation`,
+        handler: async (response) => {
+          try {
+            console.log("Payment successful", response)
 
-          // For demonstration, we'll simulate a successful donation
-          // In a real app, you would store this in your database
-          const donationData = {
-            payment_id: response.razorpay_payment_id,
-            amount: finalAmount,
-            type: donationType,
-            donor_name: `${formData.firstName} ${formData.lastName}`,
-            donor_email: formData.email,
-            donor_phone: formData.phone,
-            payment_status: "completed",
-            donation_date: new Date().toISOString(),
+            // Save donation directly after successful payment
+            const { data, error } = await supabase.from("donations").insert([
+              {
+                payment_id: response.razorpay_payment_id,
+                amount: finalAmount,
+                type: donationType,
+                donor_name: `${formData.firstName} ${formData.lastName}`,
+                donor_email: formData.email,
+                donor_phone: formData.phone || null,
+                payment_status: "completed",
+                donation_date: new Date().toISOString(),
+              },
+            ])
+
+            if (error) {
+              console.error("Error saving donation:", error)
+              setError("Payment was successful but we couldn't save your donation details. Please contact support.")
+              return
+            }
+
+            // Show success message
+            setSuccess(true)
+
+            // Reset form
+            setFormData({
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+            })
+            setDonationAmount("100")
+            setCustomAmount("")
+          } catch (err) {
+            console.error("Error in payment handler:", err)
+            setError(err.message || "An error occurred during payment processing")
+          } finally {
+            setIsProcessing(false)
           }
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: {
+          color: "#4338CA", // Indigo-700 color
+        },
+        modal: {
+          ondismiss: () => {
+            // Handle case when user closes the Razorpay modal
+            setIsProcessing(false)
+          },
+        },
+      }
 
-          console.log("Donation data:", donationData)
-
-          // Show success message
-          setSuccess(true)
-
-          // Reset form
-          setFormData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            phone: "",
-          })
-          setDonationAmount("100")
-          setCustomAmount("")
-        } catch (err) {
-          setError(err.message)
-        }
-      },
-      prefill: {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        contact: formData.phone,
-      },
-      theme: {
-        color: "#4338CA", // Indigo-700 color
-      },
+      const paymentObject = new window.Razorpay(options)
+      paymentObject.open()
+    } catch (err) {
+      console.error("Error in handlePayment:", err)
+      setError(err.message || "An error occurred. Please try again.")
+      setIsProcessing(false)
     }
-
-    const paymentObject = new window.Razorpay(options)
-    paymentObject.open()
   }
 
   // Handle donation form submission
@@ -209,6 +260,13 @@ const Donate = () => {
     // Validate form
     if (!formData.firstName || !formData.lastName || !formData.email) {
       setError("Please fill in all required fields")
+      return
+    }
+
+    // Validate amount
+    const finalAmount = donationAmount === "custom" ? customAmount : donationAmount
+    if (!finalAmount || isNaN(Number(finalAmount)) || Number(finalAmount) <= 0) {
+      setError("Please enter a valid donation amount")
       return
     }
 
@@ -501,11 +559,47 @@ const Donate = () => {
                       {/* Submit Button */}
                       <motion.button
                         type="submit"
-                        whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-xl font-bold tracking-wide shadow-lg"
+                        disabled={isProcessing}
+                        whileHover={{
+                          scale: isProcessing ? 1 : 1.05,
+                          boxShadow: isProcessing ? "none" : "0px 5px 20px rgba(250, 204, 21, 0.4)",
+                        }}
+                        whileTap={{ scale: isProcessing ? 1 : 0.95 }}
+                        className={`w-full ${
+                          isProcessing
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gradient-to-r from-yellow-500 to-yellow-400 hover:shadow-lg"
+                        } text-indigo-950 px-10 py-4 rounded-full text-xl font-bold tracking-wide shadow-lg relative`}
                       >
-                        {donationType === "monthly" ? "Donate Monthly" : "Donate Now"}
+                        {isProcessing ? (
+                          <span className="flex items-center justify-center">
+                            <svg
+                              className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-950"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            Processing...
+                          </span>
+                        ) : donationType === "monthly" ? (
+                          "Donate Monthly"
+                        ) : (
+                          "Donate Now"
+                        )}
                       </motion.button>
 
                       <p className="text-center text-indigo-300 text-sm mt-4">
