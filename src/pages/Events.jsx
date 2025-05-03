@@ -259,7 +259,7 @@ const Events = () => {
                   repeatType: "reverse",
                 }}
               >
-                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
+                {["♪", "���", "♬", "♩"][Math.floor(Math.random() * 4)]}
               </motion.div>
             ))}
           </div>
@@ -1038,4 +1038,3 @@ const Events = () => {
 }
 
 export default Events
-
