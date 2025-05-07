@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
-import React from "react"
+import { supabase } from "../lib/supabaseClient"
 import TeamPhoto from "../assets/Team Photo.jpg"
 import TeamSecondPhoto from "../assets/Team @.jpg"
 import Victor from "../assets/Victor1.jpg"
@@ -19,6 +19,8 @@ const Gallery = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImage, setCurrentImage] = useState(null)
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const [galleryImages, setGalleryImages] = useState([])
+  const [isLoadingImages, setIsLoadingImages] = useState(true)
 
   // Responsive scroll animations that work on both mobile and desktop
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
@@ -40,6 +42,182 @@ const Gallery = () => {
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
   const shareOpacity = useTransform(scrollYProgress, [0.7, 0.9], [0, 1])
+
+  // Fetch images from Supabase
+  useEffect(() => {
+    const fetchImages = async () => {
+      setIsLoadingImages(true)
+      try {
+        const { data, error } = await supabase.from("images").select("*").order("created_at", { ascending: false })
+
+        if (error) {
+          console.error("Error fetching images:", error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          // Transform the data to match our gallery image format
+          const transformedData = data.map((img) => ({
+            id: img.id,
+            src: img.image_url,
+            alt: img.alt_text || img.title,
+            category: img.category,
+            description: img.description,
+          }))
+
+          // Combine with default images to ensure we always have content
+          const defaultImages = [
+            {
+              id: "default-1",
+              src: TeamPhoto,
+              alt: "Team Photo",
+              category: "team",
+              description: "Exodus Music Ministry team gathered for a group photo",
+            },
+            {
+              id: "default-2",
+              src: TeamSecondPhoto,
+              alt: "Team Second Photo",
+              category: "team",
+              description: "Our worship team after a successful event",
+            },
+            {
+              id: "default-3",
+              src: Victor,
+              alt: "Dr. Victor",
+              category: "team",
+              description: "Dr. Victor, founder and director of Exodus Music Ministry",
+            },
+            {
+              id: "default-4",
+              src: Team3rdPhoto,
+              alt: "Team Third Photo",
+              category: "team",
+              description: "The ministry team during a practice session",
+            },
+            {
+              id: "default-5",
+              src: SundayEve,
+              alt: "Sunday Evening Service",
+              category: "worship",
+              description: "Special Sunday evening worship service at Mylapore",
+            },
+            {
+              id: "default-6",
+              src: Gospel,
+              alt: "Gospel Musical Night",
+              category: "concerts",
+              description: "Gospel Musical Night event in Madurai",
+            },
+            {
+              id: "default-7",
+              src: Centenary,
+              alt: "Centenary Celebration",
+              category: "worship",
+              description: "Centenary celebration at IELC Ayanavaram",
+            },
+          ]
+
+          // Combine uploaded images with default images
+          setGalleryImages([...transformedData, ...defaultImages])
+        } else {
+          // If no images found, use default images
+          setGalleryImages([
+            {
+              id: 1,
+              src: TeamPhoto,
+              alt: "Team Photo",
+              category: "team",
+              description: "Exodus Music Ministry team gathered for a group photo",
+            },
+            {
+              id: 2,
+              src: TeamSecondPhoto,
+              alt: "Team Second Photo",
+              category: "team",
+              description: "Our worship team after a successful event",
+            },
+            {
+              id: 3,
+              src: Victor,
+              alt: "Dr. Victor",
+              category: "team",
+              description: "Dr. Victor, founder and director of Exodus Music Ministry",
+            },
+            {
+              id: 4,
+              src: Team3rdPhoto,
+              alt: "Team Third Photo",
+              category: "team",
+              description: "The ministry team during a practice session",
+            },
+            {
+              id: 5,
+              src: SundayEve,
+              alt: "Sunday Evening Service",
+              category: "worship",
+              description: "Special Sunday evening worship service at Mylapore",
+            },
+            {
+              id: 6,
+              src: Gospel,
+              alt: "Gospel Musical Night",
+              category: "concerts",
+              description: "Gospel Musical Night event in Madurai",
+            },
+            {
+              id: 7,
+              src: Centenary,
+              alt: "Centenary Celebration",
+              category: "worship",
+              description: "Centenary celebration at IELC Ayanavaram",
+            },
+            {
+              id: 8,
+              src: "/placeholder.svg?height=400&width=600",
+              alt: "Worship Concert",
+              category: "concerts",
+              description: "Annual worship concert at Chennai",
+            },
+            {
+              id: 9,
+              src: "/placeholder.svg?height=400&width=600",
+              alt: "Behind the Scenes",
+              category: "behind",
+              description: "Sound check and preparation before a major event",
+            },
+            {
+              id: 10,
+              src: "/placeholder.svg?height=400&width=600",
+              alt: "Youth Worship",
+              category: "worship",
+              description: "Youth-led worship service",
+            },
+            {
+              id: 11,
+              src: "/placeholder.svg?height=400&width=600",
+              alt: "Recording Session",
+              category: "behind",
+              description: "Recording session for our latest worship album",
+            },
+            {
+              id: 12,
+              src: "/placeholder.svg?height=400&width=600",
+              alt: "Christmas Concert",
+              category: "concerts",
+              description: "Christmas special concert",
+            },
+          ])
+        }
+      } catch (error) {
+        console.error("Error in fetchImages:", error)
+      } finally {
+        setIsLoadingImages(false)
+      }
+    }
+
+    fetchImages()
+  }, [])
 
   // Set window size safely on client-side
   useEffect(() => {
@@ -139,94 +317,6 @@ const Gallery = () => {
     { id: "behind", name: "Behind the Scenes" },
   ]
 
-  // Gallery images data
-  const galleryImages = [
-    {
-      id: 1,
-      src: TeamPhoto,
-      alt: "Team Photo",
-      category: "team",
-      description: "Exodus Music Ministry team gathered for a group photo",
-    },
-    {
-      id: 2,
-      src: TeamSecondPhoto,
-      alt: "Team Second Photo",
-      category: "team",
-      description: "Our worship team after a successful event",
-    },
-    {
-      id: 3,
-      src: Victor,
-      alt: "Dr. Victor",
-      category: "team",
-      description: "Dr. Victor, founder and director of Exodus Music Ministry",
-    },
-    {
-      id: 4,
-      src: Team3rdPhoto,
-      alt: "Team Third Photo",
-      category: "team",
-      description: "The ministry team during a practice session",
-    },
-    {
-      id: 5,
-      src: SundayEve,
-      alt: "Sunday Evening Service",
-      category: "worship",
-      description: "Special Sunday evening worship service at Mylapore",
-    },
-    {
-      id: 6,
-      src: Gospel,
-      alt: "Gospel Musical Night",
-      category: "concerts",
-      description: "Gospel Musical Night event in Madurai",
-    },
-    {
-      id: 7,
-      src: Centenary,
-      alt: "Centenary Celebration",
-      category: "worship",
-      description: "Centenary celebration at IELC Ayanavaram",
-    },
-    {
-      id: 8,
-      src: "/placeholder.svg?height=400&width=600",
-      alt: "Worship Concert",
-      category: "concerts",
-      description: "Annual worship concert at Chennai",
-    },
-    {
-      id: 9,
-      src: "/placeholder.svg?height=400&width=600",
-      alt: "Behind the Scenes",
-      category: "behind",
-      description: "Sound check and preparation before a major event",
-    },
-    {
-      id: 10,
-      src: "/placeholder.svg?height=400&width=600",
-      alt: "Youth Worship",
-      category: "worship",
-      description: "Youth-led worship service",
-    },
-    {
-      id: 11,
-      src: "/placeholder.svg?height=400&width=600",
-      alt: "Recording Session",
-      category: "behind",
-      description: "Recording session for our latest worship album",
-    },
-    {
-      id: 12,
-      src: "/placeholder.svg?height=400&width=600",
-      alt: "Christmas Concert",
-      category: "concerts",
-      description: "Christmas special concert",
-    },
-  ]
-
   // Filter images based on active category
   const filteredImages =
     activeCategory === "all" ? galleryImages : galleryImages.filter((img) => img.category === activeCategory)
@@ -259,6 +349,11 @@ const Gallery = () => {
     }
 
     setCurrentImage(galleryImages[newIndex])
+  }
+
+  // Handle upload button click
+  const handleUploadClick = () => {
+    window.location.href = "/image-upload-form"
   }
 
   return (
@@ -366,6 +461,32 @@ const Gallery = () => {
               <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
                 Capturing moments of worship, fellowship, and ministry through the years
               </motion.p>
+
+              {/* Upload Button */}
+              <motion.div variants={fadeInUp}>
+                <motion.button
+                  onClick={handleUploadClick}
+                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-8 py-3 rounded-full text-lg font-bold tracking-wide shadow-lg flex items-center mx-auto"
+                >
+                  Upload New Image
+                  <svg
+                    className="ml-2 w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    ></path>
+                  </svg>
+                </motion.button>
+              </motion.div>
             </div>
 
             {/* Scroll indicator */}
@@ -440,34 +561,51 @@ const Gallery = () => {
                 ))}
               </motion.div>
 
+              {/* Loading indicator for images */}
+              {isLoadingImages && (
+                <div className="flex justify-center items-center py-12">
+                  <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+
               {/* Gallery Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredImages.map((image, index) => (
-                  <motion.div
-                    key={image.id}
-                    custom={index}
-                    variants={imageVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    whileHover="hover"
-                    viewport={{ once: true }}
-                    className="relative overflow-hidden rounded-xl cursor-pointer group"
-                    onClick={() => openLightbox(image)}
-                  >
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={image.src || "/placeholder.svg"}
-                        alt={image.alt}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-950/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                      <h3 className="text-lg font-bold text-white">{image.alt}</h3>
-                      <p className="text-sm text-indigo-200">{image.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              {!isLoadingImages && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {filteredImages.map((image, index) => (
+                    <motion.div
+                      key={image.id}
+                      custom={index}
+                      variants={imageVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      whileHover="hover"
+                      viewport={{ once: true }}
+                      className="relative overflow-hidden rounded-xl cursor-pointer group"
+                      onClick={() => openLightbox(image)}
+                    >
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={image.src || "/placeholder.svg"}
+                          alt={image.alt}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-950/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <h3 className="text-lg font-bold text-white">{image.alt}</h3>
+                        <p className="text-sm text-indigo-200">{image.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+              {/* No images message */}
+              {!isLoadingImages && filteredImages.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-xl text-indigo-300">No images found in this category.</p>
+                  <p className="text-indigo-400 mt-2">Try selecting a different category or upload new images.</p>
+                </div>
+              )}
 
               {/* Load More Button */}
               <motion.div
