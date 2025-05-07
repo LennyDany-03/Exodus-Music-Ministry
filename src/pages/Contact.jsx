@@ -1,9 +1,8 @@
 "use client"
-import React from "react"
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
-
+import React from "react"
 import TeamPhoto from "../assets/Team Photo.jpg"
 import Victor from "../assets/Victor1.jpg"
 
@@ -20,8 +19,28 @@ const Contact = () => {
   })
   const [formSubmitted, setFormSubmitted] = useState(false)
 
+  // Responsive scroll animations that work on both mobile and desktop
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+  const contactMethodsY = useTransform(
+    scrollYProgress,
+    [0.1, 0.3],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const contactMethodsOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
+  const formY = useTransform(
+    scrollYProgress,
+    [0.3, 0.5],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const formOpacity = useTransform(scrollYProgress, [0.3, 0.5], [0, 1])
+  const locationY = useTransform(
+    scrollYProgress,
+    [0.5, 0.7],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const locationOpacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1])
+
   // Enhanced parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
   const contactFormY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
@@ -43,6 +62,17 @@ const Contact = () => {
 
     sequence()
   }, [controls])
+
+  // Add a useEffect to handle window resize for responsive animations
+  useEffect(() => {
+    const handleResize = () => {
+      // Force a re-render to update animations based on new window size
+      setIsLoading(false)
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // Enhanced animation variants
   const fadeInUp = {
@@ -271,15 +301,11 @@ const Contact = () => {
       <div className="overflow-x-hidden bg-indigo-950 text-white">
         {/* Hero Section */}
         <motion.section
-          className="h-screen relative flex items-center justify-center overflow-hidden"
+          className="min-h-screen relative flex items-center justify-center overflow-hidden"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          style={{
-            opacity: heroOpacity,
-            scale: heroScale,
-            y: heroY,
-          }}
+          style={{ opacity: heroOpacity }}
         >
           {/* Background Animation */}
           <div className="absolute inset-0 w-full h-full z-0">
@@ -384,7 +410,7 @@ const Contact = () => {
         {/* Contact Methods Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: contactFormY, opacity: contactFormOpacity }}
+          style={{ y: contactMethodsY, opacity: contactMethodsOpacity }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -445,6 +471,7 @@ const Contact = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
+                style={{ opacity: formOpacity }}
               >
                 <div className="text-center mb-8">
                   <h3 className="text-3xl font-bold mb-4">Send Us a Message</h3>
@@ -627,7 +654,7 @@ const Contact = () => {
         {/* Location & FAQ Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: mapY, opacity: mapOpacity }}
+          style={{ y: locationY, opacity: locationOpacity }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -1115,4 +1142,3 @@ const Contact = () => {
 }
 
 export default Contact
-

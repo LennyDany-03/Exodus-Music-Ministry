@@ -1,10 +1,9 @@
 "use client"
-import React from "react"
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
-
+import React from "react"
 import TeamPhoto from "../assets/Team Photo.jpg"
 
 // Razorpay initialization function
@@ -12,6 +11,7 @@ const initializeRazorpay = () => {
   return new Promise((resolve) => {
     const script = document.createElement("script")
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
+    script.async = true
 
     script.onload = () => {
       resolve(true)
@@ -42,9 +42,25 @@ const Donate = () => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+  const formY = useTransform(
+    scrollYProgress,
+    [0.1, 0.3],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
   const formOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
+  const impactY = useTransform(
+    scrollYProgress,
+    [0.4, 0.6],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const impactOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1])
+  const otherWaysY = useTransform(
+    scrollYProgress,
+    [0.7, 0.9],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const otherWaysOpacity = useTransform(scrollYProgress, [0.7, 0.9], [0, 1])
 
   // Animation variants
   const fadeInUp = {
@@ -81,6 +97,16 @@ const Donate = () => {
 
     sequence()
   }, [controls])
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Force a re-render to update animations based on new window size
+      setIsLoading(false)
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // Donation impact data
   const donationImpacts = [
@@ -177,6 +203,11 @@ const Donate = () => {
 
       // Calculate final amount
       const finalAmount = donationAmount === "custom" ? customAmount : donationAmount
+      if (!finalAmount || isNaN(Number(finalAmount)) || Number(finalAmount) <= 0) {
+        setError("Please enter a valid donation amount")
+        setIsProcessing(false)
+        return
+      }
 
       // Razorpay options
       const options = {
@@ -190,24 +221,9 @@ const Donate = () => {
             console.log("Payment successful", response)
 
             // Save donation directly after successful payment
-            const { data, error } = await supabase.from("donations").insert([
-              {
-                payment_id: response.razorpay_payment_id,
-                amount: finalAmount,
-                type: donationType,
-                donor_name: `${formData.firstName} ${formData.lastName}`,
-                donor_email: formData.email,
-                donor_phone: formData.phone || null,
-                payment_status: "completed",
-                donation_date: new Date().toISOString(),
-              },
-            ])
-
-            if (error) {
-              console.error("Error saving donation:", error)
-              setError("Payment was successful but we couldn't save your donation details. Please contact support.")
-              return
-            }
+            await saveDonationToSupabase({
+              razorpay_payment_id: response.razorpay_payment_id,
+            })
 
             // Show success message
             setSuccess(true)
@@ -285,14 +301,11 @@ const Donate = () => {
       <div className="overflow-x-hidden bg-indigo-950 text-white">
         {/* Hero Section */}
         <motion.section
-          className="h-screen relative flex items-center justify-center overflow-hidden"
+          className="min-h-screen relative flex items-center justify-center overflow-hidden"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          style={{
-            opacity: heroOpacity,
-            scale: heroScale,
-          }}
+          style={{ opacity: heroOpacity }}
         >
           {/* Background */}
           <div className="absolute inset-0 w-full h-full z-0">
@@ -370,9 +383,10 @@ const Donate = () => {
         </motion.section>
 
         {/* Donation Form Section */}
-        <section
+        <motion.section
           id="donate-form"
-          className="py-20 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
+          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
+          style={{ y: formY, opacity: formOpacity }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -666,10 +680,13 @@ const Donate = () => {
               </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Donation Impact Section */}
-        <section className="py-20 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative">
+        <motion.section
+          className="py-20 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
+          style={{ y: impactY, opacity: impactOpacity }}
+        >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-16"
@@ -723,10 +740,13 @@ const Donate = () => {
               </a>
             </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Other Ways to Give Section */}
-        <section className="py-20 bg-indigo-950 overflow-hidden relative">
+        <motion.section
+          className="py-20 bg-indigo-950 overflow-hidden relative"
+          style={{ y: otherWaysY, opacity: otherWaysOpacity }}
+        >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-16"
@@ -810,7 +830,7 @@ const Donate = () => {
               </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Footer */}
         <footer className="bg-indigo-950 py-16 relative overflow-hidden">

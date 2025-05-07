@@ -1,236 +1,209 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+"use client"
+import React from "react"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Link, useLocation } from "react-router-dom"
+import BGLogo from "../assets/BGLogo.png"
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeLink, setActiveLink] = useState('/');
+  const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const location = useLocation()
 
-  // Navigation links
-  const navLinks = [
-    { title: "Home", path: "/" },
-    { title: "About", path: "/about" },
-    { title: "Events", path: "/events" },
-    { title: "Gallery", path: "/gallery" },
-    { title: "Music", path: "/music" },
-    { title: "Contact", path: "/contact" }
-  ];
+  // Check if current path matches the link
+  const isActive = (path) => {
+    return location.pathname === path || (path !== "/" && location.pathname.startsWith(path))
+  }
 
-  // Handle scroll effect for navbar
+  // Handle scroll event
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
-        setScrolled(true);
+        setIsScrolled(true)
       } else {
-        setScrolled(false);
+        setIsScrolled(false)
       }
-    };
+    }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
-  // Close mobile menu on window resize to prevent layout issues
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768 && isOpen) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
+  // Navigation links
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Music", path: "/music" },
+    { name: "Events", path: "/events" },
+    { name: "Gallery", path: "/gallery" },
+    { name: "Contact", path: "/contact" },
+  ]
 
   // Animation variants
-  const logoVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        duration: 0.6, 
-        ease: [0.6, 0.05, 0.01, 0.9]
-      }
-    }
-  };
-
-  const navItemVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: i => ({ 
-      opacity: 1, 
+  const navVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { 
-        delay: i * 0.1,
-        duration: 0.4,
-        ease: [0.6, 0.05, 0.01, 0.9]
-      }
-    })
-  };
+      transition: { duration: 0.5 },
+    },
+  }
 
   const mobileMenuVariants = {
-    closed: { 
+    closed: {
       opacity: 0,
-      height: 0,
+      y: -20,
       transition: {
-        duration: 0.3,
-        ease: [0.6, 0.05, 0.01, 0.9],
         staggerChildren: 0.05,
         staggerDirection: -1,
-        when: "afterChildren"
-      }
+        when: "afterChildren",
+      },
     },
-    open: { 
+    open: {
       opacity: 1,
-      height: 'auto',
+      y: 0,
       transition: {
-        duration: 0.4,
-        ease: [0.6, 0.05, 0.01, 0.9],
         staggerChildren: 0.1,
         delayChildren: 0.1,
-        when: "beforeChildren"
-      }
-    }
-  };
+      },
+    },
+  }
 
-  const mobileItemVariants = {
-    closed: { opacity: 0, x: -10 },
-    open: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        duration: 0.4,
-        ease: [0.6, 0.05, 0.01, 0.9]
-      } 
-    }
-  };
-
-  // Toggle mobile menu
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const menuItemVariants = {
+    closed: { opacity: 0, y: -10 },
+    open: { opacity: 1, y: 0 },
+  }
 
   return (
-    <motion.nav 
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "bg-indigo-950/90 backdrop-blur-md shadow-lg py-2" : "bg-transparent py-4"
+      }`}
       initial="hidden"
       animate="visible"
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled || isOpen
-          ? "bg-indigo-900/90 backdrop-blur-md shadow-lg py-3" 
-          : "bg-transparent py-4 md:py-6"
-      }`}
+      variants={navVariants}
     >
-      <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
-        {/* Logo - REDUCED FONT SIZE */}
-        <motion.div 
-          variants={logoVariants}
-          className="flex items-center"
+      {/* Animated background gradient - only shows when scrolled */}
+      {isScrolled && (
+        <motion.div
+          className="absolute inset-0 z-0 opacity-80"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <Link to="/" className="flex items-center" onClick={() => setActiveLink('/')}>
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="font-bold tracking-tight flex flex-wrap items-center"
-            >
-              <span className="text-base xs:text-lg sm:text-xl md:text-2xl text-yellow-400">EXODUS</span> 
-              <span className="ml-1 text-base xs:text-lg sm:text-xl md:text-2xl text-white">MUSIC</span>
-              <span className="ml-1 text-base xs:text-lg sm:text-xl md:text-2xl text-white">MINISTRIES</span>
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-950"
+            animate={{
+              backgroundPosition: ["0% 0%", "100% 0%"],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: "mirror",
+            }}
+            style={{ backgroundSize: "200% 100%" }}
+          />
+        </motion.div>
+      )}
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center">
+              <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-10 w-auto mr-3" />
+              <div className="flex flex-col">
+                <motion.span
+                  className="text-xl font-bold text-yellow-400"
+                  animate={
+                    isScrolled
+                      ? {}
+                      : {
+                          textShadow: [
+                            "0px 0px 0px rgba(250, 204, 21, 0)",
+                            "0px 0px 10px rgba(250, 204, 21, 0.5)",
+                            "0px 0px 0px rgba(250, 204, 21, 0)",
+                          ],
+                        }
+                  }
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                >
+                  EXODUS
+                </motion.span>
+                <span className="text-sm text-white font-medium">MUSIC MINISTRY</span>
+              </div>
             </motion.div>
           </Link>
-        </motion.div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-4 lg:space-x-10">
-          {navLinks.map((link, index) => (
-            <motion.div
-              key={link.title}
-              custom={index}
-              variants={navItemVariants}
-            >
-              <Link 
-                to={link.path} 
-                className={`text-sm lg:text-base font-medium tracking-wide transition-all duration-300 relative ${
-                  activeLink === link.path 
-                    ? "text-yellow-400" 
-                    : "text-gray-300 hover:text-yellow-400"
-                }`}
-                onClick={() => setActiveLink(link.path)}
-              >
-                {link.title}
-                {activeLink === link.path && (
-                  <motion.div 
-                    className="absolute -bottom-1 left-0 right-0 flex justify-center"
-                    layoutId="activeNavLine"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            <div className="bg-indigo-900/50 backdrop-blur-sm rounded-full p-1.5 border border-indigo-800">
+              {navLinks.map((link) => (
+                <Link key={link.name} to={link.path}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      isActive(link.path) ? "text-indigo-950 bg-yellow-400" : "text-white hover:text-yellow-400"
+                    }`}
                   >
-                    <span className="text-yellow-400 text-xs">♪</span>
-                  </motion.div>
-                )}
-              </Link>
-            </motion.div>
-          ))}
-          <a href="/donate">
-            <motion.button
-              variants={navItemVariants}
-              custom={navLinks.length}
-              whileHover={{ 
-                scale: 1.05, 
-                boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)" 
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black px-4 lg:px-6 py-2 rounded-full text-sm lg:text-base font-medium transition-all duration-300 shadow-md hover:from-yellow-400 hover:to-yellow-300"
-            >
-              Donate
-            </motion.button>
-          </a>
-        </div>
+                    {link.name}
+                    {isActive(link.path) && (
+                      <motion.span
+                        className="absolute inset-0 rounded-full bg-yellow-400 -z-10"
+                        layoutId="activeNav"
+                        transition={{ type: "spring", duration: 0.5 }}
+                      />
+                    )}
+                  </motion.button>
+                </Link>
+              ))}
+            </div>
 
-        {/* Mobile Menu Button */}
-        <motion.div 
-          className="md:hidden"
-          variants={navItemVariants}
-          custom={navLinks.length}
-        >
-          <button 
-            onClick={toggleMenu} 
-            className="focus:outline-none text-yellow-400 p-2"
-            aria-label="Toggle Menu"
-          >
-            <svg 
-              viewBox="0 0 24 24" 
-              width="24" 
-              height="24" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              fill="none" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className={`${isOpen ? "hidden" : "block"}`}
+            {/* Donate Button */}
+            <Link to="/donate">
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="ml-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-2.5 rounded-full text-sm font-bold shadow-md"
+              >
+                Donate
+              </motion.button>
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white p-2"
+              aria-label="Toggle menu"
             >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-            <svg 
-              viewBox="0 0 24 24" 
-              width="24" 
-              height="24" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              fill="none" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className={`${isOpen ? "block" : "hidden"}`}
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </motion.div>
+              <div className="w-6 flex flex-col items-end justify-center gap-1.5">
+                <motion.span
+                  animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+                  className={`block h-0.5 ${isOpen ? "w-6" : "w-6"} bg-current transition-all duration-300`}
+                ></motion.span>
+                <motion.span
+                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                  className="block h-0.5 w-4 bg-current transition-all duration-300"
+                ></motion.span>
+                <motion.span
+                  animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+                  className={`block h-0.5 ${isOpen ? "w-6" : "w-5"} bg-current transition-all duration-300`}
+                ></motion.span>
+              </div>
+            </motion.button>
+          </div>
+        </div>
       </div>
 
-      {/* Mobile Menu - CENTERED */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -238,64 +211,41 @@ const NavBar = () => {
             animate="open"
             exit="closed"
             variants={mobileMenuVariants}
-            className="md:hidden bg-indigo-900/95 backdrop-blur-md overflow-hidden border-t border-indigo-800"
+            className="md:hidden absolute top-full left-0 right-0 bg-indigo-950/95 backdrop-blur-md border-t border-indigo-800 shadow-xl"
           >
-            {/* Mobile Logo - Centered */}
-            
-            <div className="container mx-auto px-4 py-3">
-              {navLinks.map((link, index) => (
-                <motion.div
-                  key={link.title}
-                  variants={mobileItemVariants}
-                  className="py-2 border-b border-indigo-800 last:border-b-0 text-center"
-                >
-                  <Link 
-                    to={link.path} 
-                    className={`block font-medium text-base ${
-                      activeLink === link.path 
-                        ? "text-yellow-400" 
-                        : "text-gray-300 hover:text-yellow-400"
-                    }`}
-                    onClick={() => {
-                      setActiveLink(link.path);
-                      setIsOpen(false);
-                    }}
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex flex-col space-y-2">
+                {navLinks.map((link) => (
+                  <motion.div key={link.name} variants={menuItemVariants}>
+                    <Link
+                      to={link.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                        isActive(link.path)
+                          ? "bg-indigo-800/80 text-yellow-400"
+                          : "text-white hover:bg-indigo-900/50 hover:text-yellow-400"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+                <motion.div variants={menuItemVariants} className="pt-2">
+                  <Link
+                    to="/donate"
+                    onClick={() => setIsOpen(false)}
+                    className="block bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-4 py-3 rounded-lg text-base font-bold text-center shadow-md"
                   >
-                    <div className="flex items-center justify-center">
-                      {activeLink === link.path && <span className="text-yellow-400 mr-2">♪</span>}
-                      {link.title}
-                    </div>
+                    Donate
                   </Link>
                 </motion.div>
-              ))}
-              <motion.div
-                variants={mobileItemVariants}
-                className="py-3"
-              >
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-black py-2 rounded-full font-medium shadow-md"
-                >
-                  Donate
-                </motion.button>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Bottom border on scroll */}
-      {scrolled && (
-        <motion.div 
-          className="absolute bottom-0 left-0 right-0 h-px bg-indigo-400/20"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.3 }}
-        ></motion.div>
-      )}
     </motion.nav>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar

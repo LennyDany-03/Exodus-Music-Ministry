@@ -1,130 +1,32 @@
 "use client"
-import React from "react"
-import { useEffect, useState } from "react"
-import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { useEffect, useState, useRef } from "react"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
-
+import React from "react"
 import TeamPhoto from "../assets/Team Photo.jpg"
 import SundayEve from "../assets/SundayEVE.png"
 import Gospel from "../assets/GospelPoster.jpg"
 import Centenary from "../assets/Centenary.jpg"
+import Team3rdPhoto from "../assets/Team3rdPhoto.jpg"
+import Victor1 from "../assets/Victor1.jpg"
 
 const Events = () => {
-  const controls = useAnimation()
-  const { scrollYProgress } = useScroll()
   const [isLoading, setIsLoading] = useState(true)
+  const [showAllEvents, setShowAllEvents] = useState(false)
+  const formRef = useRef(null)
 
-  // Enhanced parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
-  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
-  const upcomingY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
-  const upcomingOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
-  const pastY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
-  const pastOpacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1])
-
-  // Initial animation sequence
+  // Initial loading sequence
   useEffect(() => {
-    const sequence = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+    const timer = setTimeout(() => {
       setIsLoading(false)
-      await controls.start({
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.7, staggerChildren: 0.3 },
-      })
-    }
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [])
 
-    sequence()
-  }, [controls])
-
-  // Enhanced animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
-    },
+  // Scroll to form handler
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1 + 0.3,
-        duration: 0.7,
-        ease: [0.6, 0.05, 0.01, 0.9],
-      },
-    }),
-    hover: {
-      y: -12,
-      boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.3)",
-      transition: { duration: 0.4, ease: "easeOut" },
-    },
-  }
-
-  // Loading screen animation
-  const loadingVariants = {
-    hidden: { opacity: 1 },
-    exit: {
-      opacity: 0,
-      transition: {
-        duration: 0.8,
-        ease: "easeInOut",
-      },
-    },
-  }
-
-  const loadingTextVariants = {
-    animate: {
-      opacity: [0.3, 1, 0.3],
-      transition: {
-        duration: 1.5,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-      },
-    },
-  }
-
-  // Upcoming events data
-  const upcomingEvents = [
-    {
-      title: "Easter Worship Night",
-      date: "April 9, 2025",
-      location: "St. Thomas Church, Chennai",
-      description: "Join us for a special Easter celebration with powerful worship and fellowship.",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      title: "Youth Worship Conference",
-      date: "May 15-17, 2025",
-      location: "Bethel Convention Center, Bangalore",
-      description:
-        "A three-day conference focused on equipping young worship leaders with skills and spiritual guidance.",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-    {
-      title: "Summer Music Workshop",
-      date: "June 5-10, 2025",
-      location: "Exodus Music Academy, Chennai",
-      description: "Learn worship instruments, vocal techniques, and sound engineering in this intensive workshop.",
-      image: "/placeholder.svg?height=400&width=600",
-    },
-  ]
 
   // Past events data
   const pastEvents = [
@@ -157,7 +59,7 @@ const Events = () => {
       date: "December 18, 2023",
       location: "St. Mark's Cathedral, Chennai",
       description: "A musical celebration of the birth of Christ featuring traditional and contemporary arrangements.",
-      image: "/placeholder.svg?height=400&width=600",
+      image: Team3rdPhoto,
       url: "#",
     },
     {
@@ -165,7 +67,7 @@ const Events = () => {
       date: "October 5-7, 2023",
       location: "Yelagiri Hills",
       description: "A weekend of spiritual renewal and musical training for worship leaders from across Tamil Nadu.",
-      image: "/placeholder.svg?height=400&width=600",
+      image: Victor1,
       url: "#",
     },
     {
@@ -173,10 +75,88 @@ const Events = () => {
       date: "July 22, 2023",
       location: "Marina Beach, Chennai",
       description: "A free public concert sharing the message of hope and love through music.",
-      image: "/placeholder.svg?height=400&width=600",
+      image: TeamPhoto,
+      url: "#",
+    },
+    {
+      title: "Easter Worship Night",
+      date: "April 9, 2023",
+      location: "St. Thomas Church, Chennai",
+      description: "Join us for a special Easter celebration with powerful worship and fellowship.",
+      image: SundayEve,
+      url: "#",
+    },
+    {
+      title: "Youth Worship Conference",
+      date: "May 15-17, 2023",
+      location: "Bethel Convention Center, Bangalore",
+      description:
+        "A three-day conference focused on equipping young worship leaders with skills and spiritual guidance.",
+      image: Gospel,
+      url: "#",
+    },
+    {
+      title: "Summer Music Workshop",
+      date: "June 5-10, 2023",
+      location: "Exodus Music Academy, Chennai",
+      description: "Learn worship instruments, vocal techniques, and sound engineering in this intensive workshop.",
+      image: Centenary,
       url: "#",
     },
   ]
+
+  // Responsive scroll animations that work on both mobile and desktop
+  const { scrollYProgress } = useScroll()
+
+  // Responsive scroll animations that work on both mobile and desktop
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+  const pastEventsY = useTransform(
+    scrollYProgress,
+    [0.1, 0.3],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const pastEventsOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
+  const hostEventY = useTransform(
+    scrollYProgress,
+    [0.4, 0.6],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+  )
+  const hostEventOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1])
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.6 } },
+  }
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  }
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  // Display only 6 events initially
+  const displayedEvents = showAllEvents ? pastEvents : pastEvents.slice(0, 6)
+
+  // Add a useEffect to handle window resize for responsive animations
+  useEffect(() => {
+    const handleResize = () => {
+      // Force a re-render to update animations based on new window size
+      setIsLoading(false)
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   return (
     <>
@@ -185,9 +165,8 @@ const Events = () => {
         {isLoading && (
           <motion.div
             className="fixed inset-0 bg-indigo-950 z-50 flex flex-col items-center justify-center"
-            variants={loadingVariants}
-            initial="hidden"
-            exit="exit"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.5 } }}
           >
             <motion.div
               animate={{
@@ -204,7 +183,11 @@ const Events = () => {
               <div className="w-full h-full rounded-full border-t-4 border-b-4 border-yellow-400"></div>
               <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-4xl">♪</div>
             </motion.div>
-            <motion.h2 className="text-white text-xl font-bold" variants={loadingTextVariants} animate="animate">
+            <motion.h2
+              className="text-white text-xl font-bold"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
+            >
               EXODUS MUSIC MINISTRY
             </motion.h2>
           </motion.div>
@@ -214,22 +197,18 @@ const Events = () => {
       {/* NavBar Component */}
       <NavBar />
 
-      <div className="overflow-x-hidden bg-indigo-950 text-white">
+      <div className="bg-gradient-to-b from-indigo-950 via-indigo-900 to-indigo-950 text-white">
         {/* Hero Section */}
         <motion.section
-          className="h-screen relative flex items-center justify-center overflow-hidden"
-          variants={staggerContainer}
+          className="min-h-screen flex items-center justify-center relative overflow-hidden py-20"
           initial="hidden"
           animate="visible"
-          style={{
-            opacity: heroOpacity,
-            scale: heroScale,
-            y: heroY,
-          }}
+          variants={fadeIn}
+          style={{ opacity: heroOpacity }}
         >
-          {/* Background Animation */}
+          {/* Background */}
           <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-indigo-950 opacity-60 z-10"></div>
+            <div className="absolute inset-0 bg-indigo-950/70 z-10"></div>
             <motion.div
               initial={{ scale: 1.2 }}
               animate={{ scale: 1 }}
@@ -239,303 +218,148 @@ const Events = () => {
             ></motion.div>
           </div>
 
-          {/* Particles */}
-          <div className="absolute inset-0 z-5">
-            {[...Array(20)].map((_, index) => (
+          {/* Animated particles */}
+          <div className="absolute inset-0 z-5 pointer-events-none">
+            {[...Array(12)].map((_, index) => (
               <motion.div
                 key={index}
                 className="absolute text-yellow-400 opacity-60"
                 initial={{
-                  x: Math.random() * window.innerWidth,
-                  y: Math.random() * window.innerHeight,
+                  x: Math.random() * 100 + "%",
+                  y: Math.random() * 100 + "%",
                 }}
                 animate={{
-                  y: [null, Math.random() * 100 - 50],
+                  y: [0, -15, 0],
                   opacity: [0.2, 0.8, 0.2],
                 }}
                 transition={{
-                  duration: 5 + Math.random() * 5,
+                  duration: 3 + Math.random() * 3,
                   repeat: Number.POSITIVE_INFINITY,
                   repeatType: "reverse",
+                  delay: Math.random() * 2,
                 }}
               >
-                {["♪", "���", "♬", "♩"][Math.floor(Math.random() * 4)]}
+                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
               </motion.div>
             ))}
           </div>
 
           {/* Content */}
           <div className="container mx-auto px-4 z-20 text-center">
-            <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
-              <span className="block">UPCOMING & PAST</span>
-              <motion.span
-                className="text-yellow-400 inline-block"
-                animate={{
-                  textShadow: [
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                    "0px 0px 20px rgba(250, 204, 21, 0.5)",
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-              >
-                EVENTS
-              </motion.span>
-            </motion.h1>
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+              <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
+                <span className="block">OUR</span>
+                <motion.span
+                  className="text-yellow-400 inline-block"
+                  animate={{
+                    textShadow: [
+                      "0px 0px 0px rgba(250, 204, 21, 0)",
+                      "0px 0px 20px rgba(250, 204, 21, 0.5)",
+                      "0px 0px 0px rgba(250, 204, 21, 0)",
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                >
+                  EVENTS
+                </motion.span>
+              </motion.h1>
 
-            <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-              Join us for powerful worship experiences and musical celebrations
-            </motion.p>
+              <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
+                Relive our powerful worship experiences and musical celebrations
+              </motion.p>
 
-            <motion.div variants={fadeInUp}>
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-              >
-                View Calendar
-              </motion.button>
+              <motion.div variants={fadeInUp}>
+                <motion.button
+                  onClick={scrollToForm}
+                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
+                >
+                  Host an Event
+                </motion.button>
+              </motion.div>
             </motion.div>
           </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-          >
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-          </motion.div>
-        </motion.section>
-
-        {/* Upcoming Events Section */}
-        <motion.section
-          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: upcomingY, opacity: upcomingOpacity }}
-        >
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Upcoming Events</h2>
-              <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
-              <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
-                Mark your calendars and join us for these upcoming worship experiences
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {upcomingEvents.map((event, index) => (
-                <motion.div
-                  key={index}
-                  custom={index}
-                  variants={cardVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  whileHover="hover"
-                  viewport={{ once: true }}
-                  className="bg-indigo-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-indigo-700 group"
-                >
-                  <motion.div
-                    className="h-56 bg-indigo-700 flex items-center justify-center overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.5 }}
-                      className="relative w-full h-full"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: `url(${event.image})` }}
-                      ></div>
-                      <div className="absolute bottom-4 left-4 z-20">
-                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
-                          {event.date}
-                        </span>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-yellow-400 transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-indigo-200 mb-3 flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        ></path>
-                      </svg>
-                      {event.location}
-                    </p>
-                    <p className="text-indigo-100 mb-6 text-lg">{event.description}</p>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg flex items-center justify-center"
-                    >
-                      Register Now
-                    </motion.button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-center mt-16"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05, x: [0, 5, 0] }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.5 }}
-                className="bg-transparent border-2 border-yellow-400 text-yellow-400 px-10 py-4 rounded-full text-lg font-bold flex items-center mx-auto"
-              >
-                View Full Calendar
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  ></path>
-                </svg>
-              </motion.button>
-            </motion.div>
-          </div>
-
-          {/* Floating music notes */}
-          {[...Array(10)].map((_, index) => (
-            <motion.div
-              key={index}
-              className="absolute text-xl text-yellow-400 opacity-40"
-              style={{
-                left: Math.random() * 100 + "%",
-                top: Math.random() * 100 + "%",
-              }}
-              animate={{
-                y: [-20, -100],
-                opacity: [0, 0.7, 0],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 5 + Math.random() * 10,
-                repeat: Number.POSITIVE_INFINITY,
-                delay: Math.random() * 5,
-                ease: "easeOut",
-              }}
-            >
-              {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
-            </motion.div>
-          ))}
         </motion.section>
 
         {/* Past Events Section */}
         <motion.section
-          className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: pastY, opacity: pastOpacity }}
+          className="py-24 relative overflow-hidden"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeIn}
+          style={{
+            y: pastEventsY,
+            opacity: pastEventsOpacity,
+          }}
         >
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-indigo-950/80 z-0"></div>
+
+          {/* Animated background shapes */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full bg-indigo-600/10"
+                style={{
+                  width: 100 + Math.random() * 300,
+                  height: 100 + Math.random() * 300,
+                  left: Math.random() * 100 + "%",
+                  top: Math.random() * 100 + "%",
+                }}
+                animate={{
+                  x: [0, Math.random() * 30 - 15],
+                  y: [0, Math.random() * 30 - 15],
+                  opacity: [0.1, 0.2, 0.1],
+                }}
+                transition={{
+                  duration: 8 + Math.random() * 5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+              />
+            ))}
+          </div>
+
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Past Events</h2>
-              <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
+            <motion.div className="text-center mb-16" variants={fadeInUp}>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">Past Events</h2>
+              <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
                 Relive the moments of worship and praise from our previous events
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {pastEvents.map((event, index) => (
+            {/* Event cards grid */}
+            <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={staggerContainer}>
+              {displayedEvents.map((event, index) => (
                 <motion.div
                   key={index}
-                  custom={index}
-                  variants={cardVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  whileHover="hover"
-                  viewport={{ once: true }}
-                  className="bg-indigo-800/60 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-indigo-700 group"
+                  variants={fadeInUp}
+                  className="relative h-[450px] rounded-xl overflow-hidden group"
                 >
-                  <motion.div
-                    className="h-48 bg-indigo-700 flex items-center justify-center overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.5 }}
-                      className="relative w-full h-full"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: `url(${event.image})` }}
-                      ></div>
-                      <div className="absolute bottom-4 left-4 z-20">
-                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
-                          {event.date}
-                        </span>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-yellow-400 transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-indigo-200 mb-2 flex items-center text-sm">
+                  {/* Card background image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{ backgroundImage: `url(${event.image})` }}
+                  />
+
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-900/40 to-transparent opacity-60" />
+
+                  {/* Date badge */}
+                  <div className="absolute top-4 right-4 z-20">
+                    <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
+                      {event.date}
+                    </span>
+                  </div>
+
+                  {/* Bottom content - always visible */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-0 transition-transform duration-500">
+                    <h3 className="text-2xl font-bold mb-2 text-white">{event.title}</h3>
+                    <p className="text-yellow-300 flex items-center text-sm mb-2">
                       <svg
                         className="w-4 h-4 mr-2"
                         fill="none"
@@ -558,14 +382,43 @@ const Events = () => {
                       </svg>
                       {event.location}
                     </p>
-                    <p className="text-indigo-100 mb-4 text-sm">{event.description}</p>
+                  </div>
+
+                  {/* Hover overlay with details */}
+                  <div className="absolute inset-0 bg-indigo-800/80 backdrop-blur-sm flex flex-col justify-center items-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <h3 className="text-2xl font-bold mb-4 text-white">{event.title}</h3>
+                    <div className="w-12 h-1 bg-yellow-400 mb-4"></div>
+                    <p className="text-white text-center mb-6">{event.description}</p>
+                    <p className="text-yellow-300 flex items-center text-sm mb-6">
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        ></path>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                      </svg>
+                      {event.location} • {event.date}
+                    </p>
                     <motion.a
                       href={event.url}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-2 rounded-full font-bold shadow-lg flex items-center justify-center text-sm"
+                      className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg flex items-center"
                     >
-                      View Gallery
+                      View Details
                       <svg
                         className="ml-2 w-4 h-4"
                         fill="none"
@@ -577,208 +430,306 @@ const Events = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
                         ></path>
                       </svg>
                     </motion.a>
                   </div>
                 </motion.div>
               ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-center mt-16"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05, x: [0, 5, 0] }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.5 }}
-                className="bg-transparent border-2 border-white text-white px-10 py-4 rounded-full text-lg font-bold flex items-center mx-auto hover:border-yellow-400 hover:text-yellow-400 transition-colors"
-              >
-                View All Past Events
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  ></path>
-                </svg>
-              </motion.button>
             </motion.div>
+
+            {/* View More Button */}
+            {pastEvents.length > 6 && (
+              <motion.div variants={fadeInUp} className="text-center mt-16">
+                <motion.button
+                  onClick={() => setShowAllEvents(!showAllEvents)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative overflow-hidden group px-10 py-4 rounded-full"
+                >
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-700 to-indigo-600 group-hover:from-indigo-600 group-hover:to-indigo-500 transition-all duration-300 rounded-full"></span>
+                  <span className="relative flex items-center justify-center text-white font-bold text-lg">
+                    {showAllEvents ? "Show Less" : "View More Events"}
+                    <motion.svg
+                      animate={{ x: showAllEvents ? 0 : [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: showAllEvents ? 0 : Number.POSITIVE_INFINITY }}
+                      className="ml-2 w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d={showAllEvents ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                      ></path>
+                    </motion.svg>
+                  </span>
+                </motion.button>
+              </motion.div>
+            )}
           </div>
         </motion.section>
 
-        {/* Event Registration Section */}
+        {/* Host an Event Section */}
         <motion.section
+          ref={formRef}
           className="py-32 relative overflow-hidden"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
-          transition={{ duration: 1 }}
+          variants={fadeIn}
+          style={{
+            y: hostEventY,
+            opacity: hostEventOpacity,
+          }}
         >
           {/* Background */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-indigo-950 opacity-80 z-10"></div>
-            <motion.div
-              animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.7, 0.5] }}
-              transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="w-full h-full bg-center"
-              style={{ backgroundImage: `url(${TeamPhoto})` }}
-            ></motion.div>
+            <div className="absolute inset-0 bg-indigo-950/80 backdrop-blur-sm z-10"></div>
+            <div className="w-full h-full bg-center bg-cover" style={{ backgroundImage: `url(${TeamPhoto})` }}></div>
+          </div>
+
+          {/* Animated particles */}
+          <div className="absolute inset-0 z-5 pointer-events-none">
+            {[...Array(8)].map((_, index) => (
+              <motion.div
+                key={index}
+                className="absolute text-xl text-yellow-400 opacity-40"
+                style={{
+                  left: Math.random() * 100 + "%",
+                  top: Math.random() * 100 + "%",
+                }}
+                animate={{
+                  y: [0, -15],
+                  opacity: [0.2, 0.5, 0.2],
+                  rotate: [0, 180],
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                  delay: Math.random() * 2,
+                }}
+              >
+                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
+              </motion.div>
+            ))}
           </div>
 
           <div className="container mx-auto px-4 relative z-20">
-            <div className="max-w-3xl mx-auto">
-              <motion.div
-                className="bg-indigo-800/80 backdrop-blur-sm p-10 rounded-2xl border border-indigo-700 shadow-2xl"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">Host an Event with Us</h2>
-                  <div className="w-16 h-1 bg-yellow-400 mx-auto mb-4"></div>
-                  <p className="text-indigo-100">
-                    Interested in having Exodus Music Ministry perform at your church, conference, or special event?
-                  </p>
+            <div className="max-w-4xl mx-auto">
+              <motion.div className="rounded-2xl overflow-hidden shadow-2xl" variants={fadeInUp}>
+                {/* Header section */}
+                <div className="bg-gradient-to-r from-indigo-800 to-indigo-700 p-10 relative overflow-hidden">
+                  {/* Animated background */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <motion.div
+                      animate={{
+                        backgroundPosition: ["0% 0%", "100% 100%"],
+                      }}
+                      transition={{
+                        duration: 15,
+                        repeat: Number.POSITIVE_INFINITY,
+                        repeatType: "mirror",
+                      }}
+                      className="absolute inset-0 opacity-20"
+                      style={{
+                        backgroundImage:
+                          "radial-gradient(circle at 30% 50%, rgba(250, 204, 21, 0.4) 0%, transparent 25%), radial-gradient(circle at 70% 20%, rgba(250, 204, 21, 0.4) 0%, transparent 25%)",
+                        backgroundSize: "150% 150%",
+                      }}
+                    />
+                  </div>
+
+                  <div className="relative z-10 text-center">
+                    <motion.div variants={fadeInUp}>
+                      <h2 className="text-3xl md:text-4xl font-bold mb-4">Host an Event with Us</h2>
+                      <div className="w-20 h-1 bg-yellow-400 mx-auto mb-6"></div>
+                    </motion.div>
+                    <motion.p className="text-indigo-100 max-w-2xl mx-auto" variants={fadeInUp}>
+                      Interested in having Exodus Music Ministry perform at your church, conference, or special event?
+                      Fill out the form below and we'll get back to you soon.
+                    </motion.p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2, duration: 0.6 }}
-                  >
-                    <label className="block text-sm font-medium text-indigo-100">Your Name</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                      placeholder="Enter your name"
-                    />
+                {/* Form section */}
+                <div className="bg-indigo-900/90 backdrop-blur-md p-10 border-t border-indigo-700">
+                  <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" variants={staggerContainer}>
+                    <motion.div className="space-y-2" variants={fadeInUp}>
+                      <label className="block text-sm font-medium text-indigo-100">Your Name</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                          placeholder="Enter your name"
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div className="space-y-2" variants={fadeInUp}>
+                      <label className="block text-sm font-medium text-indigo-100">Email Address</label>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                          placeholder="Enter your email"
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div className="space-y-2" variants={fadeInUp}>
+                      <label className="block text-sm font-medium text-indigo-100">Event Date</label>
+                      <div className="relative">
+                        <input
+                          type="date"
+                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div className="space-y-2" variants={fadeInUp}>
+                      <label className="block text-sm font-medium text-indigo-100">Event Location</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                          placeholder="City, Venue"
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            ></path>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </motion.div>
                   </motion.div>
 
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3, duration: 0.6 }}
-                  >
-                    <label className="block text-sm font-medium text-indigo-100">Email Address</label>
-                    <input
-                      type="email"
-                      className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                      placeholder="Enter your email"
-                    />
+                  <motion.div className="space-y-2 mb-8" variants={fadeInUp}>
+                    <label className="block text-sm font-medium text-indigo-100">Event Details</label>
+                    <div className="relative">
+                      <textarea
+                        className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white h-32"
+                        placeholder="Tell us about your event and requirements"
+                      ></textarea>
+                      <div className="absolute right-3 top-3 text-indigo-400">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
                   </motion.div>
 
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
-                  >
-                    <label className="block text-sm font-medium text-indigo-100">Event Date</label>
-                    <input
-                      type="date"
-                      className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.5, duration: 0.6 }}
-                  >
-                    <label className="block text-sm font-medium text-indigo-100">Event Location</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                      placeholder="City, Venue"
-                    />
+                  <motion.div className="text-center" variants={fadeInUp}>
+                    <motion.button
+                      whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative overflow-hidden group px-10 py-4 rounded-full"
+                    >
+                      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-500 to-yellow-400 group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 rounded-full"></span>
+                      <span className="relative flex items-center justify-center text-indigo-950 font-bold text-lg">
+                        Submit Request
+                        <svg
+                          className="ml-2 w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          ></path>
+                        </svg>
+                      </span>
+                    </motion.button>
                   </motion.div>
                 </div>
-
-                <motion.div
-                  className="space-y-2 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
-                >
-                  <label className="block text-sm font-medium text-indigo-100">Event Details</label>
-                  <textarea
-                    className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white h-32"
-                    placeholder="Tell us about your event and requirements"
-                  ></textarea>
-                </motion.div>
-
-                <motion.div
-                  className="text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.7, duration: 0.6 }}
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                  >
-                    Submit Request
-                  </motion.button>
-                </motion.div>
               </motion.div>
             </div>
           </div>
-
-          {/* Floating music notes */}
-          {[...Array(15)].map((_, index) => (
-            <motion.div
-              key={index}
-              className="absolute text-xl text-yellow-400 opacity-40"
-              style={{
-                left: Math.random() * 100 + "%",
-                top: Math.random() * 100 + "%",
-              }}
-              animate={{
-                y: [-20, -100],
-                opacity: [0, 0.7, 0],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 5 + Math.random() * 10,
-                repeat: Number.POSITIVE_INFINITY,
-                delay: Math.random() * 5,
-                ease: "easeOut",
-              }}
-            >
-              {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
-            </motion.div>
-          ))}
         </motion.section>
 
         {/* Footer */}
