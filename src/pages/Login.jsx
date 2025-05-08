@@ -12,12 +12,23 @@ const Login = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // List of authorized emails
+  const authorizedEmails = ["lennydany3@gmail.com", "lennydanygpt@gmail.com"]
+
   // Check if user is already logged in
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession()
       if (data.session) {
-        navigate("/")
+        // Check if email is authorized
+        const userEmail = data.session.user.email
+        if (authorizedEmails.includes(userEmail)) {
+          navigate("/dashboard")
+        } else {
+          // Not authorized, sign out and stay on login page
+          await supabase.auth.signOut()
+          setError("You don't have permission to access the admin area.")
+        }
       }
     }
     checkUser()
@@ -36,7 +47,7 @@ const Login = () => {
             access_type: "offline",
             prompt: "consent",
           },
-          redirectTo: window.location.origin,
+          redirectTo: window.location.origin + "/dashboard",
         },
       })
 
@@ -137,8 +148,8 @@ const Login = () => {
               transition={{ delay: 0.5 }}
               className="text-center mb-8"
             >
-              <h1 className="text-3xl font-bold mb-2 text-yellow-400">Welcome Back</h1>
-              <p className="text-indigo-200">Sign in to continue to Exodus Music Ministry</p>
+              <h1 className="text-3xl font-bold mb-2 text-yellow-400">Admin Login</h1>
+              <p className="text-indigo-200">Sign in to access the admin dashboard</p>
             </motion.div>
 
             {/* Error message */}
@@ -197,7 +208,7 @@ const Login = () => {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  <span className="relative z-10">Continue with Google</span>
+                  <span className="relative z-10">Sign in with Google</span>
                 </>
               ) : (
                 <div className="flex items-center justify-center">
@@ -210,6 +221,16 @@ const Login = () => {
                 </div>
               )}
             </motion.button>
+
+            {/* Admin note */}
+            <motion.div
+              className="mt-6 text-center text-sm text-indigo-300"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <p>Only authorized administrators can access the dashboard.</p>
+            </motion.div>
 
             {/* Return to home link */}
             <motion.div
