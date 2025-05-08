@@ -293,27 +293,36 @@ const ImageUploadForm = () => {
 
         try {
           // Check if bucket exists first
-          const { data: buckets, error: listError } = await supabase.storage.listBuckets()
+          const createBucketIfNeeded = async () => {
+            try {
+              // First check if the bucket exists
+              const { data: buckets, error: listError } = await supabase.storage.listBuckets()
 
-          if (listError) {
-            console.error("Error checking buckets:", listError)
-            throw new Error(`Failed to check storage buckets: ${listError.message}`)
-          }
+              if (listError) {
+                console.error("Error checking buckets:", listError)
+                return
+              }
 
-          const bucketExists = buckets.some((bucket) => bucket.name === "images")
+              const bucketExists = buckets.some((bucket) => bucket.name === "images")
 
-          if (!bucketExists) {
-            console.log("Images bucket doesn't exist, creating it...")
-            const { data, error: createError } = await supabase.storage.createBucket("images", {
-              public: true,
-              fileSizeLimit: 5242880, // 5MB in bytes
-            })
+              if (!bucketExists) {
+                console.log("Images bucket doesn't exist, creating it...")
+                const { data, error } = await supabase.storage.createBucket("images", {
+                  public: true,
+                  fileSizeLimit: 5242880, // 5MB in bytes
+                })
 
-            if (createError) {
-              console.error("Error creating bucket:", createError)
-              throw new Error(`Failed to create storage bucket: ${createError.message}`)
+                if (error) {
+                  console.error("Error creating bucket:", error)
+                } else {
+                  console.log("Images bucket created successfully")
+                }
+              }
+            } catch (err) {
+              console.error("Error in bucket creation:", err)
             }
           }
+          await createBucketIfNeeded()
 
           // Upload image to Supabase Storage
           const { data: uploadData, error: uploadError } = await supabase.storage
