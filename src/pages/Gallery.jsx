@@ -11,6 +11,10 @@ import SundayEve from "../assets/SundayEVE.png"
 import Gospel from "../assets/GospelPoster.jpg"
 import Centenary from "../assets/Centenary.jpg"
 
+import Thumb1 from "../assets/Thumb1.jpg"
+import Thumb2 from "../assets/Thumb2.jpg"
+import Thumb3 from "../assets/Thumb3.jpg"
+
 const Gallery = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
@@ -656,7 +660,7 @@ const Gallery = () => {
 
               {/* Video Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1, 2, 3].map((video, index) => (
+                {[1,2,3].map((video, index) => (
                   <motion.div
                     key={video}
                     initial={{ opacity: 0, y: 30 }}
@@ -667,7 +671,7 @@ const Gallery = () => {
                   >
                     <div className="relative aspect-video group cursor-pointer">
                       <img
-                        src="/placeholder.svg?height=400&width=600"
+                        src={Thumb1}
                         alt={`Video thumbnail ${video}`}
                         className="w-full h-full object-cover"
                       />
@@ -729,141 +733,7 @@ const Gallery = () => {
             </div>
           </motion.section>
 
-          {/* Share Your Photos Section */}
-          <motion.section
-            className="py-32 relative overflow-hidden"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            style={{ y: shareY, opacity: shareOpacity }}
-          >
-            {/* Background */}
-            <div className="absolute inset-0 z-0">
-              <div className="absolute inset-0 bg-indigo-950 opacity-80 z-10"></div>
-              <motion.div
-                animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.7, 0.5] }}
-                transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                className="w-full h-full bg-center"
-                style={{ backgroundImage: `url(${TeamPhoto})` }}
-              ></motion.div>
-            </div>
 
-            <div className="container mx-auto px-4 relative z-20">
-              <div className="max-w-3xl mx-auto">
-                <motion.div
-                  className="bg-indigo-800/80 backdrop-blur-sm p-10 rounded-2xl border border-indigo-700 shadow-2xl"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Share Your Photos</h2>
-                    <div className="w-16 h-1 bg-yellow-400 mx-auto mb-4"></div>
-                    <p className="text-indigo-100">
-                      Have photos from our events? Share them with us to be featured in our gallery!
-                    </p>
-                  </div>
-
-                  <div className="space-y-6">
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2, duration: 0.6 }}
-                    >
-                      <label className="block text-sm font-medium text-indigo-100">Your Name</label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                        placeholder="Enter your name"
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3, duration: 0.6 }}
-                    >
-                      <label className="block text-sm font-medium text-indigo-100">Email Address</label>
-                      <input
-                        type="email"
-                        className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                        placeholder="Enter your email"
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.4, duration: 0.6 }}
-                    >
-                      <label className="block text-sm font-medium text-indigo-100">Event Name & Date</label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                        placeholder="Which event are these photos from?"
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5, duration: 0.6 }}
-                    >
-                      <label className="block text-sm font-medium text-indigo-100">Upload Photos</label>
-                      <div className="border-2 border-dashed border-indigo-600 rounded-lg p-8 text-center">
-                        <svg
-                          className="w-12 h-12 text-indigo-400 mx-auto mb-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          ></path>
-                        </svg>
-                        <p className="text-indigo-300 mb-2">Drag and drop your photos here, or click to browse</p>
-                        <p className="text-indigo-400 text-sm">Maximum 10 photos, 5MB each</p>
-                        <input type="file" className="hidden" multiple accept="image/*" />
-                        <button className="mt-4 px-4 py-2 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white text-sm">
-                          Select Files
-                        </button>
-                      </div>
-                    </motion.div>
-                  </div>
-
-                  <motion.div
-                    className="text-center mt-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.6, duration: 0.6 }}
-                  >
-                    <motion.button
-                      whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                    >
-                      Submit Photos
-                    </motion.button>
-                  </motion.div>
-                </motion.div>
-              </div>
-            </div>
-          </motion.section>
 
           {/* Lightbox */}
           <AnimatePresence>
@@ -1148,7 +1018,7 @@ const Gallery = () => {
                           <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                         </svg>
                       </div>
-                      <span className="text-indigo-200">info@exodusmusic.org</span>
+                      <span className="text-indigo-200">victorsingthegospel@gmail.com</span>
                     </motion.li>
                     <motion.li
                       initial={{ opacity: 0, x: 10 }}
@@ -1167,7 +1037,7 @@ const Gallery = () => {
                           <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                         </svg>
                       </div>
-                      <span className="text-indigo-200">+91 9876543210</span>
+                      <span className="text-indigo-200">+91 9710405200</span>
                     </motion.li>
                   </ul>
                 </div>

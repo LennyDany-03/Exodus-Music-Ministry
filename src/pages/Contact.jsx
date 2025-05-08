@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
 import TeamPhoto from "../assets/Team Photo.jpg"
-import Victor from "../assets/Victor1.jpg"
+import Victor from "../assets/Team @.jpg"
 import { supabase } from "../lib/supabaseClient"
 
 const Contact = () => {
@@ -159,9 +159,9 @@ const Contact = () => {
       ),
       title: "Email Us",
       description: "For general inquiries and information",
-      contact: "info@exodusmusic.org",
+      contact: "victorsingthegospel@gmail.com",
       action: "Send Email",
-      url: "mailto:info@exodusmusic.org",
+      url: "mailto:victorsingthegospel@gmail.com",
     },
     {
       icon: (
@@ -182,9 +182,9 @@ const Contact = () => {
       ),
       title: "Call Us",
       description: "Speak directly with our ministry team",
-      contact: "+91 9876543210",
+      contact: "+91 9710405200",
       action: "Call Now",
-      url: "tel:+919876543210",
+      url: "tel:+919710405200",
     },
     {
       icon: (
@@ -732,9 +732,13 @@ const Contact = () => {
                 <div className="bg-indigo-800/60 backdrop-blur-sm p-6 rounded-xl border border-indigo-700 shadow-xl mb-8">
                   <h3 className="text-xl font-bold mb-4 text-yellow-400">Ministry Office</h3>
                   <p className="text-indigo-100 mb-6">
-                    123 Worship Street
+                      41-A, Ganapathi Nagar
                     <br />
-                    Chennai, Tamil Nadu 600001
+                    Kattupakkam
+                    <br />
+                    Poonamallee
+                    <br />
+                    Chennai - 600 056
                     <br />
                     India
                   </p>
@@ -749,7 +753,7 @@ const Contact = () => {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">+91 9876543210</span>
+                    <span className="text-indigo-200">+91 9710405200</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center mr-3 text-yellow-400">
@@ -763,7 +767,7 @@ const Contact = () => {
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">info@exodusmusic.org</span>
+                    <span className="text-indigo-200">victorsingthegospel@gmail.com</span>
                   </div>
                 </div>
 
@@ -1146,7 +1150,7 @@ const Contact = () => {
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">info@exodusmusic.org</span>
+                    <span className="text-indigo-200">victorsingthegospel@gmail.com</span>
                   </motion.li>
                   <motion.li
                     initial={{ opacity: 0, x: 10 }}
@@ -1165,7 +1169,7 @@ const Contact = () => {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">+91 9876543210</span>
+                    <span className="text-indigo-200">+91 9710405200</span>
                   </motion.li>
                 </ul>
               </div>

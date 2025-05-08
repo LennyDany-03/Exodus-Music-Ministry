@@ -8,6 +8,11 @@ import TeamPhoto from '../assets/Team Photo.jpg'
 import Victor from '../assets/Victor1.jpg'
 import Team3rdPhoto from '../assets/Team3rdPhoto.jpg'
 
+import Joseph from '../assets/Joseph.jpg'
+import Helen from '../assets/Helen.jpg'
+import George from '../assets/George.jpg'
+import Saral from '../assets/Saral.png'
+
 const About = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
@@ -109,35 +114,29 @@ const About = () => {
       image: Victor
     },
     {
-      name: "Sarah Thomas",
-      role: "Lead Vocalist",
-      bio: "Sarah's powerful voice and heartfelt worship has been inspiring congregations for over 10 years.",
-      image: "/placeholder.svg?height=400&width=400"
+      name: "Mrs. Helen joshua",
+      role: "Secretary",
+      bio: "Helen Joshua brings grace and precision to her role as Secretary, orchestrating every detail behind the scenes so our ministry can thrive in harmony.",
+      image: Helen
     },
     {
-      name: "David Johnson",
-      role: "Music Director",
-      bio: "David brings his classical training and passion for excellence to arrange and direct our musical performances.",
-      image: "/placeholder.svg?height=400&width=400"
+      name: "L Joseph Vijay Anand",
+      role: "Admnistrator",
+      bio: "L. Joseph Vijay Anand serves as the steady hand behind our operations, ensuring every aspect of the ministry flows with order, purpose, and grace.",
+      image: Joseph
     },
     {
-      name: "Michael Rodriguez",
-      role: "Keyboard & Piano",
-      bio: "Michael's skillful playing creates the perfect foundation for our worship experiences.",
-      image: "/placeholder.svg?height=400&width=400"
+      name: "George Stephen Raj J",
+      role: "Administrator",
+      bio: "George Stephen Raj J brings clarity and commitment to his role, managing the ministry’s functions with wisdom and a deep sense of calling.",
+      image: George
     },
     {
-      name: "Rebecca Chen",
-      role: "Violinist",
-      bio: "Rebecca's violin adds a beautiful dimension to our worship sound, touching hearts with every note.",
-      image: "/placeholder.svg?height=400&width=400"
+      name: "Saral Hendry",
+      role: "Treasurer",
+      bio: "Saral Hendry handles the ministry’s finances with integrity and care, ensuring every resource is stewarded faithfully for the glory of God.",
+      image: Saral
     },
-    {
-      name: "James Wilson",
-      role: "Drummer",
-      bio: "James keeps the rhythm flowing and brings energy to every performance with his dynamic drumming.",
-      image: "/placeholder.svg?height=400&width=400"
-    }
   ]
 
   // Core values data
@@ -919,7 +918,7 @@ const About = () => {
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">info@exodusmusic.org</span>
+                    <span className="text-indigo-200">victorsingthegospel@gmail.com</span>
                   </motion.li>
                   <motion.li
                     initial={{ opacity: 0, x: 10 }}
@@ -933,7 +932,7 @@ const About = () => {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">+91 9876543210</span>
+                    <span className="text-indigo-200">+91 9710405200</span>
                   </motion.li>
                 </ul>
               </div>
