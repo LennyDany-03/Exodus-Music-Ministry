@@ -423,6 +423,105 @@ const Dashboard = () => {
                 </div>
               </div>
             </motion.div>
+            {/* People Messages */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ y: -5, scale: 1.02 }}
+            >
+              <Link to="/people-message" className="block h-full">
+                <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
+                  <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">People Messages</h3>
+                  <p className="text-indigo-200 mb-4 flex-grow">
+                    View and manage messages from people who have contacted the ministry.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-yellow-400 font-medium">Contact Requests</span>
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Host Event Requests */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              whileHover={{ y: -5, scale: 1.02 }}
+            >
+              <Link to="/host-event" className="block h-full">
+                <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
+                  <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Event Requests</h3>
+                  <p className="text-indigo-200 mb-4 flex-grow">
+                    Manage requests from people who want to host events with the ministry.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-yellow-400 font-medium">Host Requests</span>
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
           </div>
 
           {/* Recent Activity Section */}
@@ -548,6 +647,50 @@ const Dashboard = () => {
                         ></path>
                       </svg>
                       Home Page
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/people-message"
+                      className="flex items-center gap-2 text-indigo-200 hover:text-yellow-400 transition-colors"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                        ></path>
+                      </svg>
+                      View Messages
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/host-event"
+                      className="flex items-center gap-2 text-indigo-200 hover:text-yellow-400 transition-colors"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                        ></path>
+                      </svg>
+                      View Event Requests
                     </Link>
                   </li>
                 </ul>

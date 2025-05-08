@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
-import { Link } from "react-router-dom"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
 import TeamPhoto from "../assets/Team Photo.jpg"
@@ -599,172 +598,232 @@ const Events = () => {
 
                 {/* Form section */}
                 <div className="bg-indigo-900/90 backdrop-blur-md p-10 border-t border-indigo-700">
-                  <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" variants={staggerContainer}>
-                    <motion.div className="space-y-2" variants={fadeInUp}>
-                      <label className="block text-sm font-medium text-indigo-100">Your Name</label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
-                          placeholder="Enter your name"
-                        />
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            ></path>
-                          </svg>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div className="space-y-2" variants={fadeInUp}>
-                      <label className="block text-sm font-medium text-indigo-100">Email Address</label>
-                      <div className="relative">
-                        <input
-                          type="email"
-                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
-                          placeholder="Enter your email"
-                        />
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                            ></path>
-                          </svg>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div className="space-y-2" variants={fadeInUp}>
-                      <label className="block text-sm font-medium text-indigo-100">Event Date</label>
-                      <div className="relative">
-                        <input
-                          type="date"
-                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                        />
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            ></path>
-                          </svg>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div className="space-y-2" variants={fadeInUp}>
-                      <label className="block text-sm font-medium text-indigo-100">Event Location</label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
-                          placeholder="City, Venue"
-                        />
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            ></path>
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            ></path>
-                          </svg>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-
-                  <motion.div className="space-y-2 mb-8" variants={fadeInUp}>
-                    <label className="block text-sm font-medium text-indigo-100">Event Details</label>
-                    <div className="relative">
-                      <textarea
-                        className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white h-32"
-                        placeholder="Tell us about your event and requirements"
-                      ></textarea>
-                      <div className="absolute right-3 top-3 text-indigo-400">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          ></path>
-                        </svg>
-                      </div>
-                    </div>
-                  </motion.div>
-
                   <motion.div className="text-center" variants={fadeInUp}>
-                    <motion.button
-                      whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative overflow-hidden group px-10 py-4 rounded-full"
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault()
+                        const formData = new FormData(e.target)
+
+                        try {
+                          // Show loading indicator or disable button here if needed
+
+                          const eventData = {
+                            name: formData.get("name"),
+                            email: formData.get("email"),
+                            event_date: formData.get("event_date"),
+                            location: formData.get("location"),
+                            details: formData.get("details"),
+                            status: "pending",
+                            created_at: new Date().toISOString(),
+                          }
+
+                          const { error } = await supabase.from("host_event").insert([eventData])
+
+                          if (error) throw error
+
+                          // Clear form
+                          e.target.reset()
+
+                          // Show success message
+                          alert("Your event request has been submitted successfully! We will contact you soon.")
+                        } catch (error) {
+                          console.error("Error submitting event request:", error)
+                          alert("There was an error submitting your request. Please try again later.")
+                        }
+                      }}
                     >
-                      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-500 to-yellow-400 group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 rounded-full"></span>
-                      <span className="relative flex items-center justify-center text-indigo-950 font-bold text-lg">
-                        Submit Request
-                        <svg
-                          className="ml-2 w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          ></path>
-                        </svg>
-                      </span>
-                    </motion.button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="space-y-2">
+                          <label htmlFor="name" className="block text-sm font-medium text-indigo-100">
+                            Your Name
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              id="name"
+                              name="name"
+                              required
+                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                              placeholder="Enter your name"
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                ></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="email" className="block text-sm font-medium text-indigo-100">
+                            Email Address
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="email"
+                              id="email"
+                              name="email"
+                              required
+                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                              placeholder="Enter your email"
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                ></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="event_date" className="block text-sm font-medium text-indigo-100">
+                            Event Date
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="date"
+                              id="event_date"
+                              name="event_date"
+                              required
+                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                ></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="location" className="block text-sm font-medium text-indigo-100">
+                            Event Location
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              id="location"
+                              name="location"
+                              required
+                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
+                              placeholder="City, Venue"
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                ></path>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                ></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 mb-8">
+                        <label htmlFor="details" className="block text-sm font-medium text-indigo-100">
+                          Event Details
+                        </label>
+                        <div className="relative">
+                          <textarea
+                            id="details"
+                            name="details"
+                            required
+                            className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white h-32"
+                            placeholder="Tell us about your event and requirements"
+                          ></textarea>
+                          <div className="absolute right-3 top-3 text-indigo-400">
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              ></path>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <motion.button
+                        type="submit"
+                        whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                        whileTap={{ scale: 0.95 }}
+                        className="relative overflow-hidden group px-10 py-4 rounded-full"
+                      >
+                        <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-500 to-yellow-400 group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 rounded-full"></span>
+                        <span className="relative flex items-center justify-center text-indigo-950 font-bold text-lg">
+                          Submit Request
+                          <svg
+                            className="ml-2 w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M14 5l7 7m0 0l-7 7m7-7H3"
+                            ></path>
+                          </svg>
+                        </span>
+                      </motion.button>
+                    </form>
                   </motion.div>
                 </div>
               </motion.div>

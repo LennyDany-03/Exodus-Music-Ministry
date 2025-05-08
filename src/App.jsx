@@ -12,6 +12,8 @@ import Login from "./pages/Login"
 import ImageForm from "./pages/ImageUploadForm"
 import Dashboard from "./pages/Dashboard"
 import ProtectedRoute from "./components/ProtectedRoute"
+import PeopleMessage from "./pages/PeopleMessage"
+import HostEvent from "./pages/HostEvent"
 
 const App = () => {
   return (
@@ -52,6 +54,22 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ImageForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/people-message"
+            element={
+              <ProtectedRoute>
+                <PeopleMessage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/host-event"
+            element={
+              <ProtectedRoute>
+                <HostEvent />
               </ProtectedRoute>
             }
           />
