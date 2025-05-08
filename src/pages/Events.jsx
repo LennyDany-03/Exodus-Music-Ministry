@@ -511,36 +511,6 @@ const Events = () => {
                 </motion.button>
               </motion.div>
             )}
-
-            {/* Create Event Button */}
-            <motion.div variants={fadeInUp} className="text-center mt-8">
-              <Link to="/create-event">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative overflow-hidden group px-10 py-4 rounded-full"
-                >
-                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-500 to-yellow-400 group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 rounded-full"></span>
-                  <span className="relative flex items-center justify-center text-indigo-950 font-bold text-lg">
-                    Create New Event
-                    <svg
-                      className="ml-2 w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      ></path>
-                    </svg>
-                  </span>
-                </motion.button>
-              </Link>
-            </motion.div>
           </div>
         </motion.section>
 

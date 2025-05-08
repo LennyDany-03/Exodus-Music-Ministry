@@ -461,32 +461,6 @@ const Gallery = () => {
               <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
                 Capturing moments of worship, fellowship, and ministry through the years
               </motion.p>
-
-              {/* Upload Button */}
-              <motion.div variants={fadeInUp}>
-                <motion.button
-                  onClick={handleUploadClick}
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-8 py-3 rounded-full text-lg font-bold tracking-wide shadow-lg flex items-center mx-auto"
-                >
-                  Upload New Image
-                  <svg
-                    className="ml-2 w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    ></path>
-                  </svg>
-                </motion.button>
-              </motion.div>
             </div>
 
             {/* Scroll indicator */}
