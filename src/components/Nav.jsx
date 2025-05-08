@@ -1,14 +1,48 @@
 "use client"
-import React from "react"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { supabase } from "../lib/supabaseClient"
 import BGLogo from "../assets/BGLogo.png"
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const [user, setUser] = useState(null)
+
+  // Check if user is logged in
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null)
+    })
+
+    // Get current session
+    const getUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      setUser(session?.user || null)
+    }
+
+    getUser()
+
+    return () => {
+      authListener?.subscription.unsubscribe()
+    }
+  }, [])
+
+  // Handle login
+  const handleLogin = () => {
+    navigate("/login")
+  }
+
+  // Handle logout
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate("/")
+  }
 
   // Check if current path matches the link
   const isActive = (path) => {
@@ -160,19 +194,52 @@ const NavBar = () => {
               ))}
             </div>
 
-            {/* Donate Button */}
-            <Link to="/donate">
-              <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="ml-4 bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-2.5 rounded-full text-sm font-bold shadow-md"
-              >
-                Donate
-              </motion.button>
-            </Link>
+            {/* Donate Button and Login/Dashboard */}
+            <div className="flex items-center gap-3">
+              <Link to="/donate">
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-2.5 rounded-full text-sm font-bold shadow-md"
+                >
+                  Donate
+                </motion.button>
+              </Link>
+
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <Link to="/dashboard">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-full text-sm font-medium transition-colors"
+                    >
+                      Dashboard
+                    </motion.button>
+                  </Link>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleLogout}
+                    className="bg-indigo-800/50 hover:bg-indigo-700/50 text-white px-4 py-2.5 rounded-full text-sm font-medium transition-colors"
+                  >
+                    Logout
+                  </motion.button>
+                </div>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleLogin}
+                  className="bg-indigo-700 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-colors"
+                >
+                  Login
+                </motion.button>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -239,6 +306,43 @@ const NavBar = () => {
                     Donate
                   </Link>
                 </motion.div>
+
+                {user ? (
+                  <>
+                    <motion.div variants={menuItemVariants} className="pt-2">
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setIsOpen(false)}
+                        className="block bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
+                      >
+                        Dashboard
+                      </Link>
+                    </motion.div>
+                    <motion.div variants={menuItemVariants} className="pt-2">
+                      <button
+                        onClick={() => {
+                          handleLogout()
+                          setIsOpen(false)
+                        }}
+                        className="w-full bg-indigo-800/50 hover:bg-indigo-700/50 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </motion.div>
+                  </>
+                ) : (
+                  <motion.div variants={menuItemVariants} className="pt-2">
+                    <button
+                      onClick={() => {
+                        handleLogin()
+                        setIsOpen(false)
+                      }}
+                      className="w-full bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
+                    >
+                      Login
+                    </button>
+                  </motion.div>
+                )}
               </div>
             </div>
           </motion.div>
