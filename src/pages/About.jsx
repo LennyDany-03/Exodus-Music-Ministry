@@ -1,17 +1,16 @@
 "use client"
-import React from "react"
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
 
-import TeamPhoto from '../assets/Team Photo.jpg'
-import Victor from '../assets/Victor1.jpg'
-import Team3rdPhoto from '../assets/Team3rdPhoto.jpg'
+import TeamPhoto from "../assets/Team Photo.jpg"
+import Victor from "../assets/Victor1.jpg"
+import Team3rdPhoto from "../assets/Team3rdPhoto.jpg"
 
-import Joseph from '../assets/Joseph.jpg'
-import Helen from '../assets/Helen.jpg'
-import George from '../assets/George.jpg'
-import Saral from '../assets/Saral.png'
+import Joseph from "../assets/Joseph.jpg"
+import Helen from "../assets/Helen.jpg"
+import George from "../assets/George.jpg"
+import Saral from "../assets/Saral.png"
 
 const About = () => {
   const controls = useAnimation()
@@ -111,31 +110,31 @@ const About = () => {
       name: "Dr. Victor",
       role: "Founder & Director",
       bio: "With over 25 years of experience in music ministry, Victor has dedicated his life to using music as a powerful tool for worship and evangelism.",
-      image: Victor
+      image: Victor,
     },
     {
       name: "Mrs. Helen joshua",
       role: "Secretary",
       bio: "Helen Joshua brings grace and precision to her role as Secretary, orchestrating every detail behind the scenes so our ministry can thrive in harmony.",
-      image: Helen
+      image: Helen,
     },
     {
       name: "L Joseph Vijay Anand",
       role: "Admnistrator",
       bio: "L. Joseph Vijay Anand serves as the steady hand behind our operations, ensuring every aspect of the ministry flows with order, purpose, and grace.",
-      image: Joseph
+      image: Joseph,
     },
     {
       name: "George Stephen Raj J",
       role: "Administrator",
       bio: "George Stephen Raj J brings clarity and commitment to his role, managing the ministry’s functions with wisdom and a deep sense of calling.",
-      image: George
+      image: George,
     },
     {
       name: "Saral Hendry",
       role: "Treasurer",
       bio: "Saral Hendry handles the ministry’s finances with integrity and care, ensuring every resource is stewarded faithfully for the glory of God.",
-      image: Saral
+      image: Saral,
     },
   ]
 
@@ -144,33 +143,34 @@ const About = () => {
     {
       icon: "✝️",
       title: "Faith-Centered",
-      description: "Our ministry is built on a foundation of faith in Jesus Christ, guiding everything we do."
+      description: "Our ministry is built on a foundation of faith in Jesus Christ, guiding everything we do.",
     },
     {
       icon: "🙏",
       title: "Prayer-Driven",
-      description: "We believe in the power of prayer and seek God's guidance in all our musical endeavors."
+      description: "We believe in the power of prayer and seek God's guidance in all our musical endeavors.",
     },
     {
       icon: "🎵",
       title: "Musical Excellence",
-      description: "We strive for excellence in our musicianship as an offering to God and to inspire our congregation."
+      description:
+        "We strive for excellence in our musicianship as an offering to God and to inspire our congregation.",
     },
     {
       icon: "❤️",
       title: "Servant Hearts",
-      description: "We serve with humility, putting the needs of the congregation and community before our own."
+      description: "We serve with humility, putting the needs of the congregation and community before our own.",
     },
     {
       icon: "👥",
       title: "Community",
-      description: "We foster a supportive family of musicians who grow together spiritually and musically."
+      description: "We foster a supportive family of musicians who grow together spiritually and musically.",
     },
     {
       icon: "🌱",
       title: "Growth",
-      description: "We are committed to continuous spiritual and musical growth, both individually and as a ministry."
-    }
+      description: "We are committed to continuous spiritual and musical growth, both individually and as a ministry.",
+    },
   ]
 
   return (
@@ -341,7 +341,11 @@ const About = () => {
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <img src={Team3rdPhoto || "/placeholder.svg"} alt="Exodus Music Ministry History" className="w-full h-auto" />
+                  <img
+                    src={Team3rdPhoto || "/placeholder.svg"}
+                    alt="Exodus Music Ministry History"
+                    className="w-full h-auto"
+                  />
                 </motion.div>
               </motion.div>
 
@@ -360,7 +364,10 @@ const About = () => {
                   >
                     <h3 className="text-2xl font-bold mb-3 text-yellow-400">Founded in Faith</h3>
                     <p className="text-indigo-100 text-lg">
-                      Exodus Music Ministry was founded in 2005 by Dr. Victor with a vision to create a worship experience that would draw people closer to God through anointed music. What began as a small group of passionate musicians has grown into a vibrant ministry that touches hearts across Tamil Nadu and beyond.
+                      Exodus Music Ministry was founded in 2005 by Dr. Victor with a vision to create a worship
+                      experience that would draw people closer to God through anointed music. What began as a small
+                      group of passionate musicians has grown into a vibrant ministry that touches hearts across Tamil
+                      Nadu and beyond.
                     </p>
                   </motion.div>
 
@@ -372,7 +379,9 @@ const About = () => {
                   >
                     <h3 className="text-2xl font-bold mb-3 text-yellow-400">Growth and Impact</h3>
                     <p className="text-indigo-100 text-lg">
-                      Over the years, our ministry has expanded its reach, performing at churches, conferences, and special events throughout India. We've been blessed to collaborate with renowned worship leaders and have seen countless lives transformed through our music ministry.
+                      Over the years, our ministry has expanded its reach, performing at churches, conferences, and
+                      special events throughout India. We've been blessed to collaborate with renowned worship leaders
+                      and have seen countless lives transformed through our music ministry.
                     </p>
                   </motion.div>
 
@@ -384,7 +393,9 @@ const About = () => {
                   >
                     <h3 className="text-2xl font-bold mb-3 text-yellow-400">Looking Forward</h3>
                     <p className="text-indigo-100 text-lg">
-                      Today, Exodus Music Ministry continues to grow in both size and impact. We remain committed to our founding vision while embracing new opportunities to share God's love through music. We're excited about what God has in store for our future as we continue to serve Him through our musical gifts.
+                      Today, Exodus Music Ministry continues to grow in both size and impact. We remain committed to our
+                      founding vision while embracing new opportunities to share God's love through music. We're excited
+                      about what God has in store for our future as we continue to serve Him through our musical gifts.
                     </p>
                   </motion.div>
                 </div>
@@ -478,7 +489,8 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Vision</h3>
                     <p className="text-indigo-100 text-lg">
-                      To be a transformative force in Christian worship, creating musical experiences that draw people into God's presence and inspire spiritual growth across communities in India and beyond.
+                      To be a transformative force in Christian worship, creating musical experiences that draw people
+                      into God's presence and inspire spiritual growth across communities in India and beyond.
                     </p>
                   </motion.div>
 
@@ -491,7 +503,8 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Mission</h3>
                     <p className="text-indigo-100 text-lg">
-                      To glorify God through excellence in music ministry, nurture spiritual growth in our team and audience, and use our musical gifts to spread the Gospel message to all who hear us.
+                      To glorify God through excellence in music ministry, nurture spiritual growth in our team and
+                      audience, and use our musical gifts to spread the Gospel message to all who hear us.
                     </p>
                   </motion.div>
                 </div>
@@ -516,7 +529,11 @@ const About = () => {
                   }}
                   transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
                 >
-                  <img src={Victor || "/placeholder.svg"} alt="Dr. Victor - Founder" className="w-full h-full object-cover" />
+                  <img
+                    src={Victor || "/placeholder.svg"}
+                    alt="Dr. Victor - Founder"
+                    className="w-full h-full object-cover"
+                  />
                 </motion.div>
               </motion.div>
             </div>
@@ -592,10 +609,7 @@ const About = () => {
         </motion.section>
 
         {/* Team Section */}
-        <motion.section
-          className="py-32 bg-indigo-950 relative overflow-hidden"
-          style={{ rotate: teamRotate }}
-        >
+        <motion.section className="py-32 bg-indigo-950 relative overflow-hidden" style={{ rotate: teamRotate }}>
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-20"
@@ -621,22 +635,27 @@ const About = () => {
                   whileInView="visible"
                   whileHover="hover"
                   viewport={{ once: true }}
-                  className="bg-indigo-800/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-indigo-700 shadow-xl"
+                  className="bg-indigo-800/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-indigo-700 shadow-xl flex flex-col"
                 >
-                  <motion.div
-                    className="h-64 overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <img 
-                      src={member.image || "/placeholder.svg"} 
-                      alt={member.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-                  <div className="p-6 text-center">
+                  <div className="relative pt-8 px-8 flex justify-center">
+                    <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-yellow-400/20 to-transparent"></div>
+                    <motion.div
+                      className="w-40 h-40 rounded-full overflow-hidden border-4 border-yellow-400 shadow-xl z-10 bg-indigo-900"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <img
+                        src={member.image || "/placeholder.svg"}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </motion.div>
+                  </div>
+                  <div className="p-6 text-center flex-1 flex flex-col">
                     <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
                     <p className="text-yellow-400 text-lg mb-4">{member.role}</p>
-                    <p className="text-indigo-100">{member.bio}</p>
+                    <div className="bg-indigo-900/50 p-4 rounded-xl flex-1">
+                      <p className="text-indigo-100">{member.bio}</p>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -707,7 +726,8 @@ const About = () => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
-                Whether you sing, play an instrument, or have technical skills, there's a place for you in Exodus Music Ministry.
+                Whether you sing, play an instrument, or have technical skills, there's a place for you in Exodus Music
+                Ministry.
               </motion.p>
 
               <motion.div
@@ -755,7 +775,7 @@ const About = () => {
               style={{ backgroundSize: "400% 400%" }}
             />
           </div>
-          
+
           {/* Content container */}
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
@@ -777,10 +797,7 @@ const About = () => {
                   >
                     EXODUS
                   </motion.span>
-                  <motion.span 
-                    className="text-4xl font-bold text-white ml-2" 
-                    whileHover={{ scale: 1.05 }}
-                  >
+                  <motion.span className="text-4xl font-bold text-white ml-2" whileHover={{ scale: 1.05 }}>
                     MUSIC
                   </motion.span>
                 </motion.div>
@@ -789,32 +806,40 @@ const About = () => {
                 </p>
                 <div className="flex space-x-4">
                   {[
-                    { 
-                      name: "Facebook", 
+                    {
+                      name: "Facebook",
                       url: "https://www.facebook.com/Exoduschoir/?checkpoint_src=any",
                       icon: (
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                            clipRule="evenodd"
+                          />
                         </svg>
-                      )
+                      ),
                     },
-                    { 
-                      name: "Instagram", 
+                    {
+                      name: "Instagram",
                       url: "https://www.instagram.com/lenny_dany_3/",
                       icon: (
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                            clipRule="evenodd"
+                          />
                         </svg>
-                      )
+                      ),
                     },
-                    { 
-                      name: "YouTube", 
+                    {
+                      name: "YouTube",
                       url: "https://www.youtube.com/@EXODUSMusicMinistries",
                       icon: (
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C1.763 3.36.366 5.55.366 8.627v6.745c0 3.078 1.395 5.267 4.02 5.444 3.603.245 11.626.246 15.23 0 2.625-.177 4.019-2.366 4.019-5.444V8.627c0-3.078-1.394-5.267-4.02-5.443zm-3.246 8.336l-6.26 3.626a.512.512 0 01-.752-.448V6.903a.51.51 0 01.752-.448l6.26 3.626a.51.51 0 010 .883z" />
                         </svg>
-                      )
+                      ),
                     },
                   ].map((social) => (
                     <motion.a
@@ -839,7 +864,7 @@ const About = () => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Quick links */}
               <div className="flex flex-col items-center md:items-start">
                 <motion.h3
@@ -857,7 +882,7 @@ const About = () => {
                     { name: "About Us", icon: "♪" },
                     { name: "Events", icon: "🎵" },
                     { name: "Gallery", icon: "🎭" },
-                    { name: "Contact", icon: "✉️" }
+                    { name: "Contact", icon: "✉️" },
                   ].map((link, i) => (
                     <motion.li
                       key={link.name}
@@ -869,7 +894,7 @@ const About = () => {
                     >
                       <span className="text-yellow-400 text-sm">{link.icon}</span>
                       <a
-                        href={`/${link.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={`/${link.name.toLowerCase().replace(/\s+/g, "-")}`}
                         className="text-indigo-200 hover:text-yellow-400 transition-colors duration-300"
                       >
                         {link.name}
@@ -878,7 +903,7 @@ const About = () => {
                   ))}
                 </ul>
               </div>
-              
+
               {/* Contact info */}
               <div className="flex flex-col items-center md:items-start">
                 <motion.h3
@@ -899,8 +924,17 @@ const About = () => {
                     className="flex items-center"
                   >
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                     <span className="text-indigo-200">Tamil Nadu, India</span>
@@ -913,7 +947,12 @@ const About = () => {
                     className="flex items-center"
                   >
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                       </svg>
@@ -928,7 +967,12 @@ const About = () => {
                     className="flex items-center"
                   >
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
@@ -937,7 +981,7 @@ const About = () => {
                 </ul>
               </div>
             </div>
-            
+
             {/* Copyright */}
             <div className="flex flex-col md:flex-row justify-between items-center">
               <motion.div
@@ -949,7 +993,7 @@ const About = () => {
               >
                 <p>© {new Date().getFullYear()} Exodus Music Ministry. All rights reserved.</p>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
