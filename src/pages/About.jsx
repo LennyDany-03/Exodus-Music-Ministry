@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
-import React from "react"
 import TeamPhoto from "../assets/Team Photo.jpg"
 import Victor from "../assets/Victor1.jpg"
+import { supabase } from "../lib/supabaseClient"
 
 const Contact = () => {
   const controls = useAnimation()
@@ -18,6 +18,8 @@ const Contact = () => {
     message: "",
   })
   const [formSubmitted, setFormSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionError, setSubmissionError] = useState(null)
 
   // Responsive scroll animations that work on both mobile and desktop
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
@@ -243,23 +245,45 @@ const Contact = () => {
   }
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData)
-    setFormSubmitted(true)
 
-    // Reset form after submission
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      })
-      setFormSubmitted(false)
-    }, 5000)
+    try {
+      setIsSubmitting(true)
+
+      // Insert the form data into Supabase
+      const { data, error } = await supabase.from("people_messages").insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null, // Handle empty phone numbers
+          subject: formData.subject,
+          message: formData.message,
+        },
+      ])
+
+      if (error) throw error
+
+      // Show success message
+      setFormSubmitted(true)
+
+      // Reset form after submission
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        })
+        setFormSubmitted(false)
+      }, 5000)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      setSubmissionError(error.message || "Failed to send message. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -610,13 +634,49 @@ const Contact = () => {
                       viewport={{ once: true }}
                       transition={{ delay: 0.7, duration: 0.6 }}
                     >
+                      {submissionError && (
+                        <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-white text-center">
+                          {submissionError}
+                        </div>
+                      )}
                       <motion.button
                         type="submit"
-                        whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
+                        disabled={isSubmitting}
+                        whileHover={
+                          !isSubmitting ? { scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" } : {}
+                        }
+                        whileTap={!isSubmitting ? { scale: 0.95 } : {}}
+                        className={`bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg ${
+                          isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                        }`}
                       >
-                        Send Message
+                        {isSubmitting ? (
+                          <span className="flex items-center justify-center">
+                            <svg
+                              className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-950"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            Sending...
+                          </span>
+                        ) : (
+                          "Send Message"
+                        )}
                       </motion.button>
                     </motion.div>
                   </form>
