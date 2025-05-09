@@ -5,7 +5,12 @@ import { Navigate } from "react-router-dom"
 import { supabase } from "../lib/supabaseClient"
 
 // List of authorized emails
-const authorizedEmails = ["lennydany3@gmail.com", "lennydanygpt@gmail.com"]
+const authorizedEmails = [
+  "lennydany3@gmail.com",
+  "lennydanygpt@gmail.com",
+  "rvijayanand79@gmail.com",
+  "victorsingthegospel@gmail.com",
+]
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true)
