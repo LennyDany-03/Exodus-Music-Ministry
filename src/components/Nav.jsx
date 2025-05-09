@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabaseClient"
 import BGLogo from "../assets/BGLogo.png"
 
@@ -185,7 +185,7 @@ const NavBar = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <a href="/" className="flex items-center">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center">
               <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-10 w-auto mr-3" />
               <div className="flex flex-col">
@@ -209,13 +209,13 @@ const NavBar = () => {
                 <span className="text-sm text-white font-medium">MUSIC MINISTRY</span>
               </div>
             </motion.div>
-          </Link>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             <div className="bg-indigo-900/50 backdrop-blur-sm rounded-full p-1.5 border border-indigo-800">
               {navLinks.map((link) => (
-                <Link key={link.name} to={link.path}>
+                <a key={link.name} href={link.path}>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -232,13 +232,13 @@ const NavBar = () => {
                       />
                     )}
                   </motion.button>
-                </Link>
+                </a>
               ))}
             </div>
 
             {/* Donate Button and Login/Dashboard */}
             <div className="flex items-center gap-3">
-              <Link to="/donate">
+              <a href="/donate">
                 <motion.button
                   whileHover={{
                     scale: 1.05,
@@ -249,11 +249,11 @@ const NavBar = () => {
                 >
                   Donate
                 </motion.button>
-              </Link>
+              </a>
 
               {user ? (
                 <div className="flex items-center gap-2">
-                  <Link to="/dashboard">
+                  <a href="/login">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -261,7 +261,7 @@ const NavBar = () => {
                     >
                       Dashboard
                     </motion.button>
-                  </Link>
+                  </a>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -326,8 +326,8 @@ const NavBar = () => {
               <div className="flex flex-col space-y-2">
                 {navLinks.map((link) => (
                   <motion.div key={link.name} variants={menuItemVariants}>
-                    <Link
-                      to={link.path}
+                    <a
+                      href={link.path}
                       onClick={() => setIsOpen(false)}
                       className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                         isActive(link.path)
@@ -336,29 +336,29 @@ const NavBar = () => {
                       }`}
                     >
                       {link.name}
-                    </Link>
+                    </a>
                   </motion.div>
                 ))}
                 <motion.div variants={menuItemVariants} className="pt-2">
-                  <Link
-                    to="/donate"
+                  <a
+                    href="/donate"
                     onClick={() => setIsOpen(false)}
                     className="block bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-4 py-3 rounded-lg text-base font-bold text-center shadow-md"
                   >
                     Donate
-                  </Link>
+                  </a>
                 </motion.div>
 
                 {user ? (
                   <>
                     <motion.div variants={menuItemVariants} className="pt-2">
-                      <Link
-                        to="/dashboard"
+                      <a
+                        href="/dashboard"
                         onClick={() => setIsOpen(false)}
                         className="block bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
                       >
                         Dashboard
-                      </Link>
+                      </a>
                     </motion.div>
                     <motion.div variants={menuItemVariants} className="pt-2">
                       <button
