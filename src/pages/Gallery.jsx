@@ -31,10 +31,8 @@ const Gallery = () => {
 
   // Scroll animations
   const { scrollYProgress } = useScroll()
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.2])
   const headerScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.95])
   const galleryY = useTransform(scrollYProgress, [0.1, 0.2], [50, 0])
-  const galleryOpacity = useTransform(scrollYProgress, [0.1, 0.2], [0, 1])
 
   // Handle scroll events
   useEffect(() => {
@@ -298,18 +296,16 @@ const Gallery = () => {
 
   // Animation variants
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { y: 60 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
     },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.12,
         delayChildren: 0.3,
@@ -318,9 +314,8 @@ const Gallery = () => {
   }
 
   const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { scale: 0.8 },
     visible: (i) => ({
-      opacity: 1,
       scale: 1,
       transition: {
         delay: i * 0.1,
@@ -337,9 +332,8 @@ const Gallery = () => {
 
   // Loading screen animation
   const loadingVariants = {
-    hidden: { opacity: 1 },
+    hidden: {},
     exit: {
-      opacity: 0,
       transition: {
         duration: 0.8,
         ease: "easeInOut",
@@ -414,7 +408,7 @@ const Gallery = () => {
         {/* Hero Header */}
         <motion.header
           className="relative h-[50vh] md:h-[60vh] flex items-center justify-center overflow-hidden"
-          style={{ opacity: headerOpacity, scale: headerScale }}
+          style={{ scale: headerScale }}
         >
           {/* Background Image with Parallax Effect */}
           <div
@@ -597,7 +591,7 @@ const Gallery = () => {
         <motion.section
           ref={galleryRef}
           className="py-20 bg-gradient-to-b from-indigo-950/50 to-indigo-900/50 backdrop-blur-sm relative"
-          style={{ y: galleryY, opacity: galleryOpacity }}
+          style={{ y: galleryY }}
         >
           {/* Decorative Elements */}
           <div className="absolute inset-0 overflow-hidden">

@@ -1,5 +1,4 @@
 "use client"
-import React from "react"
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
@@ -16,13 +15,10 @@ const Music = () => {
   const [currentTrack, setCurrentTrack] = useState(null)
 
   // Enhanced parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
   const albumsY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
-  const albumsOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
   const streamingY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
-  const streamingOpacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1])
 
   // Initial animation sequence
   useEffect(() => {
@@ -30,7 +26,6 @@ const Music = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setIsLoading(false)
       await controls.start({
-        opacity: 1,
         y: 0,
         transition: { duration: 0.7, staggerChildren: 0.3 },
       })
@@ -41,18 +36,16 @@ const Music = () => {
 
   // Enhanced animation variants
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { y: 60 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
     },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.12,
         delayChildren: 0.3,
@@ -61,9 +54,8 @@ const Music = () => {
   }
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { y: 50 },
     visible: (i) => ({
-      opacity: 1,
       y: 0,
       transition: {
         delay: i * 0.1 + 0.3,
@@ -80,9 +72,8 @@ const Music = () => {
 
   // Loading screen animation
   const loadingVariants = {
-    hidden: { opacity: 1 },
+    hidden: {},
     exit: {
-      opacity: 0,
       transition: {
         duration: 0.8,
         ease: "easeInOut",
@@ -300,7 +291,6 @@ const Music = () => {
           initial="hidden"
           animate="visible"
           style={{
-            opacity: heroOpacity,
             scale: heroScale,
             y: heroY,
           }}
@@ -409,7 +399,7 @@ const Music = () => {
         <motion.section
           id="music-section"
           className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: albumsY, opacity: albumsOpacity }}
+          style={{ y: albumsY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -788,7 +778,7 @@ const Music = () => {
         {/* Streaming Platforms Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: streamingY, opacity: streamingOpacity }}
+          style={{ y: streamingY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -1256,4 +1246,3 @@ const Music = () => {
 }
 
 export default Music
-

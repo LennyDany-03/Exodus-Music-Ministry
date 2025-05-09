@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
-import React from "react"
 import TeamPhoto from "../assets/Team Photo.jpg"
 
 // Razorpay initialization function
@@ -42,40 +41,34 @@ const Donate = () => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
   const formY = useTransform(
     scrollYProgress,
     [0.1, 0.3],
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const formOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
   const impactY = useTransform(
     scrollYProgress,
     [0.4, 0.6],
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const impactOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1])
   const otherWaysY = useTransform(
     scrollYProgress,
     [0.7, 0.9],
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const otherWaysOpacity = useTransform(scrollYProgress, [0.7, 0.9], [0, 1])
 
   // Animation variants
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { y: 60 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
     },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.12,
         delayChildren: 0.3,
@@ -89,7 +82,6 @@ const Donate = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setIsLoading(false)
       await controls.start({
-        opacity: 1,
         y: 0,
         transition: { duration: 0.7 },
       })
@@ -305,7 +297,6 @@ const Donate = () => {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          style={{ opacity: heroOpacity }}
         >
           {/* Background */}
           <div className="absolute inset-0 w-full h-full z-0">
@@ -360,7 +351,6 @@ const Donate = () => {
             className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
             animate={{
               y: [0, 10, 0],
-              opacity: [0.4, 1, 0.4],
             }}
             transition={{
               duration: 2,
@@ -386,7 +376,7 @@ const Donate = () => {
         <motion.section
           id="donate-form"
           className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: formY, opacity: formOpacity }}
+          style={{ y: formY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -410,7 +400,6 @@ const Donate = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                style={{ opacity: formOpacity }}
               >
                 <div className="bg-indigo-800/80 backdrop-blur-sm p-10 rounded-2xl border border-indigo-700 shadow-2xl">
                   {success ? (
@@ -685,7 +674,7 @@ const Donate = () => {
         {/* Donation Impact Section */}
         <motion.section
           className="py-20 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: impactY, opacity: impactOpacity }}
+          style={{ y: impactY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -743,10 +732,7 @@ const Donate = () => {
         </motion.section>
 
         {/* Other Ways to Give Section */}
-        <motion.section
-          className="py-20 bg-indigo-950 overflow-hidden relative"
-          style={{ y: otherWaysY, opacity: otherWaysOpacity }}
-        >
+        <motion.section className="py-20 bg-indigo-950 overflow-hidden relative" style={{ y: otherWaysY }}>
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-16"

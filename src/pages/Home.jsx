@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
@@ -18,32 +16,27 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   // Responsive scroll animations that work on both mobile and desktop
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
   const teamY = useTransform(
     scrollYProgress,
     [0.1, 0.3],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
   )
-  const teamOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
   const missionY = useTransform(
     scrollYProgress,
     [0.3, 0.5],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
   )
-  const missionOpacity = useTransform(scrollYProgress, [0.3, 0.5], [0, 1])
   const eventsY = useTransform(
     scrollYProgress,
     [0.5, 0.7],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
   )
-  const eventsOpacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1])
   const testimonialY = useTransform(
     scrollYProgress,
     [0.7, 0.9],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
   )
-  const testimonialOpacity = useTransform(scrollYProgress, [0.7, 0.9], [0, 1])
   const testimonialRotate = useTransform(scrollYProgress, [0.4, 0.6], [-5, 0])
 
   // Initial animation sequence
@@ -52,7 +45,6 @@ const Home = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setIsLoading(false)
       await controls.start({
-        opacity: 1,
         y: 0,
         transition: { duration: 0.7, staggerChildren: 0.3 },
       })
@@ -64,7 +56,6 @@ const Home = () => {
   // Add a useEffect to handle window resize for responsive animations
   useEffect(() => {
     const handleResize = () => {
-      // Force a re-render to update animations based on new window size
       setIsLoading(false)
     }
 
@@ -74,18 +65,16 @@ const Home = () => {
 
   // Enhanced animation variants
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { y: 60 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
     },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.12,
         delayChildren: 0.3,
@@ -94,9 +83,8 @@ const Home = () => {
   }
 
   const buttonVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { y: 30 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: {
         duration: 0.7,
@@ -114,9 +102,8 @@ const Home = () => {
 
   // Advanced card animation variants
   const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { y: 50 },
     visible: (i) => ({
-      opacity: 1,
       y: 0,
       transition: {
         delay: i * 0.1 + 0.3,
@@ -264,7 +251,6 @@ const Home = () => {
           initial="hidden"
           animate="visible"
           style={{
-            opacity: heroOpacity,
             scale: heroScale,
           }}
         >
@@ -292,7 +278,6 @@ const Home = () => {
                 }}
                 animate={{
                   y: [null, Math.random() * 100 - 50],
-                  opacity: [0.2, 0.8, 0.2],
                 }}
                 transition={{
                   duration: 5 + Math.random() * 5,
@@ -358,7 +343,6 @@ const Home = () => {
             className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
             animate={{
               y: [0, 10, 0],
-              opacity: [0.4, 1, 0.4],
             }}
             transition={{
               duration: 2,
@@ -383,20 +367,10 @@ const Home = () => {
         {/* Team Showcase Section */}
         <motion.section
           className="py-24 bg-gradient-to-b from-indigo-950 to-indigo-900 relative overflow-hidden"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          style={{ y: teamY, opacity: teamOpacity }}
+          style={{ y: teamY }}
         >
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
+            <motion.div className="text-center mb-16">
               <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Ministry Team</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
@@ -406,13 +380,7 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               {/* Team Photo */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="relative"
-              >
+              <motion.div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-tr from-yellow-500/20 to-indigo-600/20 rounded-xl blur-lg"></div>
                 <motion.div
                   className="relative rounded-xl overflow-hidden shadow-2xl border border-indigo-700"
@@ -420,7 +388,7 @@ const Home = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <img
-                    src={TeamSecondPhoto || "/placeholder.svg"}
+                    src={TeamSecondPhoto}
                     alt="Exodus Music Ministry Team"
                     className="w-full h-auto"
                   />
@@ -428,13 +396,7 @@ const Home = () => {
               </motion.div>
 
               {/* Ministry Leader */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="flex flex-col items-center md:items-start"
-              >
+              <motion.div className="flex flex-col items-center md:items-start">
                 <div className="mb-8 relative">
                   <div className="absolute -inset-4 bg-gradient-to-tr from-yellow-500/30 to-indigo-600/30 rounded-full blur-lg"></div>
                   <motion.div
@@ -443,20 +405,14 @@ const Home = () => {
                     transition={{ duration: 0.3 }}
                   >
                     <img
-                      src={Victor || "/placeholder.svg"}
+                      src={Victor}
                       alt="Exodus Music Ministry Leader"
                       className="w-full h-full object-cover"
                     />
                   </motion.div>
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  className="text-center md:text-left"
-                >
+                <motion.div className="text-center md:text-left">
                   <h3 className="text-2xl md:text-3xl font-bold mb-2">Dr. Victor</h3>
                   <p className="text-yellow-400 text-lg mb-4">Founder & Director</p>
                   <p className="text-indigo-100 text-lg leading-relaxed max-w-lg">
@@ -497,10 +453,10 @@ const Home = () => {
         {/* Our Mission Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-900 overflow-hidden relative"
-          style={{ y: missionY, opacity: missionOpacity }}
+          style={{ y: missionY }}
         >
           {/* Background Elements */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0">
             {[...Array(5)].map((_, index) => (
               <motion.div
                 key={index}
@@ -525,13 +481,7 @@ const Home = () => {
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-20"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
+            <motion.div className="text-center mb-20">
               <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Mission</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
@@ -569,24 +519,17 @@ const Home = () => {
         {/* Upcoming Events Section */}
         <motion.section
           className="py-32 bg-indigo-900 relative overflow-hidden"
-          style={{ y: eventsY, opacity: eventsOpacity }}
+          style={{ y: eventsY }}
         >
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-indigo-950 to-transparent"></div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-20"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
+            <motion.div className="text-center mb-20">
               <h2 className="text-4xl md:text-6xl font-bold mb-6">Previous Events</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
             </motion.div>
 
-            {/* Replace this in the Upcoming Events section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {upcomingEvents.map((event, index) => (
                 <motion.div
@@ -603,12 +546,7 @@ const Home = () => {
                     className="h-56 bg-indigo-700 flex items-center justify-center overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                   >
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.5 }}
-                      className="relative w-full h-full"
-                    >
+                    <motion.div className="relative w-full h-full">
                       <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
                       <div
                         className="w-full h-full bg-cover bg-center"
@@ -662,13 +600,7 @@ const Home = () => {
               ))}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-center mt-16"
-            >
+            <motion.div className="text-center mt-16">
               <motion.button
                 whileHover={{ scale: 1.05, x: [0, 5, 0] }}
                 whileTap={{ scale: 0.95 }}
@@ -698,16 +630,10 @@ const Home = () => {
         {/* Testimonials Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: testimonialY, opacity: testimonialOpacity }}
+          style={{ y: testimonialY }}
         >
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center mb-20"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
+            <motion.div className="text-center mb-20">
               <h2 className="text-4xl md:text-6xl font-bold mb-6">Testimonials</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
             </motion.div>
@@ -751,18 +677,12 @@ const Home = () => {
         </motion.section>
 
         {/* Call to Action */}
-        <motion.section
-          className="py-32 relative overflow-hidden"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
+        <motion.section className="py-32 relative overflow-hidden">
           {/* Background */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-indigo-950 opacity-80 z-10"></div>
             <motion.div
-              animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.7, 0.5] }}
+              animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
               className="w-full h-full bg-center"
               style={{ backgroundImage: `url(${Team3rdPhoto})` }}
@@ -771,36 +691,18 @@ const Home = () => {
 
           <div className="container mx-auto px-4 relative z-20">
             <div className="max-w-3xl mx-auto text-center">
-              <motion.h2
-                className="text-4xl md:text-6xl font-bold mb-6"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
+              <motion.h2 className="text-4xl md:text-6xl font-bold mb-6">
                 Join Our Ministry Today
               </motion.h2>
 
-              <motion.p
-                className="text-xl md:text-2xl mb-10 text-indigo-100"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-              >
+              <motion.p className="text-xl md:text-2xl mb-10 text-indigo-100">
                 Whether you sing, play an instrument, or have technical skills, there's a place for you in Exodus Music
                 Ministry.
               </motion.p>
 
-              <motion.div
-                className="flex flex-col md:flex-row justify-center gap-6"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-              >
+              <motion.div className="flex flex-col md:flex-row justify-center gap-6">
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                  whileHover={{ scale:  1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-5 rounded-full text-xl font-bold tracking-wide shadow-lg"
                 >
@@ -829,7 +731,6 @@ const Home = () => {
               }}
               animate={{
                 y: [-20, -100],
-                opacity: [0, 0.7, 0],
                 rotate: [0, 360],
               }}
               transition={{
@@ -868,13 +769,7 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
               {/* Logo and tagline */}
               <div className="flex flex-col items-center md:items-start">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="flex items-center mb-4"
-                >
+                <motion.div className="flex items-center mb-4">
                   <motion.span
                     className="text-4xl font-bold text-yellow-400"
                     whileHover={{
@@ -954,13 +849,7 @@ const Home = () => {
 
               {/* Quick links */}
               <div className="flex flex-col items-center md:items-start">
-                <motion.h3
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="text-xl font-bold text-white mb-6"
-                >
+                <motion.h3 className="text-xl font-bold text-white mb-6">
                   Quick Links
                 </motion.h3>
                 <ul className="space-y-3">
@@ -971,14 +860,7 @@ const Home = () => {
                     { name: "Gallery", icon: "🎭" },
                     { name: "Contact", icon: "✉️" },
                   ].map((link, i) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: i * 0.1 }}
-                      className="flex items-center space-x-2"
-                    >
+                    <motion.li key={link.name} className="flex items-center space-x-2">
                       <span className="text-yellow-400 text-sm">{link.icon}</span>
                       <a
                         href={`/${link.name.toLowerCase().replace(/\s+/g, "-")}`}
@@ -993,23 +875,11 @@ const Home = () => {
 
               {/* Contact info */}
               <div className="flex flex-col items-center md:items-start">
-                <motion.h3
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="text-xl font-bold text-white mb-6"
-                >
+                <motion.h3 className="text-xl font-bold text-white mb-6">
                   Get In Touch
                 </motion.h3>
                 <ul className="space-y-4">
-                  <motion.li
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4 }}
-                    className="flex items-center"
-                  >
+                  <motion.li className="flex items-center">
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
                       <svg
                         className="w-4 h-4"
@@ -1026,13 +896,7 @@ const Home = () => {
                     </div>
                     <span className="text-indigo-200">Tamil Nadu, India</span>
                   </motion.li>
-                  <motion.li
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.1 }}
-                    className="flex items-center"
-                  >
+                  <motion.li className="flex items-center">
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
                       <svg
                         className="w-4 h-4"
@@ -1046,13 +910,7 @@ const Home = () => {
                     </div>
                     <span className="text-indigo-200">victorsingthegospel@gmail.com</span>
                   </motion.li>
-                  <motion.li
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
-                    className="flex items-center"
-                  >
+                  <motion.li className="flex items-center">
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">
                       <svg
                         className="w-4 h-4"
@@ -1070,33 +928,15 @@ const Home = () => {
             </div>
 
             {/* Divider */}
-            <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              whileInView={{ opacity: 1, scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="h-px bg-gradient-to-r from-transparent via-indigo-600 to-transparent my-8"
-            />
+            <motion.div className="h-px bg-gradient-to-r from-transparent via-indigo-600 to-transparent my-8" />
 
             {/* Copyright */}
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-indigo-300 text-sm"
-              >
+              <motion.div className="text-indigo-300 text-sm">
                 <p>© {new Date().getFullYear()} Exodus Music Ministry. All rights reserved.</p>
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="flex items-center mt-4 md:mt-0"
-              >
+              <motion.div className="flex items-center mt-4 md:mt-0">
                 <span className="text-yellow-400 animate-pulse">♪</span>
                 <span className="mx-2 text-indigo-300 text-sm">Glorifying God through music</span>
                 <span className="text-yellow-400 animate-pulse">♪</span>
@@ -1115,7 +955,6 @@ const Home = () => {
               }}
               animate={{
                 y: [0, 120],
-                opacity: [0, 0.7, 0],
                 rotate: [0, 360],
               }}
               transition={{

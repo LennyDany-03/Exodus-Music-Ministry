@@ -124,35 +124,31 @@ const Events = () => {
   const { scrollYProgress } = useScroll()
 
   // Responsive scroll animations that work on both mobile and desktop
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
   const pastEventsY = useTransform(
     scrollYProgress,
     [0.1, 0.3],
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const pastEventsOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
   const hostEventY = useTransform(
     scrollYProgress,
     [0.4, 0.6],
     [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const hostEventOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1])
 
   // Animation variants
   const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.6 } },
+    hidden: {},
+    visible: { transition: { duration: 0.6 } },
   }
 
   const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    hidden: { y: 30 },
+    visible: { y: 0, transition: { duration: 0.6 } },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.1,
       },
@@ -216,7 +212,6 @@ const Events = () => {
           initial="hidden"
           animate="visible"
           variants={fadeIn}
-          style={{ opacity: heroOpacity }}
         >
           {/* Background */}
           <div className="absolute inset-0 w-full h-full z-0">
@@ -303,7 +298,6 @@ const Events = () => {
           variants={fadeIn}
           style={{
             y: pastEventsY,
-            opacity: pastEventsOpacity,
           }}
         >
           {/* Background gradient */}
@@ -523,7 +517,6 @@ const Events = () => {
           variants={fadeIn}
           style={{
             y: hostEventY,
-            opacity: hostEventOpacity,
           }}
         >
           {/* Background */}

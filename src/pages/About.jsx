@@ -18,13 +18,10 @@ const About = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   // Enhanced parallax effects
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
   const historyY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
-  const historyOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1])
   const visionY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
-  const visionOpacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1])
   const teamRotate = useTransform(scrollYProgress, [0.4, 0.6], [-5, 0])
 
   // Initial animation sequence
@@ -44,18 +41,16 @@ const About = () => {
 
   // Enhanced animation variants
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { y: 60 },
     visible: {
-      opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
     },
   }
 
   const staggerContainer = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
         staggerChildren: 0.12,
         delayChildren: 0.3,
@@ -64,9 +59,8 @@ const About = () => {
   }
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { y: 50 },
     visible: (i) => ({
-      opacity: 1,
       y: 0,
       transition: {
         delay: i * 0.1 + 0.3,
@@ -217,7 +211,6 @@ const About = () => {
           initial="hidden"
           animate="visible"
           style={{
-            opacity: heroOpacity,
             scale: heroScale,
             y: heroY,
           }}
@@ -313,7 +306,7 @@ const About = () => {
         {/* Our History Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: historyY, opacity: historyOpacity }}
+          style={{ y: historyY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -432,7 +425,7 @@ const About = () => {
         {/* Vision & Mission Section */}
         <motion.section
           className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-900 overflow-hidden relative"
-          style={{ y: visionY, opacity: visionOpacity }}
+          style={{ y: visionY }}
         >
           {/* Background Elements */}
           <div className="absolute inset-0 opacity-10">
