@@ -19,33 +19,34 @@ const Login = () => {
   const [formSubmitted, setFormSubmitted] = useState(false)
 
   // Check if user is already logged in
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (data.session) {
-        // Check if email is in admin_access table
-        const { data: adminData, error: adminError } = await supabase
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getSession()
+    if (data.session) {
+      // Check if email is in admin_access table
+      const { data: adminData, error: adminError } = await supabase
+        .from("admin_access")
+        .select("*")
+        .eq("email", data.session.user.email)
+        .eq("is_active", true)
+        .single()
+
+      if (adminData) {
+        // Update last login time
+        await supabase
           .from("admin_access")
-          .select("email")
+          .update({ last_login: new Date().toISOString() })
           .eq("email", data.session.user.email)
-          .eq("is_active", true)
-          .single()
 
-        if (adminData) {
-          // Update last login time
-          await supabase
-            .from("admin_access")
-            .update({ last_login: new Date().toISOString() })
-            .eq("email", data.session.user.email)
-
-          navigate("/dashboard")
-        } else {
-          // Not authorized, sign out and stay on login page
-          await supabase.auth.signOut()
-          setError("You don't have permission to access the admin area.")
-        }
+        // Use navigate to go to dashboard
+        navigate("/dashboard")
+      } else {
+        // Not authorized, sign out and stay on login page
+        await supabase.auth.signOut()
+        setError("You don't have permission to access the admin area.")
       }
     }
+  }
+  useEffect(() => {
     checkUser()
   }, [navigate])
 
@@ -63,79 +64,24 @@ const Login = () => {
       setLoading(true)
       setError(null)
 
-      console.log("Attempting login with:", email)
-
-      // First, directly query the admin_access table without RLS
-      // This uses the service role to bypass RLS
+      // First, check if the user exists in the admin_access table
       const { data: adminData, error: adminError } = await supabase
         .from("admin_access")
-        .select("*") // Select all fields to debug
+        .select("*")
         .eq("email", email)
+        .eq("is_active", true)
         .single()
 
-      console.log("Admin data response:", adminData)
-      console.log("Admin error:", adminError)
-
-      // If no admin data found or there's an error, authentication fails
       if (adminError || !adminData) {
-        console.error("Error fetching admin data or no data found:", adminError)
         throw new Error("Invalid email or password")
       }
 
-      // Check if account is active
-      if (!adminData.is_active) {
-        throw new Error("Your account has been deactivated")
-      }
-
-      // Check if password matches exactly
-      console.log("Comparing passwords - DB:", adminData.password, "Entered:", password)
+      // Check if the password matches (direct comparison with the stored password)
       if (adminData.password !== password) {
-        console.error("Password mismatch")
         throw new Error("Invalid email or password")
       }
 
-      console.log("Password matched, proceeding with login")
-
-      // If we get here, the credentials are valid
-      // Now we need to either sign in or create a Supabase Auth user
-
-      // Try to sign in with Supabase Auth
-      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      // If sign in fails, try to create a new auth user
-      if (signInError) {
-        console.log("Auth sign-in failed, attempting to create auth user:", signInError)
-
-        // Create a new auth user
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-        })
-
-        if (signUpError) {
-          console.error("Failed to create auth user:", signUpError)
-          // Continue anyway since we've already verified against admin_access
-        } else {
-          console.log("Created new auth user:", signUpData)
-        }
-      } else {
-        console.log("Auth sign-in successful:", authData)
-      }
-
-      // Update last login time
-      const { error: updateError } = await supabase
-        .from("admin_access")
-        .update({ last_login: new Date().toISOString() })
-        .eq("email", email)
-
-      if (updateError) {
-        console.error("Error updating last login:", updateError)
-        // Continue anyway, this is not critical
-      }
-
+      // If we get here, credentials are valid in our custom table
       // Store user info in localStorage for dashboard welcome
       localStorage.setItem(
         "adminUser",
@@ -146,8 +92,12 @@ const Login = () => {
         }),
       )
 
+      // Update last login time
+      await supabase.from("admin_access").update({ last_login: new Date().toISOString() }).eq("email", email)
+
+      // Skip Supabase Auth completely and just use our custom auth
       console.log("Login successful, navigating to dashboard")
-      navigate("/dashboard")
+      navigate("/dashboard", { replace: true })
     } catch (error) {
       console.error("Error in login process:", error)
       setError(error.message || "Failed to log in")

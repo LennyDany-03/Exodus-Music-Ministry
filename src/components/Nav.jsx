@@ -14,19 +14,55 @@ const NavBar = () => {
 
   // Check if user is logged in
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null)
-    })
-
-    // Get current session
-    const getUser = async () => {
+    const checkAuth = async () => {
+      // Check Supabase session
       const {
         data: { session },
       } = await supabase.auth.getSession()
-      setUser(session?.user || null)
+
+      // Check localStorage for custom auth
+      const adminUserString = localStorage.getItem("adminUser")
+      const adminUser = adminUserString ? JSON.parse(adminUserString) : null
+
+      // Set user if either auth method is valid
+      if (session?.user) {
+        setUser(session.user)
+      } else if (adminUser) {
+        // Create a user-like object from localStorage data
+        setUser({
+          email: adminUser.email,
+          user_metadata: {
+            name: adminUser.name || adminUser.email.split("@")[0],
+          },
+        })
+      } else {
+        setUser(null)
+      }
     }
 
-    getUser()
+    checkAuth()
+
+    // Listen for auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        setUser(session.user)
+      } else if (event === "SIGNED_OUT") {
+        // Check localStorage as fallback when signed out of Supabase
+        const adminUserString = localStorage.getItem("adminUser")
+        const adminUser = adminUserString ? JSON.parse(adminUserString) : null
+
+        if (adminUser) {
+          setUser({
+            email: adminUser.email,
+            user_metadata: {
+              name: adminUser.name || adminUser.email.split("@")[0],
+            },
+          })
+        } else {
+          setUser(null)
+        }
+      }
+    })
 
     return () => {
       authListener?.subscription.unsubscribe()
@@ -40,7 +76,13 @@ const NavBar = () => {
 
   // Handle logout
   const handleLogout = async () => {
+    // Clear localStorage first
+    localStorage.removeItem("adminUser")
+
+    // Then sign out from Supabase Auth
     await supabase.auth.signOut()
+
+    // Navigate to home page
     navigate("/")
   }
 

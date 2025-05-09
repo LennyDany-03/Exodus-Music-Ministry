@@ -16,16 +16,6 @@ const Dashboard = () => {
     music: 0,
   })
 
-  // List of authorized emails (max 6)
-  const authorizedEmails = [
-    "lennydany3@gmail.com",
-    "lennydanygpt@gmail.com",
-    "rvijayanand79@gmail.com",
-    "victorsingthegospel@gmail.com",
-    "", // Empty slot for future email
-    "", // Empty slot for future email
-  ]
-
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -36,36 +26,62 @@ const Dashboard = () => {
           data: { session },
         } = await supabase.auth.getSession()
 
-        if (!session) {
-          // No session, redirect to login
-          navigate("/login")
+        // Check if we have admin info in localStorage as a fallback
+        const adminUserString = localStorage.getItem("adminUser")
+        const adminUser = adminUserString ? JSON.parse(adminUserString) : null
+
+        if (!session && !adminUser) {
+          // No session or admin user, redirect to login
+          console.log("No session or admin user found, redirecting to login")
+          navigate("/login", { replace: true })
           return
         }
 
-        const userEmail = session.user.email
+        // Get the email either from session or localStorage
+        const userEmail = session?.user?.email || adminUser?.email
 
-        // Check if email is authorized
-        if (!authorizedEmails.includes(userEmail)) {
-          // Not authorized, redirect to home
+        if (!userEmail) {
+          console.log("No user email found, redirecting to login")
+          navigate("/login", { replace: true })
+          return
+        }
+
+        // Check if email is authorized in admin_access table
+        const { data: adminData, error: adminError } = await supabase
+          .from("admin_access")
+          .select("*")
+          .eq("email", userEmail)
+          .eq("is_active", true)
+          .single()
+
+        // Not authorized, redirect to home
+        if (!adminData) {
           console.log("Unauthorized access attempt:", userEmail)
-          await supabase.auth.signOut()
-          navigate("/")
+          localStorage.removeItem("adminUser")
+          if (session) {
+            await supabase.auth.signOut()
+          }
+          navigate("/login", { replace: true })
           return
         }
 
         // User is authorized, set user data
         setUser({
-          id: session.user.id,
+          id: session?.user?.id || adminUser?.id || "admin-user",
           email: userEmail,
-          name: session.user.user_metadata.full_name || session.user.user_metadata.name || "Admin",
-          avatar: session.user.user_metadata.avatar_url || null,
+          name:
+            session?.user?.user_metadata?.full_name ||
+            session?.user?.user_metadata?.name ||
+            adminUser?.name ||
+            userEmail.split("@")[0],
+          avatar: session?.user?.user_metadata?.avatar_url || null,
         })
 
         // Fetch stats
         await fetchStats()
       } catch (error) {
         console.error("Authentication error:", error)
-        navigate("/login")
+        navigate("/login", { replace: true })
       } finally {
         setLoading(false)
       }
@@ -103,6 +119,7 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut()
+      localStorage.removeItem("adminUser")
       navigate("/")
     } catch (error) {
       console.error("Error signing out:", error)

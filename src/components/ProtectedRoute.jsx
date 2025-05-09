@@ -1,21 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom"
 import { supabase } from "../lib/supabaseClient"
-
-// List of authorized emails
-const authorizedEmails = [
-  "lennydany3@gmail.com",
-  "lennydanygpt@gmail.com",
-  "rvijayanand79@gmail.com",
-  "victorsingthegospel@gmail.com",
-]
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -25,28 +17,71 @@ const ProtectedRoute = ({ children }) => {
           data: { session },
         } = await supabase.auth.getSession()
 
-        if (!session) {
-          setIsAuthenticated(false)
+        // Check if we have admin info in localStorage as a fallback
+        const adminUserString = localStorage.getItem("adminUser")
+        const adminUser = adminUserString ? JSON.parse(adminUserString) : null
+
+        if (!session && !adminUser) {
+          console.log("No session or admin user found, redirecting to login")
           setIsAuthorized(false)
           setLoading(false)
           return
         }
 
-        setIsAuthenticated(true)
+        // Get the email either from session or localStorage
+        const userEmail = session?.user?.email || adminUser?.email
 
-        // Check if email is in the authorized list
-        const userEmail = session.user.email
-        if (authorizedEmails.includes(userEmail)) {
-          setIsAuthorized(true)
-        } else {
+        if (!userEmail) {
+          console.log("No user email found, redirecting to login")
           setIsAuthorized(false)
-          // Sign out unauthorized users
-          await supabase.auth.signOut()
+          setLoading(false)
+          return
+        }
+
+        // Check if email is in the admin_access table and is active
+        const { data: adminData, error: adminError } = await supabase
+          .from("admin_access")
+          .select("*")
+          .eq("email", userEmail)
+          .eq("is_active", true)
+          .single()
+
+        if (adminError) {
+          console.error("Error checking admin access:", adminError)
+          setIsAuthorized(false)
+          // Clear localStorage if there's an error
+          localStorage.removeItem("adminUser")
+          // Only sign out if we have a session
+          if (session) {
+            await supabase.auth.signOut()
+          }
+        } else if (adminData) {
+          console.log("User authorized:", userEmail)
+          setIsAuthorized(true)
+
+          // Update last_login timestamp
+          const { error: updateError } = await supabase
+            .from("admin_access")
+            .update({ last_login: new Date().toISOString() })
+            .eq("email", userEmail)
+
+          if (updateError) {
+            console.error("Error updating last_login:", updateError)
+          }
+        } else {
+          console.log("User not authorized:", userEmail)
+          setIsAuthorized(false)
+          // Clear localStorage
+          localStorage.removeItem("adminUser")
+          // Only sign out if we have a session
+          if (session) {
+            await supabase.auth.signOut()
+          }
         }
       } catch (error) {
         console.error("Auth check error:", error)
-        setIsAuthenticated(false)
         setIsAuthorized(false)
+        localStorage.removeItem("adminUser")
       } finally {
         setLoading(false)
       }
@@ -56,23 +91,44 @@ const ProtectedRoute = ({ children }) => {
 
     // Set up auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN") {
-        setIsAuthenticated(true)
+      console.log("Auth state changed:", event)
 
-        // Check if email is authorized
+      if (event === "SIGNED_IN" && session) {
+        // Check if email is authorized in admin_access table
         const userEmail = session.user.email
-        if (authorizedEmails.includes(userEmail)) {
+        const { data: adminData, error: adminError } = await supabase
+          .from("admin_access")
+          .select("*")
+          .eq("email", userEmail)
+          .eq("is_active", true)
+          .single()
+
+        if (adminData) {
+          console.log("User authorized on state change:", userEmail)
           setIsAuthorized(true)
+
+          // Store in localStorage as well
+          localStorage.setItem(
+            "adminUser",
+            JSON.stringify({
+              email: adminData.email,
+              name: adminData.email.split("@")[0],
+              lastLogin: new Date().toISOString(),
+            }),
+          )
         } else {
+          console.log("User not authorized on state change:", userEmail)
           setIsAuthorized(false)
           // Sign out unauthorized users
+          localStorage.removeItem("adminUser")
           await supabase.auth.signOut()
         }
       }
 
       if (event === "SIGNED_OUT") {
-        setIsAuthenticated(false)
+        console.log("User signed out")
         setIsAuthorized(false)
+        localStorage.removeItem("adminUser")
       }
     })
 
@@ -95,12 +151,14 @@ const ProtectedRoute = ({ children }) => {
     )
   }
 
-  // Redirect if not authenticated or not authorized
-  if (!isAuthenticated || !isAuthorized) {
-    return <Navigate to="/" replace />
+  // If not authorized, redirect to login
+  if (!isAuthorized) {
+    console.log("Not authorized, redirecting to login")
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  // Render children if authenticated and authorized
+  // If we made it here, we're authorized
+  console.log("Authorized, rendering protected content")
   return children
 }
 
