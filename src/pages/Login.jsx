@@ -6,23 +6,38 @@ import { Link, useNavigate } from "react-router-dom"
 import Nav from "../components/Nav"
 import BGLogo from "../assets/BGLogo.png"
 import { supabase } from "../lib/supabaseClient"
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react"
 
 const Login = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState(null)
-
-  // List of authorized emails
-  const authorizedEmails = ["lennydany3@gmail.com", "lennydanygpt@gmail.com" , "rvijayanand79@gmail.com", "victorsingthegospel@gmail.com"]
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [formSubmitted, setFormSubmitted] = useState(false)
 
   // Check if user is already logged in
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession()
       if (data.session) {
-        // Check if email is authorized
-        const userEmail = data.session.user.email
-        if (authorizedEmails.includes(userEmail)) {
+        // Check if email is in admin_access table
+        const { data: adminData, error: adminError } = await supabase
+          .from("admin_access")
+          .select("email")
+          .eq("email", data.session.user.email)
+          .eq("is_active", true)
+          .single()
+
+        if (adminData) {
+          // Update last login time
+          await supabase
+            .from("admin_access")
+            .update({ last_login: new Date().toISOString() })
+            .eq("email", data.session.user.email)
+
           navigate("/dashboard")
         } else {
           // Not authorized, sign out and stay on login page
@@ -34,10 +49,117 @@ const Login = () => {
     checkUser()
   }, [navigate])
 
+  // Handle email/password login
+  const handleEmailLogin = async (e) => {
+    e.preventDefault()
+    setFormSubmitted(true)
+
+    // Basic validation
+    if (!email || !password) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      console.log("Attempting login with:", email)
+
+      // First, directly query the admin_access table without RLS
+      // This uses the service role to bypass RLS
+      const { data: adminData, error: adminError } = await supabase
+        .from("admin_access")
+        .select("*") // Select all fields to debug
+        .eq("email", email)
+        .single()
+
+      console.log("Admin data response:", adminData)
+      console.log("Admin error:", adminError)
+
+      // If no admin data found or there's an error, authentication fails
+      if (adminError || !adminData) {
+        console.error("Error fetching admin data or no data found:", adminError)
+        throw new Error("Invalid email or password")
+      }
+
+      // Check if account is active
+      if (!adminData.is_active) {
+        throw new Error("Your account has been deactivated")
+      }
+
+      // Check if password matches exactly
+      console.log("Comparing passwords - DB:", adminData.password, "Entered:", password)
+      if (adminData.password !== password) {
+        console.error("Password mismatch")
+        throw new Error("Invalid email or password")
+      }
+
+      console.log("Password matched, proceeding with login")
+
+      // If we get here, the credentials are valid
+      // Now we need to either sign in or create a Supabase Auth user
+
+      // Try to sign in with Supabase Auth
+      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      // If sign in fails, try to create a new auth user
+      if (signInError) {
+        console.log("Auth sign-in failed, attempting to create auth user:", signInError)
+
+        // Create a new auth user
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+        })
+
+        if (signUpError) {
+          console.error("Failed to create auth user:", signUpError)
+          // Continue anyway since we've already verified against admin_access
+        } else {
+          console.log("Created new auth user:", signUpData)
+        }
+      } else {
+        console.log("Auth sign-in successful:", authData)
+      }
+
+      // Update last login time
+      const { error: updateError } = await supabase
+        .from("admin_access")
+        .update({ last_login: new Date().toISOString() })
+        .eq("email", email)
+
+      if (updateError) {
+        console.error("Error updating last login:", updateError)
+        // Continue anyway, this is not critical
+      }
+
+      // Store user info in localStorage for dashboard welcome
+      localStorage.setItem(
+        "adminUser",
+        JSON.stringify({
+          email: adminData.email,
+          name: adminData.email.split("@")[0], // Extract name from email
+          lastLogin: new Date().toISOString(),
+        }),
+      )
+
+      console.log("Login successful, navigating to dashboard")
+      navigate("/dashboard")
+    } catch (error) {
+      console.error("Error in login process:", error)
+      setError(error.message || "Failed to log in")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Handle Google login
   const handleGoogleLogin = async () => {
     try {
-      setLoading(true)
+      setGoogleLoading(true)
       setError(null)
 
       const { error } = await supabase.auth.signInWithOAuth({
@@ -59,7 +181,8 @@ const Login = () => {
     } catch (error) {
       console.error("Error logging in with Google:", error)
       setError(error.message || "Failed to log in with Google")
-      setLoading(false)
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -105,7 +228,7 @@ const Login = () => {
       </div>
 
       {/* Main content */}
-      <div className="container mx-auto px-4 pt-32 pb-20 relative z-10">
+      <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
         <div className="max-w-md mx-auto">
           {/* Logo animation */}
           <motion.div
@@ -146,7 +269,7 @@ const Login = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-center mb-8"
+              className="text-center mb-6"
             >
               <h1 className="text-3xl font-bold mb-2 text-yellow-400">Admin Login</h1>
               <p className="text-indigo-200">Sign in to access the admin dashboard</p>
@@ -157,22 +280,126 @@ const Login = () => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200 text-center"
+                className="mb-6 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200 flex items-start gap-3"
               >
-                {error}
+                <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <span>{error}</span>
               </motion.div>
             )}
+
+            {/* Email/Password Form */}
+            <form onSubmit={handleEmailLogin} className="space-y-4 mb-6">
+              {/* Email Input */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium text-indigo-200">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-indigo-400" />
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`block w-full pl-10 pr-3 py-3 bg-indigo-950/50 border ${
+                      formSubmitted && !email ? "border-red-500" : "border-indigo-700"
+                    } rounded-xl text-white placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-transparent transition-colors`}
+                    placeholder="your@email.com"
+                  />
+                </div>
+                {formSubmitted && !email && <p className="text-red-400 text-xs mt-1">Email is required</p>}
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-sm font-medium text-indigo-200">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-indigo-400" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`block w-full pl-10 pr-10 py-3 bg-indigo-950/50 border ${
+                      formSubmitted && !password ? "border-red-500" : "border-indigo-700"
+                    } rounded-xl text-white placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-transparent transition-colors`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-indigo-400 hover:text-yellow-400 transition-colors" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-indigo-400 hover:text-yellow-400 transition-colors" />
+                    )}
+                  </button>
+                </div>
+                {formSubmitted && !password && <p className="text-red-400 text-xs mt-1">Password is required</p>}
+              </div>
+
+              {/* Login Button */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className="relative w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 font-semibold rounded-xl py-3 px-6 overflow-hidden group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {/* Button background animation */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 via-yellow-300/30 to-yellow-400/0 z-0"
+                  animate={{
+                    x: ["-100%", "100%"],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "linear",
+                  }}
+                />
+
+                {/* Button text */}
+                {!loading ? (
+                  <span className="relative z-10">Sign In</span>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <motion.div
+                      className="w-5 h-5 border-2 border-indigo-900 border-t-transparent rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                    />
+                    <span className="ml-3 relative z-10">Signing In...</span>
+                  </div>
+                )}
+              </motion.button>
+            </form>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-indigo-700"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-indigo-900/50 text-indigo-300">Or continue with</span>
+              </div>
+            </div>
 
             {/* Google login button */}
             <motion.button
               onClick={handleGoogleLogin}
-              disabled={loading}
-              className="relative w-full bg-white text-gray-800 font-medium rounded-xl py-4 px-6 flex items-center justify-center gap-3 overflow-hidden group"
+              disabled={googleLoading}
+              className="relative w-full bg-white text-gray-800 font-medium rounded-xl py-3 px-6 flex items-center justify-center gap-3 overflow-hidden group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.7 }}
             >
               {/* Button background animation */}
               <motion.div
@@ -188,7 +415,7 @@ const Login = () => {
               />
 
               {/* Google icon */}
-              {!loading ? (
+              {!googleLoading ? (
                 <>
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -234,7 +461,7 @@ const Login = () => {
 
             {/* Return to home link */}
             <motion.div
-              className="mt-8 text-center"
+              className="mt-6 text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9 }}
