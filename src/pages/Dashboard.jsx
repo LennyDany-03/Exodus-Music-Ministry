@@ -16,8 +16,15 @@ const Dashboard = () => {
     music: 0,
   })
 
-  // List of authorized emails
-  const authorizedEmails = ["lennydany3@gmail.com", "rvijayanand79@gmail.com", "lennydanygpt@gmail.com", "victorsingthegospel@gmail.com"]
+  // List of authorized emails (max 6)
+  const authorizedEmails = [
+    "lennydany3@gmail.com",
+    "lennydanygpt@gmail.com",
+    "rvijayanand79@gmail.com",
+    "victorsingthegospel@gmail.com",
+    "", // Empty slot for future email
+    "", // Empty slot for future email
+  ]
 
   useEffect(() => {
     const checkAuth = async () => {
