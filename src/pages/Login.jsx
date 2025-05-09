@@ -12,8 +12,15 @@ const Login = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // List of authorized emails
-  const authorizedEmails = ["lennydany3@gmail.com", "lennydanygpt@gmail.com"]
+  // List of authorized emails (max 6)
+  const authorizedEmails = [
+    "lennydany3@gmail.com",
+    "lennydanygpt@gmail.com",
+    "rvijayanand79@gmail.com",
+    "victorsingthegospel@gmail.com",
+    "", // Empty slot for future email
+    "", // Empty slot for future email
+  ]
 
   // Check if user is already logged in
   useEffect(() => {
