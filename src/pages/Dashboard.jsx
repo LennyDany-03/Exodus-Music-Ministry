@@ -17,7 +17,7 @@ const Dashboard = () => {
   })
 
   // List of authorized emails
-  const authorizedEmails = ["lennydany3@gmail.com", "lennydanygpt@gmail.com", "rvijayanand79@gmail.com","ld8520@srmist.edu.in"]
+  const authorizedEmails = ["lennydany3@gmail.com","rvijayanand79@gmail.com"]
 
   useEffect(() => {
     const checkAuth = async () => {
