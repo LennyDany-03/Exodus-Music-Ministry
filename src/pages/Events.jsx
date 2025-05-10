@@ -16,6 +16,9 @@ const Events = () => {
   const [events, setEvents] = useState([])
   const [fetchError, setFetchError] = useState(null)
   const formRef = useRef(null)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showCalendar, setShowCalendar] = useState(false)
+  const calendarRef = useRef(null)
 
   // Fetch events from Supabase
   useEffect(() => {
@@ -49,6 +52,20 @@ const Events = () => {
 
     fetchEvents()
   }, [])
+
+  // Close calendar when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setShowCalendar(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [calendarRef])
 
   // Scroll to form handler
   const scrollToForm = () => {
@@ -166,6 +183,130 @@ const Events = () => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [eventDate, setEventDate] = useState("")
+  const [location, setLocation] = useState("")
+  const [details, setDetails] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formError, setFormError] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [displayValue, setDisplayValue] = useState("")
+
+  // Calendar days generation
+  const generateCalendarDays = (year, month) => {
+    const firstDay = new Date(year, month, 1).getDay()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    const days = []
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null)
+    }
+
+    // Add days of the month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i)
+    }
+
+    return days
+  }
+
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
+  const calendarDays = generateCalendarDays(currentYear, currentMonth)
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+
+  const goToPreviousMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11)
+      setCurrentYear(currentYear - 1)
+    } else {
+      setCurrentMonth(currentMonth - 1)
+    }
+  }
+
+  const goToNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0)
+      setCurrentYear(currentYear + 1)
+    } else {
+      setCurrentMonth(currentMonth + 1)
+    }
+  }
+
+  const selectDate = (day) => {
+    if (day) {
+      const date = new Date(currentYear, currentMonth, day)
+      setSelectedDate(date)
+      setEventDate(`${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`)
+      setDisplayValue(formatDate(date))
+      setShowCalendar(false)
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setFormError(null)
+
+    try {
+      // Validate form
+      if (!name || !email || !eventDate || !location || !details) {
+        throw new Error("Please fill in all required fields")
+      }
+
+      // Submit to Supabase
+      const { error } = await supabase.from("host_event").insert([
+        {
+          name,
+          email,
+          event_date: eventDate,
+          location,
+          details,
+          status: "pending",
+        },
+      ])
+
+      if (error) throw error
+
+      // Show success animation
+      setShowSuccess(true)
+
+      // Reset form
+      setName("")
+      setEmail("")
+      setEventDate("")
+      setDisplayValue("")
+      setLocation("")
+      setDetails("")
+
+      // Hide success animation after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false)
+      }, 3000)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      setFormError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <>
       {/* Loading Screen */}
@@ -198,6 +339,120 @@ const Events = () => {
             >
               EXODUS MUSIC MINISTRY
             </motion.h2>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Success Animation */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="fixed inset-0 bg-indigo-950/80 backdrop-blur-sm z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-indigo-800/90 rounded-2xl p-10 shadow-2xl max-w-md w-full mx-4 border border-indigo-600 relative overflow-hidden"
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 20 }}
+              transition={{ type: "spring", damping: 15 }}
+            >
+              {/* Background glow effect */}
+              <motion.div
+                className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-green-400 opacity-20 filter blur-xl"
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.1, 0.3, 0.1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+              />
+
+              {/* Success icon container */}
+              <div className="flex flex-col items-center justify-center relative z-10">
+                {/* Circle background */}
+                <motion.div
+                  className="w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", damping: 12 }}
+                >
+                  {/* Checkmark */}
+                  <motion.svg
+                    className="w-20 h-20 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                  >
+                    <motion.path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </motion.svg>
+                </motion.div>
+
+                {/* Success text with better visibility */}
+                <motion.h3
+                  className="text-2xl font-bold text-white mb-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  Success!
+                </motion.h3>
+
+                <motion.p
+                  className="text-green-300 text-center text-lg"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  Your event request has been submitted
+                </motion.p>
+
+                {/* Optional close button */}
+                <motion.button
+                  onClick={() => setShowSuccess(false)}
+                  className="mt-6 px-4 py-2 bg-indigo-700 hover:bg-indigo-600 text-white rounded-full text-sm transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Close
+                </motion.button>
+              </div>
+
+              {/* Animated particles */}
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 rounded-full bg-green-400"
+                  initial={{
+                    x: 0,
+                    y: 0,
+                    scale: 0,
+                  }}
+                  animate={{
+                    x: (Math.random() - 0.5) * 150,
+                    y: (Math.random() - 0.5) * 150,
+                    scale: Math.random() * 1.5,
+                    opacity: [1, 0],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    delay: 0.3 + Math.random() * 0.5,
+                    ease: "easeOut",
+                  }}
+                />
+              ))}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -592,39 +847,7 @@ const Events = () => {
                 {/* Form section */}
                 <div className="bg-indigo-900/90 backdrop-blur-md p-10 border-t border-indigo-700">
                   <motion.div className="text-center" variants={fadeInUp}>
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault()
-                        const formData = new FormData(e.target)
-
-                        try {
-                          // Show loading indicator or disable button here if needed
-
-                          const eventData = {
-                            name: formData.get("name"),
-                            email: formData.get("email"),
-                            event_date: formData.get("event_date"),
-                            location: formData.get("location"),
-                            details: formData.get("details"),
-                            status: "pending",
-                            created_at: new Date().toISOString(),
-                          }
-
-                          const { error } = await supabase.from("host_event").insert([eventData])
-
-                          if (error) throw error
-
-                          // Clear form
-                          e.target.reset()
-
-                          // Show success message
-                          alert("Your event request has been submitted successfully! We will contact you soon.")
-                        } catch (error) {
-                          console.error("Error submitting event request:", error)
-                          alert("There was an error submitting your request. Please try again later.")
-                        }
-                      }}
-                    >
+                    <form onSubmit={handleSubmit}>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div className="space-y-2">
                           <label htmlFor="name" className="block text-sm font-medium text-indigo-100">
@@ -635,6 +858,8 @@ const Events = () => {
                               type="text"
                               id="name"
                               name="name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
                               required
                               className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
                               placeholder="Enter your name"
@@ -667,6 +892,8 @@ const Events = () => {
                               type="email"
                               id="email"
                               name="email"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
                               required
                               className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
                               placeholder="Enter your email"
@@ -696,12 +923,16 @@ const Events = () => {
                           </label>
                           <div className="relative">
                             <input
-                              type="date"
-                              id="event_date"
-                              name="event_date"
-                              required
-                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                              type="text"
+                              id="event_date_display"
+                              name="event_date_display"
+                              value={displayValue}
+                              onClick={() => setShowCalendar(!showCalendar)}
+                              readOnly
+                              className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white cursor-pointer"
+                              placeholder="Select a date"
                             />
+                            <input type="hidden" id="event_date" name="event_date" value={eventDate} />
                             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
                               <svg
                                 className="w-5 h-5"
@@ -718,6 +949,111 @@ const Events = () => {
                                 ></path>
                               </svg>
                             </div>
+
+                            {/* Calendar Dropdown */}
+                            {showCalendar && (
+                              <div
+                                ref={calendarRef}
+                                className="absolute mt-2 left-0 right-0 bg-indigo-800 border border-indigo-600 rounded-lg shadow-xl z-30 overflow-hidden"
+                              >
+                                <div className="p-3 bg-indigo-900 border-b border-indigo-700 flex justify-between items-center">
+                                  <button
+                                    type="button"
+                                    onClick={goToPreviousMonth}
+                                    className="p-1 rounded-full hover:bg-indigo-700 text-indigo-300 hover:text-white transition-colors"
+                                  >
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 19l-7-7 7-7"
+                                      ></path>
+                                    </svg>
+                                  </button>
+
+                                  <div className="font-medium text-white">
+                                    {monthNames[currentMonth]} {currentYear}
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    onClick={goToNextMonth}
+                                    className="p-1 rounded-full hover:bg-indigo-700 text-indigo-300 hover:text-white transition-colors"
+                                  >
+                                    <svg
+                                      className="w-5 h-5"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 5l7 7-7 7"
+                                      ></path>
+                                    </svg>
+                                  </button>
+                                </div>
+
+                                <div className="p-3">
+                                  {/* Day headers */}
+                                  <div className="grid grid-cols-7 gap-1 mb-2">
+                                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, index) => (
+                                      <div key={index} className="text-center text-xs text-indigo-300 font-medium py-1">
+                                        {day}
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Calendar days */}
+                                  <div className="grid grid-cols-7 gap-1">
+                                    {calendarDays.map((day, index) => (
+                                      <div key={index} className="text-center">
+                                        {day ? (
+                                          <button
+                                            type="button"
+                                            onClick={() => selectDate(day)}
+                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors
+                                              ${
+                                                selectedDate &&
+                                                selectedDate.getDate() === day &&
+                                                selectedDate.getMonth() === currentMonth &&
+                                                selectedDate.getFullYear() === currentYear
+                                                  ? "bg-yellow-400 text-indigo-900 font-bold"
+                                                  : "text-white hover:bg-indigo-700"
+                                              }
+                                            `}
+                                          >
+                                            {day}
+                                          </button>
+                                        ) : (
+                                          <div className="w-8 h-8"></div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div className="p-2 border-t border-indigo-700 flex justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowCalendar(false)}
+                                    className="px-3 py-1 text-sm text-indigo-300 hover:text-white transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -730,6 +1066,8 @@ const Events = () => {
                               type="text"
                               id="location"
                               name="location"
+                              value={location}
+                              onChange={(e) => setLocation(e.target.value)}
                               required
                               className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white pr-10"
                               placeholder="City, Venue"
@@ -768,6 +1106,8 @@ const Events = () => {
                           <textarea
                             id="details"
                             name="details"
+                            value={details}
+                            onChange={(e) => setDetails(e.target.value)}
                             required
                             className="w-full px-4 py-3 bg-indigo-800/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white h-32"
                             placeholder="Tell us about your event and requirements"
@@ -793,27 +1133,56 @@ const Events = () => {
 
                       <motion.button
                         type="submit"
+                        disabled={isSubmitting}
                         whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
                         whileTap={{ scale: 0.95 }}
-                        className="relative overflow-hidden group px-10 py-4 rounded-full"
+                        className="relative overflow-hidden group px-10 py-4 rounded-full disabled:opacity-70"
                       >
                         <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-500 to-yellow-400 group-hover:from-yellow-400 group-hover:to-yellow-300 transition-all duration-300 rounded-full"></span>
                         <span className="relative flex items-center justify-center text-indigo-950 font-bold text-lg">
-                          Submit Request
-                          <svg
-                            className="ml-2 w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M14 5l7 7m0 0l-7 7m7-7H3"
-                            ></path>
-                          </svg>
+                          {isSubmitting ? (
+                            <>
+                              <svg
+                                className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-900"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                              </svg>
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              Submit Request
+                              <svg
+                                className="ml-2 w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                ></path>
+                              </svg>
+                            </>
+                          )}
                         </span>
                       </motion.button>
                     </form>
