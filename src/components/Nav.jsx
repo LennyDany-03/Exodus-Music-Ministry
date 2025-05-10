@@ -253,7 +253,7 @@ const NavBar = () => {
 
               {user ? (
                 <div className="flex items-center gap-2">
-                  <a href="/login">
+                  <a href="/dashboard">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
