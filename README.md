@@ -28,7 +28,7 @@ Welcome to the official website repository of **Exodus Music Ministry**, a worsh
 
 | Frontend     | Backend      | Database    | Deployment |
 |--------------|--------------|-------------|------------|
-| React / HTML / CSS / Tailwind | Node.js / Express (or Flask/Django) | MongoDB / Firebase / Supabase | Vercel / Netlify / GitHub Pages |
+| React /Tailwind | Node.js | Supabase | Vercel |
 
 ---
 
