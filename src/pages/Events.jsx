@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
 import TeamPhoto from "../assets/Team Photo.jpg"
@@ -19,6 +19,7 @@ const Events = () => {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
   const calendarRef = useRef(null)
+  const [eventType, setEventType] = useState("past") // "past" or "upcoming"
 
   // Fetch events from Supabase
   useEffect(() => {
@@ -309,393 +310,96 @@ const Events = () => {
 
   return (
     <>
-      {/* Loading Screen */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            className="fixed inset-0 bg-indigo-950 z-50 flex flex-col items-center justify-center"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-              className="w-20 h-20 mb-8 relative"
-            >
-              <div className="w-full h-full rounded-full border-t-4 border-b-4 border-yellow-400"></div>
-              <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-4xl">♪</div>
-            </motion.div>
-            <motion.h2
-              className="text-white text-xl font-bold"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-            >
-              EXODUS MUSIC MINISTRY
-            </motion.h2>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Success Animation */}
-      <AnimatePresence>
-        {showSuccess && (
-          <motion.div
-            className="fixed inset-0 bg-indigo-950/80 backdrop-blur-sm z-50 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-indigo-800/90 rounded-2xl p-10 shadow-2xl max-w-md w-full mx-4 border border-indigo-600 relative overflow-hidden"
-              initial={{ scale: 0.8, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 20 }}
-              transition={{ type: "spring", damping: 15 }}
-            >
-              {/* Background glow effect */}
-              <motion.div
-                className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 rounded-full bg-green-400 opacity-20 filter blur-xl"
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.1, 0.3, 0.1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                }}
-              />
-
-              {/* Success icon container */}
-              <div className="flex flex-col items-center justify-center relative z-10">
-                {/* Circle background */}
-                <motion.div
-                  className="w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", damping: 12 }}
-                >
-                  {/* Checkmark */}
-                  <motion.svg
-                    className="w-20 h-20 text-white"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-                  >
-                    <motion.path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                  </motion.svg>
-                </motion.div>
-
-                {/* Success text with better visibility */}
-                <motion.h3
-                  className="text-2xl font-bold text-white mb-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  Success!
-                </motion.h3>
-
-                <motion.p
-                  className="text-green-300 text-center text-lg"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
-                >
-                  Your event request has been submitted
-                </motion.p>
-
-                {/* Optional close button */}
-                <motion.button
-                  onClick={() => setShowSuccess(false)}
-                  className="mt-6 px-4 py-2 bg-indigo-700 hover:bg-indigo-600 text-white rounded-full text-sm transition-colors"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Close
-                </motion.button>
-              </div>
-
-              {/* Animated particles */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 rounded-full bg-green-400"
-                  initial={{
-                    x: 0,
-                    y: 0,
-                    scale: 0,
-                  }}
-                  animate={{
-                    x: (Math.random() - 0.5) * 150,
-                    y: (Math.random() - 0.5) * 150,
-                    scale: Math.random() * 1.5,
-                    opacity: [1, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    delay: 0.3 + Math.random() * 0.5,
-                    ease: "easeOut",
-                  }}
-                />
-              ))}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* NavBar Component */}
       <NavBar />
 
       <div className="bg-gradient-to-b from-indigo-950 via-indigo-900 to-indigo-950 text-white">
-        {/* Hero Section */}
-        <motion.section
-          className="min-h-screen flex items-center justify-center relative overflow-hidden py-20"
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-        >
-          {/* Background */}
-          <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-indigo-950/70 z-10"></div>
-            <motion.div
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${TeamPhoto})` }}
-            ></motion.div>
-          </div>
-
-          {/* Animated particles */}
-          <div className="absolute inset-0 z-5 pointer-events-none">
-            {[...Array(12)].map((_, index) => (
-              <motion.div
-                key={index}
-                className="absolute text-yellow-400 opacity-60"
-                initial={{
-                  x: Math.random() * 100 + "%",
-                  y: Math.random() * 100 + "%",
-                }}
-                animate={{
-                  y: [0, -15, 0],
-                  opacity: [0.2, 0.8, 0.2],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 3,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                  delay: Math.random() * 2,
-                }}
-              >
-                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="container mx-auto px-4 z-20 text-center">
-            <motion.div variants={staggerContainer} initial="hidden" animate="visible">
-              <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
-                <span className="block">OUR</span>
-                <motion.span
-                  className="text-yellow-400 inline-block"
-                  animate={{
-                    textShadow: [
-                      "0px 0px 0px rgba(250, 204, 21, 0)",
-                      "0px 0px 20px rgba(250, 204, 21, 0.5)",
-                      "0px 0px 0px rgba(250, 204, 21, 0)",
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                >
-                  EVENTS
-                </motion.span>
-              </motion.h1>
-
-              <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-                Relive our powerful worship experiences and musical celebrations
-              </motion.p>
-
-              <motion.div variants={fadeInUp}>
-                <motion.button
-                  onClick={scrollToForm}
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                >
-                  Host an Event
-                </motion.button>
-              </motion.div>
-            </motion.div>
-          </div>
-        </motion.section>
-
-        {/* Past Events Section */}
+        {/* Events Section - Now the first section */}
         <motion.section
           className="py-24 relative overflow-hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeIn}
-          style={{
-            y: pastEventsY,
-          }}
         >
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-indigo-950/80 z-0"></div>
-
-          {/* Animated background shapes */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-indigo-600/10"
-                style={{
-                  width: 100 + Math.random() * 300,
-                  height: 100 + Math.random() * 300,
-                  left: Math.random() * 100 + "%",
-                  top: Math.random() * 100 + "%",
-                }}
-                animate={{
-                  x: [0, Math.random() * 30 - 15],
-                  y: [0, Math.random() * 30 - 15],
-                  opacity: [0.1, 0.2, 0.1],
-                }}
-                transition={{
-                  duration: 8 + Math.random() * 5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                }}
-              />
-            ))}
-          </div>
-
           <div className="container mx-auto px-4 relative z-10">
             <motion.div className="text-center mb-16" variants={fadeInUp}>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Past Events</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                {eventType === "past" ? "Past Events" : "Upcoming Events"}
+              </h2>
               <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
-                Relive the moments of worship and praise from our previous events
+                {eventType === "past"
+                  ? "Relive the moments of worship and praise from our previous events"
+                  : "Join us for our upcoming worship experiences and musical celebrations"}
               </p>
             </motion.div>
 
-            {/* Error message if fetch failed */}
-            {fetchError && (
-              <motion.div
-                variants={fadeInUp}
-                className="bg-red-500/20 border border-red-500 text-red-200 p-4 rounded-lg text-center mb-8"
-              >
-                {fetchError}
-              </motion.div>
-            )}
+            {/* Event Type Toggle */}
+            <motion.div
+              className="flex justify-center gap-4 mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {[
+                { id: "past", name: "Past Events" },
+                { id: "upcoming", name: "Upcoming Events" },
+              ].map((type) => (
+                <motion.button
+                  key={type.id}
+                  onClick={() => setEventType(type.id)}
+                  className={`px-8 py-3 rounded-full text-lg font-bold transition-all duration-300 ${
+                    eventType === type.id
+                      ? "bg-yellow-400 text-indigo-950"
+                      : "bg-indigo-800/60 text-white hover:bg-indigo-700"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {type.name}
+                </motion.button>
+              ))}
+            </motion.div>
 
-            {/* Event cards grid */}
+            {/* Event cards grid - filter based on eventType */}
             {displayedEvents.length > 0 ? (
               <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={staggerContainer}>
-                {displayedEvents.map((event, index) => (
-                  <motion.div
-                    key={index}
-                    variants={fadeInUp}
-                    className="relative h-[450px] rounded-xl overflow-hidden group"
-                  >
-                    {/* Card background image */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                      style={{ backgroundImage: `url(${event.image_url})` }}
-                    />
+                {displayedEvents
+                  .filter((event) => {
+                    const eventDate = new Date(event.date)
+                    const now = new Date()
+                    return eventType === "past" ? eventDate < now : eventDate >= now
+                  })
+                  .map((event, index) => (
+                    <motion.div
+                      key={index}
+                      variants={fadeInUp}
+                      className="relative h-[450px] rounded-xl overflow-hidden group"
+                    >
+                      {/* Card background image */}
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                        style={{ backgroundImage: `url(${event.image_url})` }}
+                      />
 
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-900/40 to-transparent opacity-60" />
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-900/40 to-transparent opacity-60" />
 
-                    {/* Date badge */}
-                    <div className="absolute top-4 right-4 z-20">
-                      <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
-                        {formatDate(event.date)}
-                      </span>
-                    </div>
+                      {/* Date badge */}
+                      <div className="absolute top-4 right-4 z-20">
+                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
+                          {formatDate(event.date)}
+                        </span>
+                      </div>
 
-                    {/* Bottom content - always visible */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-0 transition-transform duration-500">
-                      <h3 className="text-2xl font-bold mb-2 text-white">{event.title}</h3>
-                      <p className="text-yellow-300 flex items-center text-sm mb-2">
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          ></path>
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          ></path>
-                        </svg>
-                        {event.location}
-                      </p>
-                    </div>
-
-                    {/* Hover overlay with details */}
-                    <div className="absolute inset-0 bg-indigo-800/80 backdrop-blur-sm flex flex-col justify-center items-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <h3 className="text-2xl font-bold mb-4 text-white">{event.title}</h3>
-                      <div className="w-12 h-1 bg-yellow-400 mb-4"></div>
-                      <p className="text-white text-center mb-6">{event.description}</p>
-                      <p className="text-yellow-300 flex items-center text-sm mb-6">
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          ></path>
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          ></path>
-                        </svg>
-                        {event.location} • {formatDate(event.date)}
-                      </p>
-                      {event.url && (
-                        <motion.a
-                          href={event.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg flex items-center"
-                        >
-                          View Details
+                      {/* Bottom content - always visible */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-0 transition-transform duration-500">
+                        <h3 className="text-2xl font-bold mb-2 text-white">{event.title}</h3>
+                        <p className="text-yellow-300 flex items-center text-sm mb-2">
                           <svg
-                            className="ml-2 w-4 h-4"
+                            className="w-4 h-4 mr-2"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -705,26 +409,84 @@ const Events = () => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth="2"
-                              d="M14 5l7 7m0 0l-7 7m7-7H3"
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            ></path>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                             ></path>
                           </svg>
-                        </motion.a>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                          {event.location}
+                        </p>
+                      </div>
+
+                      {/* Hover overlay with details */}
+                      <div className="absolute inset-0 bg-indigo-800/80 backdrop-blur-sm flex flex-col justify-center items-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <h3 className="text-2xl font-bold mb-4 text-white">{event.title}</h3>
+                        <div className="w-12 h-1 bg-yellow-400 mb-4"></div>
+                        <p className="text-white text-center mb-6">{event.description}</p>
+                        <p className="text-yellow-300 flex items-center text-sm mb-6">
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            ></path>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            ></path>
+                          </svg>
+                          {event.location} • {formatDate(event.date)}
+                        </p>
+                        {event.url && (
+                          <motion.a
+                            href={event.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg flex items-center"
+                          >
+                            View Details
+                            <svg
+                              className="ml-2 w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                              ></path>
+                            </svg>
+                          </motion.a>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
               </motion.div>
             ) : (
-              // Show when no events are available and not loading
-              !isLoading && (
-                <motion.div
-                  variants={fadeInUp}
-                  className="text-center p-8 bg-indigo-900/30 rounded-xl border border-indigo-800"
-                >
-                  <p className="text-xl text-indigo-200">No events available at the moment.</p>
-                  <p className="mt-2 text-indigo-300">Be the first to create an event!</p>
-                </motion.div>
-              )
+              <motion.div
+                variants={fadeInUp}
+                className="text-center p-8 bg-indigo-900/30 rounded-xl border border-indigo-800"
+              >
+                <p className="text-xl text-indigo-200">No {eventType} events available at the moment.</p>
+              </motion.div>
             )}
 
             {/* View More Button */}

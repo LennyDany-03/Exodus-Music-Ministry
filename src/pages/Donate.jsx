@@ -1,9 +1,8 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { motion, useAnimation, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
-import TeamPhoto from "../assets/Team Photo.jpg"
 
 // Razorpay initialization function
 const initializeRazorpay = () => {
@@ -41,11 +40,6 @@ const Donate = () => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Parallax effects
-  const formY = useTransform(
-    scrollYProgress,
-    [0.1, 0.3],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
-  )
   const impactY = useTransform(
     scrollYProgress,
     [0.4, 0.6],
@@ -66,6 +60,14 @@ const Donate = () => {
     },
   }
 
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 1, ease: "easeInOut" },
+    },
+  }
+
   const staggerContainer = {
     hidden: {},
     visible: {
@@ -77,28 +79,28 @@ const Donate = () => {
   }
 
   // Initial animation sequence
-  useEffect(() => {
-    const sequence = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setIsLoading(false)
-      await controls.start({
-        y: 0,
-        transition: { duration: 0.7 },
-      })
-    }
+  // useEffect(() => {
+  //   const sequence = async () => {
+  //     await new Promise((resolve) => setTimeout(resolve, 1000))
+  //     setIsLoading(false)
+  //     await controls.start({
+  //       y: 0,
+  //       transition: { duration: 0.7 },
+  //     })
+  //   }
 
-    sequence()
-  }, [controls])
+  //   sequence()
+  // }, [controls])
 
-  useEffect(() => {
-    const handleResize = () => {
-      // Force a re-render to update animations based on new window size
-      setIsLoading(false)
-    }
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     // Force a re-render to update animations based on new window size
+  //     setIsLoading(false)
+  //   }
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+  //   window.addEventListener("resize", handleResize)
+  //   return () => window.removeEventListener("resize", handleResize)
+  // }, [])
 
   // Donation impact data
   const donationImpacts = [
@@ -291,92 +293,13 @@ const Donate = () => {
       <NavBar />
 
       <div className="overflow-x-hidden bg-indigo-950 text-white">
-        {/* Hero Section */}
+        {/* Donation Form Section - Now the first section */}
         <motion.section
-          className="min-h-screen relative flex items-center justify-center overflow-hidden"
-          variants={staggerContainer}
+          className="py-24 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
           initial="hidden"
-          animate="visible"
-        >
-          {/* Background */}
-          <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-indigo-950 opacity-60 z-10"></div>
-            <motion.div
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${TeamPhoto})` }}
-            ></motion.div>
-          </div>
-
-          {/* Content */}
-          <div className="container mx-auto px-4 z-20 text-center">
-            <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
-              <span className="block">SUPPORT OUR</span>
-              <motion.span
-                className="text-yellow-400 inline-block"
-                animate={{
-                  textShadow: [
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                    "0px 0px 20px rgba(250, 204, 21, 0.5)",
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-              >
-                MINISTRY
-              </motion.span>
-            </motion.h1>
-
-            <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-              Your generous donations help us spread God's love through music and worship
-            </motion.p>
-
-            <motion.div variants={fadeInUp}>
-              <a href="#donate-form">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                >
-                  Donate Now
-                </motion.button>
-              </a>
-            </motion.div>
-          </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-          >
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-          </motion.div>
-        </motion.section>
-
-        {/* Donation Form Section */}
-        <motion.section
-          id="donate-form"
-          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: formY }}
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeIn}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -386,10 +309,10 @@ const Donate = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Make a Donation</h2>
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">Support Our Ministry</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
-                Your financial support enables us to continue our mission of spreading God's love through music ministry
+                Your generous donations help us spread God's love through music and worship
               </p>
             </motion.div>
 

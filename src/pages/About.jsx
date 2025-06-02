@@ -1,6 +1,6 @@
 "use client"
-import { useEffect, useState } from "react"
-import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { useEffect } from "react"
+import { motion, useAnimation, useScroll, useTransform } from "framer-motion"
 import NavBar from "../components/Nav"
 
 import TeamPhoto from "../assets/Team Photo.jpg"
@@ -17,11 +17,8 @@ import SeventhMember from "../assets/SeventhMember.jpg"
 const About = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
-  const [isLoading, setIsLoading] = useState(true)
 
   // Enhanced parallax effects
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
-  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
   const historyY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
   const visionY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
   const teamRotate = useTransform(scrollYProgress, [0.4, 0.6], [-5, 0])
@@ -30,7 +27,6 @@ const About = () => {
   useEffect(() => {
     const sequence = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      setIsLoading(false)
       await controls.start({
         opacity: 1,
         y: 0,
@@ -42,24 +38,6 @@ const About = () => {
   }, [controls])
 
   // Enhanced animation variants
-  const fadeInUp = {
-    hidden: { y: 60 },
-    visible: {
-      y: 0,
-      transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] },
-    },
-  }
-
-  const staggerContainer = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
   const cardVariants = {
     hidden: { y: 50 },
     visible: (i) => ({
@@ -74,29 +52,6 @@ const About = () => {
       y: -12,
       boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.3)",
       transition: { duration: 0.4, ease: "easeOut" },
-    },
-  }
-
-  // Loading screen animation
-  const loadingVariants = {
-    hidden: { opacity: 1 },
-    exit: {
-      opacity: 0,
-      transition: {
-        duration: 0.8,
-        ease: "easeInOut",
-      },
-    },
-  }
-
-  const loadingTextVariants = {
-    animate: {
-      opacity: [0.3, 1, 0.3],
-      transition: {
-        duration: 1.5,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-      },
     },
   }
 
@@ -116,20 +71,20 @@ const About = () => {
     },
     {
       name: "L Joseph Vijay Anand",
-      role: "Admnistrator",
+      role: "Administrator",
       bio: "L. Joseph Vijay Anand serves as the steady hand behind our operations, ensuring every aspect of the ministry flows with order, purpose, and grace.",
       image: Joseph,
     },
     {
       name: "George Stephen Raj J",
       role: "Administrator",
-      bio: "George Stephen Raj J brings clarity and commitment to his role, managing the ministry’s functions with wisdom and a deep sense of calling.",
+      bio: "George Stephen Raj J brings clarity and commitment to his role, managing the ministry's functions with wisdom and a deep sense of calling.",
       image: George,
     },
     {
       name: "Saral Hendry",
       role: "Treasurer",
-      bio: "Saral Hendry handles the ministry’s finances with integrity and care, ensuring every resource is stewarded faithfully for the glory of God.",
+      bio: "Saral Hendry handles the ministry's finances with integrity and care, ensuring every resource is stewarded faithfully for the glory of God.",
       image: Saral,
     },
     {
@@ -161,8 +116,7 @@ const About = () => {
     {
       icon: "🎵",
       title: "Musical Excellence",
-      description:
-        "We strive for excellence in our musicianship as an offering to God and to inspire our congregation.",
+      description: "We strive for excellence in our musicianship as an offering to God and to inspire our congregation.",
     },
     {
       icon: "❤️",
@@ -183,144 +137,17 @@ const About = () => {
 
   return (
     <>
-      {/* Loading Screen */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            className="fixed inset-0 bg-indigo-950 z-50 flex flex-col items-center justify-center"
-            variants={loadingVariants}
-            initial="hidden"
-            exit="exit"
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-              className="w-20 h-20 mb-8 relative"
-            >
-              <div className="w-full h-full rounded-full border-t-4 border-b-4 border-yellow-400"></div>
-              <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-4xl">♪</div>
-            </motion.div>
-            <motion.h2 className="text-white text-xl font-bold" variants={loadingTextVariants} animate="animate">
-              EXODUS MUSIC MINISTRY
-            </motion.h2>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* NavBar Component */}
       <NavBar />
 
       <div className="overflow-x-hidden bg-indigo-950 text-white">
-        {/* Hero Section */}
+        {/* Our History Section - Now the first section */}
         <motion.section
-          className="h-screen relative flex items-center justify-center overflow-hidden"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          style={{
-            scale: heroScale,
-            y: heroY,
-          }}
-        >
-          {/* Background Animation */}
-          <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-indigo-950 opacity-60 z-10"></div>
-            <motion.div
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${TeamPhoto})` }}
-            ></motion.div>
-          </div>
-
-          {/* Particles */}
-          <div className="absolute inset-0 z-5">
-            {[...Array(20)].map((_, index) => (
-              <motion.div
-                key={index}
-                className="absolute text-yellow-400 opacity-60"
-                initial={{
-                  x: Math.random() * window.innerWidth,
-                  y: Math.random() * window.innerHeight,
-                }}
-                animate={{
-                  y: [null, Math.random() * 100 - 50],
-                  opacity: [0.2, 0.8, 0.2],
-                }}
-                transition={{
-                  duration: 5 + Math.random() * 5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                }}
-              >
-                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="container mx-auto px-4 z-20 text-center">
-            <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
-              <span className="block">ABOUT</span>
-              <motion.span
-                className="text-yellow-400 inline-block"
-                animate={{
-                  textShadow: [
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                    "0px 0px 20px rgba(250, 204, 21, 0.5)",
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-              >
-                EXODUS MUSIC MINISTRY
-              </motion.span>
-            </motion.h1>
-
-            <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-              Discover our journey, mission, and the passionate team behind our worship ministry
-            </motion.p>
-          </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-          >
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-          </motion.div>
-        </motion.section>
-
-        {/* Our History Section */}
-        <motion.section
-          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: historyY }}
+          className="py-24 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -707,7 +534,7 @@ const About = () => {
             <motion.div
               animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.7, 0.5] }}
               transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="w-full h-full bg-center"
+              className="w-full h-full bg-center bg-cover"
               style={{ backgroundImage: `url(${TeamPhoto})` }}
             ></motion.div>
           </div>

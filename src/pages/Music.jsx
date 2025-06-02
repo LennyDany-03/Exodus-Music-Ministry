@@ -1,38 +1,15 @@
 "use client"
-import { useEffect, useState } from "react"
-import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { useState } from "react"
+import { motion, useAnimation, useScroll } from "framer-motion"
 import NavBar from "../components/Nav"
-
-import TeamPhoto from "../assets/Team Photo.jpg"
 import Team3rdPhoto from "../assets/Team3rdPhoto.jpg"
 
 const Music = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
-  const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("albums")
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTrack, setCurrentTrack] = useState(null)
-
-  // Enhanced parallax effects
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
-  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 100])
-  const albumsY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
-  const streamingY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
-
-  // Initial animation sequence
-  useEffect(() => {
-    const sequence = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setIsLoading(false)
-      await controls.start({
-        y: 0,
-        transition: { duration: 0.7, staggerChildren: 0.3 },
-      })
-    }
-
-    sequence()
-  }, [controls])
 
   // Enhanced animation variants
   const fadeInUp = {
@@ -67,28 +44,6 @@ const Music = () => {
       y: -12,
       boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.3)",
       transition: { duration: 0.4, ease: "easeOut" },
-    },
-  }
-
-  // Loading screen animation
-  const loadingVariants = {
-    hidden: {},
-    exit: {
-      transition: {
-        duration: 0.8,
-        ease: "easeInOut",
-      },
-    },
-  }
-
-  const loadingTextVariants = {
-    animate: {
-      opacity: [0.3, 1, 0.3],
-      transition: {
-        duration: 1.5,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-      },
     },
   }
 
@@ -247,159 +202,31 @@ const Music = () => {
     }
   }
 
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 1,
+        ease: "easeInOut",
+      },
+    },
+  }
+
   return (
     <>
-      {/* Loading Screen */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            className="fixed inset-0 bg-indigo-950 z-50 flex flex-col items-center justify-center"
-            variants={loadingVariants}
-            initial="hidden"
-            exit="exit"
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-              className="w-20 h-20 mb-8 relative"
-            >
-              <div className="w-full h-full rounded-full border-t-4 border-b-4 border-yellow-400"></div>
-              <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-4xl">♪</div>
-            </motion.div>
-            <motion.h2 className="text-white text-xl font-bold" variants={loadingTextVariants} animate="animate">
-              EXODUS MUSIC MINISTRY
-            </motion.h2>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* NavBar Component */}
       <NavBar />
 
       <div className="overflow-x-hidden bg-indigo-950 text-white">
-        {/* Hero Section */}
-        <motion.section
-          className="h-screen relative flex items-center justify-center overflow-hidden"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          style={{
-            scale: heroScale,
-            y: heroY,
-          }}
-        >
-          {/* Background Animation */}
-          <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 bg-indigo-950 opacity-60 z-10"></div>
-            <motion.div
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${TeamPhoto})` }}
-            ></motion.div>
-          </div>
-
-          {/* Particles */}
-          <div className="absolute inset-0 z-5">
-            {[...Array(20)].map((_, index) => (
-              <motion.div
-                key={index}
-                className="absolute text-yellow-400 opacity-60"
-                initial={{
-                  x: Math.random() * window.innerWidth,
-                  y: Math.random() * window.innerHeight,
-                }}
-                animate={{
-                  y: [null, Math.random() * 100 - 50],
-                  opacity: [0.2, 0.8, 0.2],
-                }}
-                transition={{
-                  duration: 5 + Math.random() * 5,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                }}
-              >
-                {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="container mx-auto px-4 z-20 text-center">
-            <motion.h1 className="text-5xl md:text-7xl font-bold mb-6" variants={fadeInUp}>
-              <span className="block">OUR</span>
-              <motion.span
-                className="text-yellow-400 inline-block"
-                animate={{
-                  textShadow: [
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                    "0px 0px 20px rgba(250, 204, 21, 0.5)",
-                    "0px 0px 0px rgba(250, 204, 21, 0)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-              >
-                MUSIC
-              </motion.span>
-            </motion.h1>
-
-            <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-              Explore our albums, singles, and live recordings that glorify God through anointed worship
-            </motion.p>
-
-            <motion.div variants={fadeInUp}>
-              <a href="#music-section">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                >
-                  Listen Now
-                </motion.button>
-              </a>
-            </motion.div>
-          </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-            animate={{
-              y: [0, 10, 0],
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-          >
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-          </motion.div>
-        </motion.section>
-
-        {/* Music Section */}
+        {/* Music Section - Now the first section */}
         <motion.section
           id="music-section"
-          className="py-32 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
-          style={{ y: albumsY }}
+          className="py-24 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeIn}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -776,10 +603,7 @@ const Music = () => {
         </motion.section>
 
         {/* Streaming Platforms Section */}
-        <motion.section
-          className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative"
-          style={{ y: streamingY }}
-        >
+        <motion.section className="py-32 bg-gradient-to-b from-indigo-900 to-indigo-950 overflow-hidden relative">
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-16"
