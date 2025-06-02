@@ -187,27 +187,7 @@ const NavBar = () => {
           {/* Logo */}
           <a href="/" className="flex items-center">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center">
-              <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-10 w-auto mr-3" />
-              <div className="flex flex-col">
-                <motion.span
-                  className="text-xl font-bold text-yellow-400"
-                  animate={
-                    isScrolled
-                      ? {}
-                      : {
-                          textShadow: [
-                            "0px 0px 0px rgba(250, 204, 21, 0)",
-                            "0px 0px 10px rgba(250, 204, 21, 0.5)",
-                            "0px 0px 0px rgba(250, 204, 21, 0)",
-                          ],
-                        }
-                  }
-                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                >
-                  EXODUS
-                </motion.span>
-                <span className="text-sm text-white font-medium">MUSIC MINISTRY</span>
-              </div>
+              <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-18 w-40 mr-3" />
             </motion.div>
           </a>
 

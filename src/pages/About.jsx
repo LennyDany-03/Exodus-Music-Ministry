@@ -11,6 +11,8 @@ import Joseph from "../assets/Joseph.jpg"
 import Helen from "../assets/Helen.jpg"
 import George from "../assets/George.jpg"
 import Saral from "../assets/Saral.png"
+import SixthMember from "../assets/6th Member.jpg"
+import SeventhMember from "../assets/SeventhMember.jpg"
 
 const About = () => {
   const controls = useAnimation()
@@ -130,6 +132,18 @@ const About = () => {
       bio: "Saral Hendry handles the ministry’s finances with integrity and care, ensuring every resource is stewarded faithfully for the glory of God.",
       image: Saral,
     },
+    {
+      name: "Rev.EdenV.Prabhu",
+      role: "Designation",
+      bio: "Rev. Eden V. Prabhu shepherds the ministry with a heart for God's people and a passion for the Word, guiding the flock with wisdom, compassion, and unwavering faithfulness to Christ.",
+      image: SixthMember,
+    },
+    {
+      name: "7th Member",
+      role: "General secretary",
+      bio: "As General Secretary, 7th Member provides visionary leadership and spiritual oversight, fostering unity, growth, and purpose across the ministry, all rooted in a deep commitment to the Gospel and the glory of God.",
+      image: SeventhMember,
+    }
   ]
 
   // Core values data
@@ -482,8 +496,7 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Vision</h3>
                     <p className="text-indigo-100 text-lg">
-                      To be a transformative force in Christian worship, creating musical experiences that draw people
-                      into God's presence and inspire spiritual growth across communities in India and beyond.
+                      To revive, preserve, and promote the rich heritage of Tamil Christian lyrics and music for the spiritual enrichment of worshippers worldwide.
                     </p>
                   </motion.div>
 
@@ -496,8 +509,7 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Mission</h3>
                     <p className="text-indigo-100 text-lg">
-                      To glorify God through excellence in music ministry, nurture spiritual growth in our team and
-                      audience, and use our musical gifts to spread the Gospel message to all who hear us.
+                      To restore original Tamil Christian hymns, archive historical lyric collections, train worship leaders, and empower global Tamil communities to rediscover and use these songs in worship through print, digital, and training initiatives.
                     </p>
                   </motion.div>
                 </div>
@@ -788,10 +800,10 @@ const About = () => {
                       scale: 1.05,
                     }}
                   >
-                    EXODUS
+                    Exodus
                   </motion.span>
                   <motion.span className="text-4xl font-bold text-white ml-2" whileHover={{ scale: 1.05 }}>
-                    MUSIC
+                    Music Ministry
                   </motion.span>
                 </motion.div>
                 <p className="text-indigo-200 text-center md:text-left mb-6">
@@ -969,7 +981,7 @@ const About = () => {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">+91 9710405200</span>
+                    <span className="text-indigo-200">+91 99444 51426</span>
                   </motion.li>
                 </ul>
               </div>

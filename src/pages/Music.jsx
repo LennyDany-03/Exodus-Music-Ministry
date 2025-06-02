@@ -409,7 +409,7 @@ const Music = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Discography</h2>
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Music Library</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
               <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
                 Browse through our collection of worship albums, singles, and live recordings
@@ -1027,10 +1027,10 @@ const Music = () => {
                       scale: 1.05,
                     }}
                   >
-                    EXODUS
+                    Exodus
                   </motion.span>
                   <motion.span className="text-4xl font-bold text-white ml-2" whileHover={{ scale: 1.05 }}>
-                    MUSIC
+                    Music Ministry
                   </motion.span>
                 </motion.div>
                 <p className="text-indigo-200 text-center md:text-left mb-6">
@@ -1208,7 +1208,7 @@ const Music = () => {
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
                     </div>
-                    <span className="text-indigo-200">+91 9710405200</span>
+                    <span className="text-indigo-200">+91 99444 51426</span>
                   </motion.li>
                 </ul>
               </div>
