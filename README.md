@@ -8,7 +8,7 @@ Welcome to the official website repository of **Exodus Music Ministry**, a worsh
 
 ## 📸 Live Preview
 
-🌐 [Visit the Website](https://www.exodusmusicministry.com)  
+🌐 [Visit the Website](https://exodus-music-ministry.vercel.app)  
 🚧 *Currently under development*
 
 ---
