@@ -1,42 +1,42 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
-import Portfolio from "./pages/Portfolio"
 import About from "./pages/About"
 import Music from "./pages/Music"
-import Contact from "./pages/Contact"
 import Events from "./pages/Events"
 import Gallery from "./pages/Gallery"
+import Contact from "./pages/Contact"
 import Donate from "./pages/Donate"
-import CreateEvent from "./pages/CreateEvent"
+import Portfolio from "./pages/Portfolio"
 import Login from "./pages/Login"
-import ImageForm from "./pages/ImageUploadForm"
 import Dashboard from "./pages/Dashboard"
-import ProtectedRoute from "./components/ProtectedRoute"
+import CreateEvent from "./pages/CreateEvent"
+import ImageUploadForm from "./pages/ImageUploadForm"
+import JoinOutMinistryForm from "./pages/JoinOutMinistryForm"
 import PeopleMessage from "./pages/PeopleMessage"
 import HostEvent from "./pages/HostEvent"
-import JoinOurMinistryForm from './pages/JoinOutMinistryForm'
-import MinistryApplications from './pages/MinistryApplications'
+import MinistryApplications from "./pages/MinistryApplications"
+import PartnerWithUs from "./pages/PartnerWithUs"
+import PartnerView from "./pages/PartnerView"
+import ProtectedRoute from "./components/ProtectedRoute"
 
-const App = () => {
+function App() {
   return (
-    <>
-      <Router>
+    <Router>
+      <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/about-us" element={<About />} />
           <Route path="/music" element={<Music />} />
-          <Route path="/music" element={<Music />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/events" element={<Events />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/partner-with-us" element={<PartnerWithUs />} />
+          <Route path="/join-our-ministry" element={<JoinOutMinistryForm />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/fullbio" element={<Portfolio />} />
-          <Route path="/join-ministry" element={<JoinOurMinistryForm />} />
-          <Route path="/ministry-applications" element={<MinistryApplications />} />
-          {/* Protected Routes */}
+
+          {/* Protected Admin Routes */}
           <Route
             path="/dashboard"
             element={
@@ -57,7 +57,7 @@ const App = () => {
             path="/image-upload-form"
             element={
               <ProtectedRoute>
-                <ImageForm />
+                <ImageUploadForm />
               </ProtectedRoute>
             }
           />
@@ -77,9 +77,25 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/ministry-applications"
+            element={
+              <ProtectedRoute>
+                <MinistryApplications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/partner-view"
+            element={
+              <ProtectedRoute>
+                <PartnerView />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-      </Router>
-    </>
+      </div>
+    </Router>
   )
 }
 

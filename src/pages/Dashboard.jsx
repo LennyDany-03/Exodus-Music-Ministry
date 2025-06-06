@@ -15,6 +15,7 @@ const Dashboard = () => {
     events: 0,
     music: 0,
     applications: 0,
+    partnerships: 0,
   })
 
   useEffect(() => {
@@ -109,15 +110,22 @@ const Dashboard = () => {
         .from("ministry_applications")
         .select("*", { count: "exact", head: true })
 
+      // Get count of partnership requests
+      const { count: partnershipCount, error: partnershipError } = await supabase
+        .from("partnership_requests")
+        .select("*", { count: "exact", head: true })
+
       if (imageError) throw imageError
       if (eventError) throw eventError
       if (applicationError) throw applicationError
+      if (partnershipError) throw partnershipError
 
       setStats({
         images: imageCount || 0,
         events: eventCount || 0,
         music: 0, // Placeholder for future music feature
         applications: applicationCount || 0,
+        partnerships: partnershipCount || 0,
       })
     } catch (error) {
       console.error("Error fetching stats:", error)
@@ -257,6 +265,23 @@ const Dashboard = () => {
                       ></path>
                     </svg>
                     <span>{stats.applications} Applications</span>
+                  </div>
+                  <div className="bg-indigo-800/50 px-4 py-2 rounded-lg flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                      ></path>
+                    </svg>
+                    <span>{stats.partnerships} Partnerships</span>
                   </div>
                 </div>
               </div>
@@ -620,6 +645,55 @@ const Dashboard = () => {
                 </div>
               </Link>
             </motion.div>
+            {/* Partnership Requests */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              whileHover={{ y: -5, scale: 1.02 }}
+            >
+              <Link to="/partner-view" className="block h-full">
+                <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
+                  <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Partnership Requests</h3>
+                  <p className="text-indigo-200 mb-4 flex-grow">
+                    Manage partnership requests and collaboration opportunities from supporters.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-yellow-400 font-medium">{stats.partnerships} Requests</span>
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
           </div>
 
           {/* Recent Activity Section */}
@@ -811,6 +885,28 @@ const Dashboard = () => {
                         ></path>
                       </svg>
                       Ministry Applications
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/partner-view"
+                      className="flex items-center gap-2 text-indigo-200 hover:text-yellow-400 transition-colors"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                        ></path>
+                      </svg>
+                      Partnership Requests
                     </Link>
                   </li>
                 </ul>
