@@ -12,6 +12,7 @@ const NavBar = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [loginMethod, setLoginMethod] = useState(null) // Track login method
 
   // Check if user is logged in
   useEffect(() => {
@@ -25,9 +26,20 @@ const NavBar = () => {
       const adminUserString = localStorage.getItem("adminUser")
       const adminUser = adminUserString ? JSON.parse(adminUserString) : null
 
+      // Check login method from localStorage
+      const storedLoginMethod = localStorage.getItem("loginMethod")
+      if (storedLoginMethod) {
+        setLoginMethod(storedLoginMethod)
+      }
+
       // Set user if either auth method is valid
       if (session?.user) {
         setUser(session.user)
+        // If we have a session, it's likely Google login
+        if (!storedLoginMethod) {
+          setLoginMethod("google")
+          localStorage.setItem("loginMethod", "google")
+        }
       } else if (adminUser) {
         // Create a user-like object from localStorage data
         setUser({
@@ -36,8 +48,15 @@ const NavBar = () => {
             name: adminUser.name || adminUser.email.split("@")[0],
           },
         })
+        // If we only have adminUser but no session, it's likely email login
+        if (!storedLoginMethod) {
+          setLoginMethod("email")
+          localStorage.setItem("loginMethod", "email")
+        }
       } else {
         setUser(null)
+        setLoginMethod(null)
+        localStorage.removeItem("loginMethod")
       }
     }
 
@@ -47,6 +66,9 @@ const NavBar = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
         setUser(session.user)
+        // If signed in with Supabase Auth, it's Google
+        setLoginMethod("google")
+        localStorage.setItem("loginMethod", "google")
       } else if (event === "SIGNED_OUT") {
         // Check localStorage as fallback when signed out of Supabase
         const adminUserString = localStorage.getItem("adminUser")
@@ -59,8 +81,11 @@ const NavBar = () => {
               name: adminUser.name || adminUser.email.split("@")[0],
             },
           })
+          // Keep existing login method if we still have adminUser
         } else {
           setUser(null)
+          setLoginMethod(null)
+          localStorage.removeItem("loginMethod")
         }
       }
     })
@@ -79,6 +104,7 @@ const NavBar = () => {
   const handleLogout = async () => {
     // Clear localStorage first
     localStorage.removeItem("adminUser")
+    localStorage.removeItem("loginMethod")
 
     // Then sign out from Supabase Auth
     await supabase.auth.signOut()
@@ -86,6 +112,7 @@ const NavBar = () => {
     // Navigate to home page
     navigate("/")
     setShowUserMenu(false)
+    setLoginMethod(null)
   }
 
   // Check if current path matches the link
@@ -114,6 +141,12 @@ const NavBar = () => {
     { name: "Gallery", path: "/gallery" },
     { name: "Contact", path: "/contact" },
   ]
+
+  // Get dashboard URL based on login method
+  const getDashboardUrl = () => {
+    console.log("Current login method:", loginMethod)
+    return loginMethod === "google" ? "/login" : "/dashboard"
+  }
 
   return (
     <motion.nav
@@ -201,10 +234,11 @@ const NavBar = () => {
                           {user.user_metadata?.name || "User"}
                         </p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        <p className="text-xs text-gray-400 mt-1">Login: {loginMethod || "unknown"}</p>
                       </div>
 
                       <a
-                        href="/dashboard"
+                        href={getDashboardUrl()}
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       >
@@ -307,7 +341,7 @@ const NavBar = () => {
                         transition={{ delay: (navLinks.length + 1) * 0.1 }}
                       >
                         <a
-                          href="/dashboard"
+                          href={getDashboardUrl()}
                           onClick={() => setIsOpen(false)}
                           className="block bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors duration-200"
                         >

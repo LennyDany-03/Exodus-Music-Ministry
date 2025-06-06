@@ -10,21 +10,38 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation()
 
   useEffect(() => {
+    let isMounted = true
+
     const checkAuth = async () => {
       try {
+        setLoading(true)
+
         // Get current session
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession()
+
+        if (sessionError) {
+          console.error("Session error:", sessionError)
+          if (isMounted) {
+            setIsAuthorized(false)
+            setLoading(false)
+          }
+          return
+        }
 
         // Check if we have admin info in localStorage as a fallback
         const adminUserString = localStorage.getItem("adminUser")
         const adminUser = adminUserString ? JSON.parse(adminUserString) : null
 
+        // If no session and no admin user, redirect to login
         if (!session && !adminUser) {
           console.log("No session or admin user found, redirecting to login")
-          setIsAuthorized(false)
-          setLoading(false)
+          if (isMounted) {
+            setIsAuthorized(false)
+            setLoading(false)
+          }
           return
         }
 
@@ -33,8 +50,10 @@ const ProtectedRoute = ({ children }) => {
 
         if (!userEmail) {
           console.log("No user email found, redirecting to login")
-          setIsAuthorized(false)
-          setLoading(false)
+          if (isMounted) {
+            setIsAuthorized(false)
+            setLoading(false)
+          }
           return
         }
 
@@ -48,96 +67,157 @@ const ProtectedRoute = ({ children }) => {
 
         if (adminError) {
           console.error("Error checking admin access:", adminError)
-          setIsAuthorized(false)
-          // Clear localStorage if there's an error
-          localStorage.removeItem("adminUser")
-          // Only sign out if we have a session
-          if (session) {
-            await supabase.auth.signOut()
-          }
-        } else if (adminData) {
-          console.log("User authorized:", userEmail)
-          setIsAuthorized(true)
 
-          // Update last_login timestamp
-          const { error: updateError } = await supabase
+          // If it's a "not found" error, the user is not authorized
+          if (adminError.code === "PGRST116") {
+            console.log("User not found in admin_access table:", userEmail)
+            if (isMounted) {
+              setIsAuthorized(false)
+              localStorage.removeItem("adminUser")
+              if (session) {
+                await supabase.auth.signOut()
+              }
+              setLoading(false)
+            }
+            return
+          }
+
+          // For other errors, still deny access but don't sign out
+          if (isMounted) {
+            setIsAuthorized(false)
+            setLoading(false)
+          }
+          return
+        }
+
+        if (adminData) {
+          console.log("User authorized:", userEmail)
+
+          if (isMounted) {
+            setIsAuthorized(true)
+
+            // Store/update user info in localStorage for consistency
+            localStorage.setItem(
+              "adminUser",
+              JSON.stringify({
+                email: adminData.email,
+                name: adminData.email.split("@")[0],
+                lastLogin: new Date().toISOString(),
+              }),
+            )
+          }
+
+          // Update last_login timestamp (don't await to avoid blocking)
+          supabase
             .from("admin_access")
             .update({ last_login: new Date().toISOString() })
             .eq("email", userEmail)
-
-          if (updateError) {
-            console.error("Error updating last_login:", updateError)
-          }
+            .then(({ error: updateError }) => {
+              if (updateError) {
+                console.error("Error updating last_login:", updateError)
+              }
+            })
         } else {
           console.log("User not authorized:", userEmail)
-          setIsAuthorized(false)
-          // Clear localStorage
-          localStorage.removeItem("adminUser")
-          // Only sign out if we have a session
-          if (session) {
-            await supabase.auth.signOut()
+          if (isMounted) {
+            setIsAuthorized(false)
+            localStorage.removeItem("adminUser")
+            if (session) {
+              await supabase.auth.signOut()
+            }
+            setLoading(false)
           }
         }
       } catch (error) {
         console.error("Auth check error:", error)
-        setIsAuthorized(false)
-        localStorage.removeItem("adminUser")
+        if (isMounted) {
+          setIsAuthorized(false)
+          localStorage.removeItem("adminUser")
+          setLoading(false)
+        }
       } finally {
-        setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
     checkAuth()
 
-    // Set up auth state listener
+    // Set up auth state listener for real-time updates
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event)
+      console.log("Auth state changed:", event, session?.user?.email)
+
+      if (!isMounted) return
 
       if (event === "SIGNED_IN" && session) {
-        // Check if email is authorized in admin_access table
         const userEmail = session.user.email
-        const { data: adminData, error: adminError } = await supabase
-          .from("admin_access")
-          .select("*")
-          .eq("email", userEmail)
-          .eq("is_active", true)
-          .single()
 
-        if (adminData) {
-          console.log("User authorized on state change:", userEmail)
-          setIsAuthorized(true)
+        try {
+          // Check if email is authorized in admin_access table
+          const { data: adminData, error: adminError } = await supabase
+            .from("admin_access")
+            .select("*")
+            .eq("email", userEmail)
+            .eq("is_active", true)
+            .single()
 
-          // Store in localStorage as well
-          localStorage.setItem(
-            "adminUser",
-            JSON.stringify({
-              email: adminData.email,
-              name: adminData.email.split("@")[0],
-              lastLogin: new Date().toISOString(),
-            }),
-          )
-        } else {
-          console.log("User not authorized on state change:", userEmail)
-          setIsAuthorized(false)
-          // Sign out unauthorized users
-          localStorage.removeItem("adminUser")
-          await supabase.auth.signOut()
+          if (adminData && isMounted) {
+            console.log("User authorized on state change:", userEmail)
+            setIsAuthorized(true)
+            setLoading(false)
+
+            // Store in localStorage
+            localStorage.setItem(
+              "adminUser",
+              JSON.stringify({
+                email: adminData.email,
+                name: adminData.email.split("@")[0],
+                lastLogin: new Date().toISOString(),
+              }),
+            )
+
+            // Update last login
+            supabase.from("admin_access").update({ last_login: new Date().toISOString() }).eq("email", userEmail)
+          } else if (isMounted) {
+            console.log("User not authorized on state change:", userEmail)
+            setIsAuthorized(false)
+            setLoading(false)
+            localStorage.removeItem("adminUser")
+            await supabase.auth.signOut()
+          }
+        } catch (error) {
+          console.error("Error in auth state change:", error)
+          if (isMounted) {
+            setIsAuthorized(false)
+            setLoading(false)
+          }
         }
       }
 
       if (event === "SIGNED_OUT") {
         console.log("User signed out")
-        setIsAuthorized(false)
-        localStorage.removeItem("adminUser")
+        if (isMounted) {
+          setIsAuthorized(false)
+          setLoading(false)
+          localStorage.removeItem("adminUser")
+        }
+      }
+
+      if (event === "TOKEN_REFRESHED") {
+        console.log("Token refreshed")
+        // Don't change loading state, just log
       }
     })
 
+    // Cleanup function
     return () => {
+      isMounted = false
       if (authListener && authListener.subscription) {
         authListener.subscription.unsubscribe()
       }
     }
-  }, [])
+  }, [location.pathname]) // Add location.pathname to dependencies
 
   // Show loading state
   if (loading) {
