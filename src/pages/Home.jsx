@@ -434,7 +434,7 @@ const Home = () => {
                     Ministry into a beacon of excellence in Christian worship.
                   </p>
 
-                  <a href="/fullbio">
+                  <a href="/portfolio">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
