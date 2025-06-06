@@ -342,38 +342,6 @@ const Donate = () => {
                     </div>
                   ) : (
                     <form onSubmit={handleDonateSubmit}>
-                      {/* Donation Type */}
-                      <div className="mb-8">
-                        <h3 className="text-xl font-bold mb-4">Donation Type</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <motion.button
-                            type="button"
-                            onClick={() => handleDonationTypeChange("one-time")}
-                            className={`p-4 rounded-lg border ${
-                              donationType === "one-time"
-                                ? "bg-yellow-400 text-indigo-950 border-yellow-500"
-                                : "bg-indigo-700/50 border-indigo-600 text-white"
-                            }`}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            One-Time Donation
-                          </motion.button>
-                          <motion.button
-                            type="button"
-                            onClick={() => handleDonationTypeChange("monthly")}
-                            className={`p-4 rounded-lg border ${
-                              donationType === "monthly"
-                                ? "bg-yellow-400 text-indigo-950 border-yellow-500"
-                                : "bg-indigo-700/50 border-indigo-600 text-white"
-                            }`}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            Monthly Donation
-                          </motion.button>
-                        </div>
-                      </div>
 
                       {/* Donation Amount */}
                       <div className="mb-8">

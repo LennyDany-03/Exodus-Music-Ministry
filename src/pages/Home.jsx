@@ -1,43 +1,76 @@
+"use client"
+
 import { useEffect, useState } from "react"
 import { motion, useAnimation, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
-import React from "react"
 import TeamPhoto from "../assets/Team Photo_Edit1.jpg"
 import TeamSecondPhoto from "../assets/Team @.jpg"
 import Victor from "../assets/Victor1.jpg"
 import Team3rdPhoto from "../assets/Team3rdPhoto.jpg"
-import SundayEve from "../assets/SundayEVE.png"
-import Gospel from "../assets/GospelPoster.jpg"
-import Centenary from "../assets/Centenary.jpg"
+import { supabase } from "../lib/supabaseClient"
 
 const Home = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
   const [isLoading, setIsLoading] = useState(true)
+  const [events, setEvents] = useState([])
+  const [eventsLoading, setEventsLoading] = useState(true)
 
   // Responsive scroll animations that work on both mobile and desktop
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.85])
   const teamY = useTransform(
     scrollYProgress,
     [0.1, 0.3],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
   const missionY = useTransform(
     scrollYProgress,
     [0.3, 0.5],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
   const eventsY = useTransform(
     scrollYProgress,
     [0.5, 0.7],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
   const testimonialY = useTransform(
     scrollYProgress,
     [0.7, 0.9],
-    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0]
+    [typeof window !== "undefined" ? (window.innerWidth > 768 ? 100 : 50) : 100, 0],
   )
-  const testimonialRotate = useTransform(scrollYProgress, [0.4, 0.6], [-5, 0])
+
+  // Fetch events from Supabase
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setEventsLoading(true)
+        // Fetch events from Supabase, ordered by date (most recent first)
+        const { data, error } = await supabase
+          .from("events")
+          .select("*")
+          .order("date", { ascending: false })
+          .eq("is_published", true)
+          .limit(6) // Limit to 6 events for the home page
+
+        if (error) {
+          throw error
+        }
+
+        if (data) {
+          console.log("Fetched events for home:", data)
+          setEvents(data)
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error)
+        // Set empty array on error so the section still shows
+        setEvents([])
+      } finally {
+        setEventsLoading(false)
+      }
+    }
+
+    fetchEvents()
+  }, [])
 
   // Initial animation sequence
   useEffect(() => {
@@ -62,6 +95,13 @@ const Home = () => {
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
+
+  // Format date from database (YYYY-MM-DD) to readable format
+  const formatDate = (dateString) => {
+    if (!dateString) return ""
+    const options = { year: "numeric", month: "long", day: "numeric" }
+    return new Date(dateString).toLocaleDateString("en-US", options)
+  }
 
   // Enhanced animation variants
   const fadeInUp = {
@@ -159,33 +199,6 @@ const Home = () => {
       name: "David Williams",
       role: "Worship Leader",
       quote: "The passion and skill they bring to every performance is truly inspirational and uplifting.",
-    },
-  ]
-
-  const upcomingEvents = [
-    {
-      title: "Sunday Eve/Special Service",
-      date: "December 29, 2024",
-      location: "Mylapore",
-      description: "An evening of praise and worship to lift our spirits and connect with God.",
-      image: SundayEve,
-      url: "https://www.youtube.com/live/ITVjeqALSJ0?si=rcYiNaNygn-jkPcg&fbclid=IwY2xjawIxrNpleHRuA2FlbQIxMQABHbh-4KabQAxXlxjUjf7ln9UEEOtnUYmWCH-Jfk4LJtrnMm0H57R-D1SBNw_aem_W8VvXOh2pWlEfw6PYYSD7w",
-    },
-    {
-      title: "Centenary Celebration",
-      date: "December 22, 2024",
-      location: " IELC Ayanavaram",
-      description: "The centenary celebration was truly blessed by God's grace.",
-      image: Centenary,
-      url: "https://www.facebook.com/victor.exodus.9/videos/950779669841576",
-    },
-    {
-      title: "Gospel Musical Night",
-      date: "August 16, 2022",
-      location: "Madurai",
-      description: "Training and mentoring for young musicians and worship leaders.",
-      image: Gospel,
-      url: "https://www.facebook.com/photo/?fbid=3201309720197618&set=a.1415500502111891",
     },
   ]
 
@@ -310,7 +323,7 @@ const Home = () => {
             </motion.h1>
 
             <motion.p className="text-xl md:text-2xl max-w-2xl mx-auto mb-8 text-indigo-100" variants={fadeInUp}>
-              பண் மறந்து போன கீர்த்தனைகளை வெளிக்கொணரும் ஊழியம்
+              பண் மறந்து போன கீர்த்தனைகளை வெளிக்கொணரும் ஊழியம்
             </motion.p>
 
             <motion.div className="flex flex-col md:flex-row justify-center gap-4" variants={fadeInUp}>
@@ -325,7 +338,7 @@ const Home = () => {
                 </motion.button>
               </a>
 
-              <a href="https://www.facebook.com/Exoduschoir/?checkpoint_src=any">
+              <a href="/join-ministry">
                 <motion.button
                   variants={buttonVariants}
                   whileHover="hover"
@@ -388,7 +401,7 @@ const Home = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <img
-                    src={TeamSecondPhoto}
+                    src={TeamSecondPhoto || "/placeholder.svg"}
                     alt="Exodus Music Ministry Team"
                     className="w-full h-auto"
                   />
@@ -405,7 +418,7 @@ const Home = () => {
                     transition={{ duration: 0.3 }}
                   >
                     <img
-                      src={Victor}
+                      src={Victor || "/placeholder.svg"}
                       alt="Exodus Music Ministry Leader"
                       className="w-full h-full object-cover"
                     />
@@ -516,113 +529,173 @@ const Home = () => {
           </div>
         </motion.section>
 
-        {/* Upcoming Events Section */}
-        <motion.section
-          className="py-32 bg-indigo-900 relative overflow-hidden"
-          style={{ y: eventsY }}
-        >
+        {/* Events Section */}
+        <motion.section className="py-32 bg-indigo-900 relative overflow-hidden" style={{ y: eventsY }}>
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-indigo-950 to-transparent"></div>
 
           <div className="container mx-auto px-4 relative z-10">
             <motion.div className="text-center mb-20">
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">Previous Events</h2>
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Events</h2>
               <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
+              <p className="text-lg md:text-xl max-w-3xl mx-auto text-indigo-100">
+                Discover our worship experiences and musical celebrations that bring communities together in faith.
+              </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {upcomingEvents.map((event, index) => (
+            {/* Events Loading State */}
+            {eventsLoading ? (
+              <div className="flex justify-center items-center py-20">
                 <motion.div
-                  key={index}
-                  custom={index}
-                  variants={cardVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  whileHover="hover"
-                  viewport={{ once: true }}
-                  className="bg-indigo-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-indigo-700 group"
-                >
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                  className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full"
+                />
+              </div>
+            ) : events.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {events.slice(0, 6).map((event, index) => (
                   <motion.div
-                    className="h-56 bg-indigo-700 flex items-center justify-center overflow-hidden"
-                    whileHover={{ scale: 1.05 }}
+                    key={event.id}
+                    custom={index}
+                    variants={cardVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    whileHover="hover"
+                    viewport={{ once: true }}
+                    className="bg-indigo-800/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-indigo-700 group"
                   >
-                    <motion.div className="relative w-full h-full">
-                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
-                      <div
-                        className="w-full h-full bg-cover bg-center"
-                        style={{ backgroundImage: `url(${event.image})` }}
-                      ></div>
-                      <div className="absolute bottom-4 left-4 z-20">
-                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
-                          {event.date}
-                        </span>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-yellow-400 transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-indigo-200 mb-3 flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        ></path>
-                      </svg>
-                      {event.location}
-                    </p>
-                    <p className="text-indigo-100 mb-6 text-lg">{event.description}</p>
-                    <motion.a
-                      href={event.url}
+                    <motion.div
+                      className="h-56 bg-indigo-700 flex items-center justify-center overflow-hidden"
                       whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg flex items-center justify-center"
                     >
-                      Learn More
-                    </motion.a>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                      <motion.div className="relative w-full h-full">
+                        <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 to-transparent opacity-70 z-10"></div>
+                        <div
+                          className="w-full h-full bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url(${event.image_url || "/placeholder.svg?height=224&width=400"})`,
+                          }}
+                        ></div>
+                        <div className="absolute bottom-4 left-4 z-20">
+                          <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
+                            {formatDate(event.date)}
+                          </span>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold mb-3 group-hover:text-yellow-400 transition-colors">
+                        {event.title}
+                      </h3>
+                      <p className="text-indigo-200 mb-3 flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                        </svg>
+                        {event.location}
+                      </p>
+                      <p className="text-indigo-100 mb-6 text-lg line-clamp-3">{event.description}</p>
+                      {event.url ? (
+                        <motion.a
+                          href={event.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-full font-bold shadow-lg flex items-center justify-center"
+                        >
+                          Learn More
+                          <svg
+                            className="ml-2 w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            ></path>
+                          </svg>
+                        </motion.a>
+                      ) : (
+                        <motion.div className="w-full bg-indigo-700 text-indigo-300 py-3 rounded-full font-bold text-center">
+                          Event Details Coming Soon
+                        </motion.div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center p-12 bg-indigo-800/60 backdrop-blur-sm rounded-2xl border border-indigo-700"
+              >
+                <div className="text-6xl mb-6">🎵</div>
+                <h3 className="text-2xl font-bold mb-4">No Events Available</h3>
+                <p className="text-indigo-200 text-lg mb-6">
+                  We're currently planning exciting new events. Check back soon for updates on our upcoming worship
+                  experiences!
+                </p>
+                <a href="/events">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-8 py-3 rounded-full font-bold shadow-lg"
+                  >
+                    Visit Events Page
+                  </motion.button>
+                </a>
+              </motion.div>
+            )}
 
             <motion.div className="text-center mt-16">
-              <motion.button
-                whileHover={{ scale: 1.05, x: [0, 5, 0] }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.5 }}
-                className="bg-transparent border-2 border-yellow-400 text-yellow-400 px-10 py-4 rounded-full text-lg font-bold flex items-center mx-auto"
-              >
-                View All Events
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+              <a href="/events">
+                <motion.button
+                  whileHover={{ scale: 1.05, x: [0, 5, 0] }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-transparent border-2 border-yellow-400 text-yellow-400 px-10 py-4 rounded-full text-lg font-bold flex items-center mx-auto"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  ></path>
-                </svg>
-              </motion.button>
+                  View All Events
+                  <svg
+                    className="ml-2 w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    ></path>
+                  </svg>
+                </motion.button>
+              </a>
             </motion.div>
           </div>
         </motion.section>
@@ -691,9 +764,7 @@ const Home = () => {
 
           <div className="container mx-auto px-4 relative z-20">
             <div className="max-w-3xl mx-auto text-center">
-              <motion.h2 className="text-4xl md:text-6xl font-bold mb-6">
-                Join Our Ministry Today
-              </motion.h2>
+              <motion.h2 className="text-4xl md:text-6xl font-bold mb-6">Join Our Ministry Today</motion.h2>
 
               <motion.p className="text-xl md:text-2xl mb-10 text-indigo-100">
                 Whether you sing, play an instrument, or have technical skills, there's a place for you in Exodus Music
@@ -701,21 +772,25 @@ const Home = () => {
               </motion.p>
 
               <motion.div className="flex flex-col md:flex-row justify-center gap-6">
-                <motion.button
-                  whileHover={{ scale:  1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-5 rounded-full text-xl font-bold tracking-wide shadow-lg"
-                >
-                  Apply Now
-                </motion.button>
+                <a href="/join-ministry">
+                  <motion.button
+                    whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-5 rounded-full text-xl font-bold tracking-wide shadow-lg"
+                  >
+                    Apply Now
+                  </motion.button>
+                </a>
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-transparent border-2 border-white px-10 py-5 rounded-full text-xl font-bold tracking-wide hover:border-yellow-400 hover:text-yellow-400 transition-colors"
-                >
-                  Contact Us
-                </motion.button>
+                <a href="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-transparent border-2 border-white px-10 py-5 rounded-full text-xl font-bold tracking-wide hover:border-yellow-400 hover:text-yellow-400 transition-colors"
+                  >
+                    Contact Us
+                  </motion.button>
+                </a>
               </motion.div>
             </div>
           </div>
@@ -849,9 +924,7 @@ const Home = () => {
 
               {/* Quick links */}
               <div className="flex flex-col items-center md:items-start">
-                <motion.h3 className="text-xl font-bold text-white mb-6">
-                  Quick Links
-                </motion.h3>
+                <motion.h3 className="text-xl font-bold text-white mb-6">Quick Links</motion.h3>
                 <ul className="space-y-3">
                   {[
                     { name: "Home", icon: "🏠" },
@@ -875,9 +948,7 @@ const Home = () => {
 
               {/* Contact info */}
               <div className="flex flex-col items-center md:items-start">
-                <motion.h3 className="text-xl font-bold text-white mb-6">
-                  Get In Touch
-                </motion.h3>
+                <motion.h3 className="text-xl font-bold text-white mb-6">Get In Touch</motion.h3>
                 <ul className="space-y-4">
                   <motion.li className="flex items-center">
                     <div className="w-8 h-8 rounded-full bg-indigo-800 flex items-center justify-center mr-3 text-yellow-400">

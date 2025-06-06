@@ -4,10 +4,6 @@ import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
-import SundayEve from "../assets/SundayEVE.png"
-import Gospel from "../assets/GospelPoster.jpg"
-import Centenary from "../assets/Centenary.jpg"
-import TeamPhoto from "../assets/Team Photo.jpg"
 
 const CreateEvent = () => {
   const navigate = useNavigate()
@@ -24,14 +20,6 @@ const CreateEvent = () => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [errors, setErrors] = useState({})
   const [successMessage, setSuccessMessage] = useState("")
-
-  // Sample images for quick selection
-  const sampleImages = [
-    { src: SundayEve, name: "Sunday Service" },
-    { src: Gospel, name: "Gospel Night" },
-    { src: Centenary, name: "Centenary" },
-    { src: TeamPhoto, name: "Team Photo" },
-  ]
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -65,20 +53,6 @@ const CreateEvent = () => {
     }
   }
 
-  // Handle sample image selection
-  const handleSampleImageSelect = (imageSrc) => {
-    setPreviewImage(imageSrc)
-    setSelectedImage(null) // Clear any uploaded file
-
-    // Clear image error if it exists
-    if (errors.image) {
-      setErrors({
-        ...errors,
-        image: null,
-      })
-    }
-  }
-
   // Validate form before submission
   const validateForm = () => {
     const newErrors = {}
@@ -87,7 +61,7 @@ const CreateEvent = () => {
     if (!formData.date) newErrors.date = "Date is required"
     if (!formData.location.trim()) newErrors.location = "Location is required"
     if (!formData.description.trim()) newErrors.description = "Description is required"
-    if (!previewImage && !selectedImage) newErrors.image = "Please select or upload an image"
+    if (!previewImage && !selectedImage) newErrors.image = "Please upload an image"
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -106,13 +80,8 @@ const CreateEvent = () => {
     try {
       let imageUrl = ""
 
-      // If using a sample image (which is already in the assets folder)
-      if (previewImage && !selectedImage) {
-        // For sample images, we can use the path directly since they're already in the assets
-        imageUrl = previewImage
-      }
       // If user uploaded a custom image
-      else if (selectedImage) {
+      if (selectedImage) {
         console.log("Uploading custom image:", selectedImage.name, selectedImage.type, selectedImage.size)
 
         // Validate file size (limit to 5MB)
@@ -161,7 +130,7 @@ const CreateEvent = () => {
           throw new Error(`Image upload failed: ${uploadErr.message}`)
         }
       } else {
-        throw new Error("Please select or upload an image")
+        throw new Error("Please upload an image")
       }
 
       // Insert event data into Supabase table
@@ -343,7 +312,7 @@ const CreateEvent = () => {
                 </p>
               </div>
 
-              {/* Image Selection */}
+              {/* Image Upload */}
               <div className="mb-8">
                 <label className="block text-sm font-medium text-indigo-200 mb-4">
                   Event Image <span className="text-yellow-400">*</span>
@@ -415,35 +384,6 @@ const CreateEvent = () => {
                     </svg>
                     Upload Image
                   </button>
-                </div>
-
-                {/* Sample images */}
-                <div>
-                  <p className="text-sm text-indigo-300 mb-2">Or select from sample images:</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {sampleImages.map((image, index) => (
-                      <div
-                        key={index}
-                        onClick={() => handleSampleImageSelect(image.src)}
-                        className={`cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                          previewImage === image.src
-                            ? "border-yellow-400 ring-2 ring-yellow-400/50"
-                            : "border-transparent hover:border-indigo-600"
-                        }`}
-                      >
-                        <div className="aspect-square">
-                          <img
-                            src={image.src || "/placeholder.svg"}
-                            alt={image.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="p-1 text-center text-xs bg-indigo-800/80 text-indigo-200 truncate">
-                          {image.name}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
                 {errors.image && <p className="mt-3 text-sm text-red-400">{errors.image}</p>}

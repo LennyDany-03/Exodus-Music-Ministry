@@ -1,14 +1,8 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import NavBar from "../components/Nav"
 import { supabase } from "../lib/supabaseClient"
-import TeamPhoto from "../assets/Team Photo.jpg"
-import SundayEve from "../assets/SundayEVE.png"
-import Gospel from "../assets/GospelPoster.jpg"
-import Centenary from "../assets/Centenary.jpg"
-import Team3rdPhoto from "../assets/Team3rdPhoto.jpg"
-import Victor1 from "../assets/Victor1.jpg"
 
 const Events = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -73,63 +67,8 @@ const Events = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Fallback events data in case database is empty
-  const fallbackEvents = [
-    {
-      title: "Sunday Eve/Special Service",
-      date: "December 29, 2024",
-      location: "Mylapore",
-      description: "An evening of praise and worship to lift our spirits and connect with God.",
-      image_url: SundayEve,
-      url: "https://www.youtube.com/live/ITVjeqALSJ0?si=rcYiNaNygn-jkPcg&fbclid=IwY2xjawIxrNpleHRuA2FlbQIxMQABHbh-4KabQAxXlxjUjf7ln9UEEOtnUYmWCH-Jfk4LJtrnMm0H57R-D1SBNw_aem_W8VvXOh2pWlEfw6PYYSD7w",
-    },
-    {
-      title: "Centenary Celebration",
-      date: "December 22, 2024",
-      location: "IELC Ayanavaram",
-      description: "The centenary celebration was truly blessed by God's grace.",
-      image_url: Centenary,
-      url: "https://www.facebook.com/victor.exodus.9/videos/950779669841576",
-    },
-    {
-      title: "Gospel Musical Night",
-      date: "August 16, 2022",
-      location: "Madurai",
-      description: "Training and mentoring for young musicians and worship leaders.",
-      image_url: Gospel,
-      url: "https://www.facebook.com/photo/?fbid=3201309720197618&set=a.1415500502111891",
-    },
-    {
-      title: "Christmas Cantata",
-      date: "December 18, 2023",
-      location: "St. Mark's Cathedral, Chennai",
-      description: "A musical celebration of the birth of Christ featuring traditional and contemporary arrangements.",
-      image_url: Team3rdPhoto,
-      url: "#",
-    },
-    {
-      title: "Worship Leaders Retreat",
-      date: "October 5-7, 2023",
-      location: "Yelagiri Hills",
-      description: "A weekend of spiritual renewal and musical training for worship leaders from across Tamil Nadu.",
-      image_url: Victor1,
-      url: "#",
-    },
-    {
-      title: "Community Outreach Concert",
-      date: "July 22, 2023",
-      location: "Marina Beach, Chennai",
-      description: "A free public concert sharing the message of hope and love through music.",
-      image_url: TeamPhoto,
-      url: "#",
-    },
-  ]
-
-  // Use database events if available, otherwise use fallback
-  const displayEvents = events.length > 0 ? events : fallbackEvents
-
   // Display only 6 events initially
-  const displayedEvents = showAllEvents ? displayEvents : displayEvents.slice(0, 6)
+  const displayedEvents = showAllEvents ? events : events.slice(0, 6)
 
   // Format date from database (YYYY-MM-DD) to readable format
   const formatDate = (dateString) => {
@@ -299,7 +238,7 @@ const Events = () => {
       // Hide success animation after 3 seconds
       setTimeout(() => {
         setShowSuccess(false)
-      }, 3000)
+      }, 4000)
     } catch (error) {
       console.error("Error submitting form:", error)
       setFormError(error.message)
@@ -308,13 +247,120 @@ const Events = () => {
     }
   }
 
+  // Filter events based on type
+  const filteredEvents = events.filter((event) => {
+    const eventDate = new Date(event.date)
+    const now = new Date()
+    return eventType === "past" ? eventDate < now : eventDate >= now
+  })
+
+  const displayedFilteredEvents = showAllEvents ? filteredEvents : filteredEvents.slice(0, 6)
+
   return (
     <>
       {/* NavBar Component */}
       <NavBar />
 
       <div className="bg-gradient-to-b from-indigo-950 via-indigo-900 to-indigo-950 text-white">
-        {/* Events Section - Now the first section */}
+        {/* Success Animation Popup */}
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            >
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: "spring", duration: 0.5 }}
+                className="bg-gradient-to-br from-indigo-800 to-indigo-900 p-8 rounded-2xl shadow-2xl border border-indigo-600 max-w-md mx-4"
+              >
+                <div className="text-center">
+                  {/* Animated Check Icon */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="w-20 h-20 mx-auto mb-6 bg-green-500 rounded-full flex items-center justify-center"
+                  >
+                    <motion.svg
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ delay: 0.5, duration: 0.8, ease: "easeInOut" }}
+                      className="w-10 h-10 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <motion.path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                    </motion.svg>
+                  </motion.div>
+
+                  {/* Success Message */}
+                  <motion.h3
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.5 }}
+                    className="text-2xl font-bold text-white mb-3"
+                  >
+                    Event Request Submitted!
+                  </motion.h3>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, duration: 0.5 }}
+                    className="text-indigo-200 mb-6"
+                  >
+                    Your event request has been passed to our team successfully. We'll review and get back to you soon!
+                  </motion.p>
+
+                  {/* Floating Music Notes */}
+                  {[...Array(6)].map((_, index) => (
+                    <motion.div
+                      key={index}
+                      className="absolute text-yellow-400 text-lg"
+                      style={{
+                        left: Math.random() * 100 + "%",
+                        top: Math.random() * 100 + "%",
+                      }}
+                      animate={{
+                        y: [-10, -30],
+                        opacity: [0, 1, 0],
+                        rotate: [0, 360],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: 2,
+                        delay: 1 + Math.random() * 0.5,
+                        ease: "easeOut",
+                      }}
+                    >
+                      {["♪", "♫", "♬"][Math.floor(Math.random() * 3)]}
+                    </motion.div>
+                  ))}
+
+                  {/* Close Button */}
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1, duration: 0.5 }}
+                    onClick={() => setShowSuccess(false)}
+                    className="bg-yellow-400 hover:bg-yellow-300 text-indigo-950 px-6 py-2 rounded-full font-bold transition-colors duration-300"
+                  >
+                    Continue
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Events Section */}
         <motion.section
           className="py-24 relative overflow-hidden"
           initial="hidden"
@@ -363,43 +409,101 @@ const Events = () => {
               ))}
             </motion.div>
 
-            {/* Event cards grid - filter based on eventType */}
-            {displayedEvents.length > 0 ? (
+            {/* Event cards grid */}
+            {displayedFilteredEvents.length > 0 ? (
               <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={staggerContainer}>
-                {displayedEvents
-                  .filter((event) => {
-                    const eventDate = new Date(event.date)
-                    const now = new Date()
-                    return eventType === "past" ? eventDate < now : eventDate >= now
-                  })
-                  .map((event, index) => (
-                    <motion.div
-                      key={index}
-                      variants={fadeInUp}
-                      className="relative h-[450px] rounded-xl overflow-hidden group"
-                    >
-                      {/* Card background image */}
-                      <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                        style={{ backgroundImage: `url(${event.image_url})` }}
-                      />
+                {displayedFilteredEvents.map((event, index) => (
+                  <motion.div
+                    key={event.id}
+                    variants={fadeInUp}
+                    className="relative h-[450px] rounded-xl overflow-hidden group"
+                  >
+                    {/* Card background image */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                      style={{
+                        backgroundImage: `url(${event.image_url || "/placeholder.svg?height=450&width=350"})`,
+                      }}
+                    />
 
-                      {/* Gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-900/40 to-transparent opacity-60" />
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-indigo-950 via-indigo-900/40 to-transparent opacity-60" />
 
-                      {/* Date badge */}
-                      <div className="absolute top-4 right-4 z-20">
-                        <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
-                          {formatDate(event.date)}
-                        </span>
-                      </div>
+                    {/* Date badge */}
+                    <div className="absolute top-4 right-4 z-20">
+                      <span className="bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full text-sm font-bold">
+                        {formatDate(event.date)}
+                      </span>
+                    </div>
 
-                      {/* Bottom content - always visible */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-0 transition-transform duration-500">
-                        <h3 className="text-2xl font-bold mb-2 text-white">{event.title}</h3>
-                        <p className="text-yellow-300 flex items-center text-sm mb-2">
+                    {/* Bottom content - always visible */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-0 transition-transform duration-500">
+                      <h3 className="text-2xl font-bold mb-2 text-white">{event.title}</h3>
+                      <p className="text-yellow-300 flex items-center text-sm mb-2">
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                        </svg>
+                        {event.location}
+                      </p>
+                    </div>
+
+                    {/* Hover overlay with details */}
+                    <div className="absolute inset-0 bg-indigo-800/80 backdrop-blur-sm flex flex-col justify-center items-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <h3 className="text-2xl font-bold mb-4 text-white">{event.title}</h3>
+                      <div className="w-12 h-1 bg-yellow-400 mb-4"></div>
+                      <p className="text-white text-center mb-6">{event.description}</p>
+                      <p className="text-yellow-300 flex items-center text-sm mb-6">
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                        </svg>
+                        {event.location} • {formatDate(event.date)}
+                      </p>
+                      {event.url && (
+                        <motion.a
+                          href={event.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg flex items-center"
+                        >
+                          View Details
                           <svg
-                            className="w-4 h-4 mr-2"
+                            className="ml-2 w-4 h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -409,76 +513,14 @@ const Events = () => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            ></path>
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              d="M14 5l7 7m0 0l-7 7m7-7H3"
                             ></path>
                           </svg>
-                          {event.location}
-                        </p>
-                      </div>
-
-                      {/* Hover overlay with details */}
-                      <div className="absolute inset-0 bg-indigo-800/80 backdrop-blur-sm flex flex-col justify-center items-center p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <h3 className="text-2xl font-bold mb-4 text-white">{event.title}</h3>
-                        <div className="w-12 h-1 bg-yellow-400 mb-4"></div>
-                        <p className="text-white text-center mb-6">{event.description}</p>
-                        <p className="text-yellow-300 flex items-center text-sm mb-6">
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            ></path>
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            ></path>
-                          </svg>
-                          {event.location} • {formatDate(event.date)}
-                        </p>
-                        {event.url && (
-                          <motion.a
-                            href={event.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-3 rounded-full font-bold shadow-lg flex items-center"
-                          >
-                            View Details
-                            <svg
-                              className="ml-2 w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                              ></path>
-                            </svg>
-                          </motion.a>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
+                        </motion.a>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
               </motion.div>
             ) : (
               <motion.div
@@ -486,11 +528,12 @@ const Events = () => {
                 className="text-center p-8 bg-indigo-900/30 rounded-xl border border-indigo-800"
               >
                 <p className="text-xl text-indigo-200">No {eventType} events available at the moment.</p>
+                <p className="text-sm text-indigo-400 mt-2">Check back soon for updates on our ministry events.</p>
               </motion.div>
             )}
 
             {/* View More Button */}
-            {displayEvents.length > 6 && (
+            {filteredEvents.length > 6 && (
               <motion.div variants={fadeInUp} className="text-center mt-16">
                 <motion.button
                   onClick={() => setShowAllEvents(!showAllEvents)}
@@ -539,7 +582,10 @@ const Events = () => {
           {/* Background */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-indigo-950/80 backdrop-blur-sm z-10"></div>
-            <div className="w-full h-full bg-center bg-cover" style={{ backgroundImage: `url(${TeamPhoto})` }}></div>
+            <div
+              className="w-full h-full bg-center bg-cover"
+              style={{ backgroundImage: `url(/placeholder.svg?height=600&width=1200)` }}
+            ></div>
           </div>
 
           {/* Animated particles */}

@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard"
 import ProtectedRoute from "./components/ProtectedRoute"
 import PeopleMessage from "./pages/PeopleMessage"
 import HostEvent from "./pages/HostEvent"
+import JoinOurMinistryForm from './pages/JoinOutMinistryForm'
+import MinistryApplications from './pages/MinistryApplications'
 
 const App = () => {
   return (
@@ -32,6 +34,8 @@ const App = () => {
           <Route path="/donate" element={<Donate />} />
           <Route path="/login" element={<Login />} />
           <Route path="/fullbio" element={<Portfolio />} />
+          <Route path="/join-ministry" element={<JoinOurMinistryForm />} />
+          <Route path="/ministry-applications" element={<MinistryApplications />} />
           {/* Protected Routes */}
           <Route
             path="/dashboard"

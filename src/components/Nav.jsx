@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useLocation, useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabaseClient"
 import BGLogo from "../assets/BGLogo.png"
+import { ChevronDown, User, LogOut, Settings, Menu, X } from "lucide-react"
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
@@ -84,6 +85,7 @@ const NavBar = () => {
 
     // Navigate to home page
     navigate("/")
+    setShowUserMenu(false)
   }
 
   // Check if current path matches the link
@@ -91,19 +93,17 @@ const NavBar = () => {
     return location.pathname === path || (path !== "/" && location.pathname.startsWith(path))
   }
 
-  // Handle scroll event
+  // Close user menu when clicking outside
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest(".user-menu-container")) {
+        setShowUserMenu(false)
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [showUserMenu])
 
   // Navigation links
   const navLinks = [
@@ -115,178 +115,137 @@ const NavBar = () => {
     { name: "Contact", path: "/contact" },
   ]
 
-  // Animation variants
-  const navVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  }
-
-  const mobileMenuVariants = {
-    closed: {
-      opacity: 0,
-      y: -20,
-      transition: {
-        staggerChildren: 0.05,
-        staggerDirection: -1,
-        when: "afterChildren",
-      },
-    },
-    open: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  }
-
-  const menuItemVariants = {
-    closed: { opacity: 0, y: -10 },
-    open: { opacity: 1, y: 0 },
-  }
-
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-indigo-950/90 backdrop-blur-md shadow-lg py-2" : "bg-transparent py-4"
-      }`}
-      initial="hidden"
-      animate="visible"
-      variants={navVariants}
+      className="fixed top-0 left-0 right-0 z-50 bg-indigo-900 shadow-lg"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      {/* Animated background gradient - only shows when scrolled */}
-      {isScrolled && (
-        <motion.div
-          className="absolute inset-0 z-0 opacity-80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-950"
-            animate={{
-              backgroundPosition: ["0% 0%", "100% 0%"],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Number.POSITIVE_INFINITY,
-              repeatType: "mirror",
-            }}
-            style={{ backgroundSize: "200% 100%" }}
-          />
-        </motion.div>
-      )}
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center">
-              <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-18 w-40 mr-3" />
-            </motion.div>
-          </a>
+          <motion.a href="/" className="flex items-center" whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+            <img src={BGLogo || "/placeholder.svg"} alt="Exodus Music Ministry" className="h-12 w-auto" />
+          </motion.a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            <div className="bg-indigo-900/50 backdrop-blur-sm rounded-full p-1.5 border border-indigo-800">
-              {navLinks.map((link) => (
-                <a key={link.name} href={link.path}>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      isActive(link.path) ? "text-indigo-950 bg-yellow-400" : "text-white hover:text-yellow-400"
-                    }`}
-                  >
-                    {link.name}
-                    {isActive(link.path) && (
-                      <motion.span
-                        className="absolute inset-0 rounded-full bg-yellow-400 -z-10"
-                        layoutId="activeNav"
-                        transition={{ type: "spring", duration: 0.5 }}
-                      />
-                    )}
-                  </motion.button>
-                </a>
-              ))}
-            </div>
-
-            {/* Donate Button and Login/Dashboard */}
-            <div className="flex items-center gap-3">
-              <a href="/donate">
-                <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0px 0px 15px rgba(250, 204, 21, 0.5)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-6 py-2.5 rounded-full text-sm font-bold shadow-md"
-                >
-                  Donate
-                </motion.button>
-              </a>
-
-              {user ? (
-                <div className="flex items-center gap-2">
-                  <a href="/dashboard">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-full text-sm font-medium transition-colors"
-                    >
-                      Dashboard
-                    </motion.button>
-                  </a>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleLogout}
-                    className="bg-indigo-800/50 hover:bg-indigo-700/50 text-white px-4 py-2.5 rounded-full text-sm font-medium transition-colors"
-                  >
-                    Logout
-                  </motion.button>
-                </div>
-              ) : (
-                <motion.button
+          {/* Desktop Navigation - Center */}
+          <div className="hidden lg:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <a key={link.name} href={link.path}>
+                <motion.div
+                  className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                    isActive(link.path) ? "text-yellow-400" : "text-white hover:text-yellow-400"
+                  }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={handleLogin}
-                  className="bg-indigo-700 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-full text-sm font-medium transition-colors"
                 >
-                  Login
+                  {link.name}
+                  {isActive(link.path) && (
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-400 rounded-full"
+                      layoutId="activeIndicator"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </motion.div>
+              </a>
+            ))}
+          </div>
+
+          {/* Desktop Actions - Right */}
+          <div className="hidden lg:flex items-center space-x-4">
+            {/* Donate Button */}
+            <a href="/donate">
+              <motion.button
+                className="bg-yellow-400 hover:bg-yellow-500 text-indigo-900 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Donate
+              </motion.button>
+            </a>
+
+            {/* User Authentication */}
+            {user ? (
+              <div className="relative user-menu-container">
+                <motion.button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-full bg-yellow-400 hover:bg-yellow-500 text-indigo-900 transition-all duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="w-6 h-6 bg-indigo-900 rounded-full flex items-center justify-center">
+                    <User className="w-3 h-3 text-yellow-400" />
+                  </div>
+                  <span className="text-sm font-medium max-w-24 truncate">
+                    {user.user_metadata?.name || user.email?.split("@")[0] || "User"}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""}`}
+                  />
                 </motion.button>
-              )}
-            </div>
+
+                {/* User Dropdown Menu */}
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
+                    >
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {user.user_metadata?.name || "User"}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      </div>
+
+                      <a
+                        href="/dashboard"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Dashboard</span>
+                      </a>
+
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center space-x-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <motion.button
+                onClick={handleLogin}
+                className="flex items-center space-x-2 px-4 py-2 rounded-full bg-yellow-400 hover:bg-yellow-500 text-indigo-900 transition-all duration-200"
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <User className="w-4 h-4" />
+                <span className="text-sm font-semibold">Sign In</span>
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white p-2"
+              className="p-2 rounded-lg text-white hover:bg-indigo-800 transition-colors duration-200"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               aria-label="Toggle menu"
             >
-              <div className="w-6 flex flex-col items-end justify-center gap-1.5">
-                <motion.span
-                  animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                  className={`block h-0.5 ${isOpen ? "w-6" : "w-6"} bg-current transition-all duration-300`}
-                ></motion.span>
-                <motion.span
-                  animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-                  className="block h-0.5 w-4 bg-current transition-all duration-300"
-                ></motion.span>
-                <motion.span
-                  animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-                  className={`block h-0.5 ${isOpen ? "w-6" : "w-5"} bg-current transition-all duration-300`}
-                ></motion.span>
-              </div>
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </motion.button>
           </div>
         </div>
@@ -296,75 +255,99 @@ const NavBar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={mobileMenuVariants}
-            className="md:hidden absolute top-full left-0 right-0 bg-indigo-950/95 backdrop-blur-md border-t border-indigo-800 shadow-xl"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="lg:hidden bg-indigo-800 border-t border-indigo-700"
           >
-            <div className="container mx-auto px-4 py-4">
-              <div className="flex flex-col space-y-2">
-                {navLinks.map((link) => (
-                  <motion.div key={link.name} variants={menuItemVariants}>
+            <div className="container mx-auto px-4 py-6">
+              <div className="space-y-2">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
                     <a
                       href={link.path}
                       onClick={() => setIsOpen(false)}
-                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${
                         isActive(link.path)
-                          ? "bg-indigo-800/80 text-yellow-400"
-                          : "text-white hover:bg-indigo-900/50 hover:text-yellow-400"
+                          ? "text-yellow-400 bg-indigo-700"
+                          : "text-white hover:text-yellow-400 hover:bg-indigo-700"
                       }`}
                     >
                       {link.name}
                     </a>
                   </motion.div>
                 ))}
-                <motion.div variants={menuItemVariants} className="pt-2">
-                  <a
-                    href="/donate"
-                    onClick={() => setIsOpen(false)}
-                    className="block bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-4 py-3 rounded-lg text-base font-bold text-center shadow-md"
-                  >
-                    Donate
-                  </a>
-                </motion.div>
 
-                {user ? (
-                  <>
-                    <motion.div variants={menuItemVariants} className="pt-2">
-                      <a
-                        href="/dashboard"
-                        onClick={() => setIsOpen(false)}
-                        className="block bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
+                <div className="pt-4 space-y-3 border-t border-indigo-700">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.1 }}
+                  >
+                    <a
+                      href="/donate"
+                      onClick={() => setIsOpen(false)}
+                      className="block bg-yellow-400 hover:bg-yellow-500 text-indigo-900 px-4 py-3 rounded-lg text-base font-semibold text-center transition-colors duration-200"
+                    >
+                      Donate
+                    </a>
+                  </motion.div>
+
+                  {user ? (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: (navLinks.length + 1) * 0.1 }}
                       >
-                        Dashboard
-                      </a>
-                    </motion.div>
-                    <motion.div variants={menuItemVariants} className="pt-2">
+                        <a
+                          href="/dashboard"
+                          onClick={() => setIsOpen(false)}
+                          className="block bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors duration-200"
+                        >
+                          Dashboard
+                        </a>
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: (navLinks.length + 2) * 0.1 }}
+                      >
+                        <button
+                          onClick={() => {
+                            handleLogout()
+                            setIsOpen(false)
+                          }}
+                          className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors duration-200"
+                        >
+                          Sign Out
+                        </button>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (navLinks.length + 1) * 0.1 }}
+                    >
                       <button
                         onClick={() => {
-                          handleLogout()
+                          handleLogin()
                           setIsOpen(false)
                         }}
-                        className="w-full bg-indigo-800/50 hover:bg-indigo-700/50 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
+                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-indigo-900 px-4 py-3 rounded-lg text-base font-semibold text-center transition-colors duration-200"
                       >
-                        Logout
+                        Sign In
                       </button>
                     </motion.div>
-                  </>
-                ) : (
-                  <motion.div variants={menuItemVariants} className="pt-2">
-                    <button
-                      onClick={() => {
-                        handleLogin()
-                        setIsOpen(false)
-                      }}
-                      className="w-full bg-indigo-700 hover:bg-indigo-600 text-white px-4 py-3 rounded-lg text-base font-medium text-center transition-colors"
-                    >
-                      Login
-                    </button>
-                  </motion.div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

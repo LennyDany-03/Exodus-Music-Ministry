@@ -18,10 +18,10 @@ const About = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
 
-  // Enhanced parallax effects
+  // Enhanced parallax effects (matching Home.jsx)
   const historyY = useTransform(scrollYProgress, [0.1, 0.3], [150, 0])
   const visionY = useTransform(scrollYProgress, [0.25, 0.45], [150, 0])
-  const teamRotate = useTransform(scrollYProgress, [0.4, 0.6], [-5, 0])
+  const teamY = useTransform(scrollYProgress, [0.4, 0.6], [100, 0])
 
   // Initial animation sequence
   useEffect(() => {
@@ -37,7 +37,7 @@ const About = () => {
     sequence()
   }, [controls])
 
-  // Enhanced animation variants
+  // Enhanced animation variants (matching Home.jsx)
   const cardVariants = {
     hidden: { y: 50 },
     visible: (i) => ({
@@ -55,6 +55,25 @@ const About = () => {
     },
   }
 
+  // Professional team card variants (no rotation)
+  const teamCardVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: (i) => ({
+      y: 0,
+      opacity: 1,
+      transition: {
+        delay: i * 0.1 + 0.3,
+        duration: 0.7,
+        ease: [0.6, 0.05, 0.01, 0.9],
+      },
+    }),
+    hover: {
+      y: -8,
+      boxShadow: "0px 15px 30px rgba(0, 0, 0, 0.2)",
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+  }
+
   // Team members data
   const teamMembers = [
     {
@@ -64,7 +83,7 @@ const About = () => {
       image: Victor,
     },
     {
-      name: "Mrs. Helen joshua",
+      name: "Mrs. Helen Joshua",
       role: "Secretary",
       bio: "Helen Joshua brings grace and precision to her role as Secretary, orchestrating every detail behind the scenes so our ministry can thrive in harmony.",
       image: Helen,
@@ -88,17 +107,17 @@ const About = () => {
       image: Saral,
     },
     {
-      name: "Rev.EdenV.Prabhu",
-      role: "Designation",
+      name: "Rev. Eden V. Prabhu",
+      role: "Spiritual Advisor",
       bio: "Rev. Eden V. Prabhu shepherds the ministry with a heart for God's people and a passion for the Word, guiding the flock with wisdom, compassion, and unwavering faithfulness to Christ.",
       image: SixthMember,
     },
     {
-      name: "7th Member",
-      role: "General secretary",
-      bio: "As General Secretary, 7th Member provides visionary leadership and spiritual oversight, fostering unity, growth, and purpose across the ministry, all rooted in a deep commitment to the Gospel and the glory of God.",
+      name: "General Secretary",
+      role: "General Secretary",
+      bio: "As General Secretary, provides visionary leadership and spiritual oversight, fostering unity, growth, and purpose across the ministry, all rooted in a deep commitment to the Gospel and the glory of God.",
       image: SeventhMember,
-    }
+    },
   ]
 
   // Core values data
@@ -116,7 +135,8 @@ const About = () => {
     {
       icon: "🎵",
       title: "Musical Excellence",
-      description: "We strive for excellence in our musicianship as an offering to God and to inspire our congregation.",
+      description:
+        "We strive for excellence in our musicianship as an offering to God and to inspire our congregation.",
     },
     {
       icon: "❤️",
@@ -148,6 +168,7 @@ const About = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
+          style={{ y: historyY }}
         >
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -323,7 +344,8 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Vision</h3>
                     <p className="text-indigo-100 text-lg">
-                      To revive, preserve, and promote the rich heritage of Tamil Christian lyrics and music for the spiritual enrichment of worshippers worldwide.
+                      To revive, preserve, and promote the rich heritage of Tamil Christian lyrics and music for the
+                      spiritual enrichment of worshippers worldwide.
                     </p>
                   </motion.div>
 
@@ -336,7 +358,9 @@ const About = () => {
                   >
                     <h3 className="text-3xl font-bold mb-4 text-yellow-400">Our Mission</h3>
                     <p className="text-indigo-100 text-lg">
-                      To restore original Tamil Christian hymns, archive historical lyric collections, train worship leaders, and empower global Tamil communities to rediscover and use these songs in worship through print, digital, and training initiatives.
+                      To restore original Tamil Christian hymns, archive historical lyric collections, train worship
+                      leaders, and empower global Tamil communities to rediscover and use these songs in worship through
+                      print, digital, and training initiatives.
                     </p>
                   </motion.div>
                 </div>
@@ -440,8 +464,8 @@ const About = () => {
           ))}
         </motion.section>
 
-        {/* Team Section */}
-        <motion.section className="py-32 bg-indigo-950 relative overflow-hidden" style={{ rotate: teamRotate }}>
+        {/* Team Section - Professional Design without rotation */}
+        <motion.section className="py-32 bg-indigo-950 relative overflow-hidden" style={{ y: teamY }}>
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               className="text-center mb-20"
@@ -462,7 +486,7 @@ const About = () => {
                 <motion.div
                   key={index}
                   custom={index}
-                  variants={cardVariants}
+                  variants={teamCardVariants}
                   initial="hidden"
                   whileInView="visible"
                   whileHover="hover"
