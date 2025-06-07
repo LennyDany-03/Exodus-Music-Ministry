@@ -16,6 +16,8 @@ const Dashboard = () => {
     music: 0,
     applications: 0,
     partnerships: 0,
+    donations: 0,
+    donationAmount: 0,
   })
 
   useEffect(() => {
@@ -115,10 +117,26 @@ const Dashboard = () => {
         .from("partnership_requests")
         .select("*", { count: "exact", head: true })
 
+      // Get count and total amount of donations
+      const { count: donationCount, error: donationCountError } = await supabase
+        .from("donations")
+        .select("*", { count: "exact", head: true })
+
+      const { data: donationData, error: donationAmountError } = await supabase
+        .from("donations")
+        .select("amount")
+        .eq("payment_status", "success")
+
       if (imageError) throw imageError
       if (eventError) throw eventError
       if (applicationError) throw applicationError
       if (partnershipError) throw partnershipError
+      if (donationCountError) throw donationCountError
+      if (donationAmountError) throw donationAmountError
+
+      // Calculate total donation amount
+      const totalAmount =
+        donationData?.reduce((sum, donation) => sum + (Number.parseFloat(donation.amount) || 0), 0) || 0
 
       setStats({
         images: imageCount || 0,
@@ -126,6 +144,8 @@ const Dashboard = () => {
         music: 0, // Placeholder for future music feature
         applications: applicationCount || 0,
         partnerships: partnershipCount || 0,
+        donations: donationCount || 0,
+        donationAmount: totalAmount,
       })
     } catch (error) {
       console.error("Error fetching stats:", error)
@@ -140,6 +160,16 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error signing out:", error)
     }
+  }
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount)
   }
 
   // Loading state
@@ -244,23 +274,6 @@ const Dashboard = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                      ></path>
-                    </svg>
-                    <span>{stats.music} Music Tracks</span>
-                  </div>
-                  <div className="bg-indigo-800/50 px-4 py-2 rounded-lg flex items-center gap-2">
-                    <svg
-                      className="w-5 h-5 text-yellow-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                       ></path>
                     </svg>
@@ -282,6 +295,23 @@ const Dashboard = () => {
                       ></path>
                     </svg>
                     <span>{stats.partnerships} Partnerships</span>
+                  </div>
+                  <div className="bg-indigo-800/50 px-4 py-2 rounded-lg flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                      ></path>
+                    </svg>
+                    <span>{formatCurrency(stats.donationAmount)} Raised</span>
                   </div>
                 </div>
               </div>
@@ -441,62 +471,56 @@ const Dashboard = () => {
               </div>
             </motion.div>
 
-            {/* Settings & Future Features */}
+            {/* Transaction Tracker */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col relative overflow-hidden">
-                <div className="absolute top-2 right-2 bg-yellow-400 text-indigo-900 text-xs font-bold px-2 py-1 rounded-full">
-                  Coming Soon
+              <Link to="/transaction-tracker" className="block h-full">
+                <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
+                  <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Transaction Tracker</h3>
+                  <p className="text-indigo-200 mb-4 flex-grow">
+                    Track and manage all donation transactions and donor information.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-yellow-400 font-medium">{stats.donations} Donations</span>
+                    <svg
+                      className="w-5 h-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </div>
                 </div>
-                <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-8 h-8 text-yellow-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    ></path>
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Settings & More</h3>
-                <p className="text-indigo-200 mb-4 flex-grow">
-                  Configure website settings and access upcoming features.
-                </p>
-                <div className="flex justify-between items-center opacity-50">
-                  <span className="text-yellow-400 font-medium">Feature in Development</span>
-                  <svg
-                    className="w-5 h-5 text-yellow-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    ></path>
-                  </svg>
-                </div>
-              </div>
+              </Link>
             </motion.div>
+
             {/* People Messages */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -907,6 +931,28 @@ const Dashboard = () => {
                         ></path>
                       </svg>
                       Partnership Requests
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/transaction-tracker"
+                      className="flex items-center gap-2 text-indigo-200 hover:text-yellow-400 transition-colors"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                        ></path>
+                      </svg>
+                      Transaction Tracker
                     </Link>
                   </li>
                 </ul>

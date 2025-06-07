@@ -17,6 +17,7 @@ import HostEvent from "./pages/HostEvent"
 import MinistryApplications from "./pages/MinistryApplications"
 import PartnerWithUs from "./pages/PartnerWithUs"
 import PartnerView from "./pages/PartnerView"
+import TransactionTracker from "./pages/TransactionTracker"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
@@ -90,6 +91,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PartnerView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transaction-tracker"
+            element={
+              <ProtectedRoute>
+                <TransactionTracker />
               </ProtectedRoute>
             }
           />
