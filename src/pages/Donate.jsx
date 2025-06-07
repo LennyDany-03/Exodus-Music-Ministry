@@ -22,10 +22,95 @@ const initializeRazorpay = () => {
   })
 }
 
+// PDF generation function
+const generateInvoicePDF = (donationData) => {
+  // Create a new jsPDF instance
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF()
+
+  // Set colors
+  const primaryColor = [67, 56, 202] // Indigo
+  const accentColor = [250, 204, 21] // Yellow
+
+  // Header
+  doc.setFillColor(...primaryColor)
+  doc.rect(0, 0, 210, 40, "F")
+
+  // Ministry Name
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(24)
+  doc.setFont(undefined, "bold")
+  doc.text("EXODUS MUSIC MINISTRY", 20, 25)
+
+  // Subtitle
+  doc.setFontSize(12)
+  doc.setFont(undefined, "normal")
+  doc.text("Donation Receipt", 20, 32)
+
+  // Reset text color
+  doc.setTextColor(0, 0, 0)
+
+  // Receipt Title
+  doc.setFontSize(20)
+  doc.setFont(undefined, "bold")
+  doc.text("DONATION RECEIPT", 20, 60)
+
+  // Receipt details
+  doc.setFontSize(12)
+  doc.setFont(undefined, "normal")
+
+  const currentDate = new Date().toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+
+  // Receipt information
+  doc.text(`Receipt No: EMM-${Date.now()}`, 20, 80)
+  doc.text(`Date: ${currentDate}`, 20, 90)
+  doc.text(`Payment ID: ${donationData.paymentId || "N/A"}`, 20, 100)
+
+  // Donor information
+  doc.setFont(undefined, "bold")
+  doc.text("DONOR INFORMATION:", 20, 120)
+  doc.setFont(undefined, "normal")
+  doc.text(`Name: ${donationData.donorName}`, 20, 135)
+  doc.text(`Email: ${donationData.email}`, 20, 145)
+  if (donationData.phone) {
+    doc.text(`Phone: ${donationData.phone}`, 20, 155)
+  }
+
+  // Donation details
+  doc.setFont(undefined, "bold")
+  doc.text("DONATION DETAILS:", 20, 175)
+  doc.setFont(undefined, "normal")
+  doc.text(`Amount: ₹${donationData.amount}`, 20, 190)
+  doc.text(`Type: ${donationData.type === "monthly" ? "Monthly Donation" : "One-time Donation"}`, 20, 200)
+  doc.text(`Status: Completed`, 20, 210)
+
+  // Thank you message
+  doc.setFillColor(...accentColor)
+  doc.rect(15, 230, 180, 30, "F")
+  doc.setTextColor(...primaryColor)
+  doc.setFontSize(14)
+  doc.setFont(undefined, "bold")
+  doc.text("Thank you for your generous donation!", 20, 245)
+  doc.setFontSize(10)
+  doc.setFont(undefined, "normal")
+  doc.text("Your contribution helps us spread God's love through music.", 20, 252)
+
+  // Footer
+  doc.setTextColor(100, 100, 100)
+  doc.setFontSize(8)
+  doc.text("This is a computer-generated receipt. No signature required.", 20, 280)
+  doc.text("Exodus Music Ministry | Email: info@exodusmusicministry.org", 20, 285)
+
+  return doc
+}
+
 const Donate = () => {
   const controls = useAnimation()
   const { scrollYProgress } = useScroll()
-  const [isLoading, setIsLoading] = useState(true)
   const [donationAmount, setDonationAmount] = useState("100")
   const [customAmount, setCustomAmount] = useState("")
   const [donationType, setDonationType] = useState("one-time")
@@ -38,6 +123,8 @@ const Donate = () => {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [donationData, setDonationData] = useState(null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Parallax effects
   const impactY = useTransform(
@@ -68,39 +155,29 @@ const Donate = () => {
     },
   }
 
-  const staggerContainer = {
-    hidden: {},
+  // Success modal variants
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
     visible: {
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: { duration: 0.3 },
     },
   }
 
-  // Initial animation sequence
-  // useEffect(() => {
-  //   const sequence = async () => {
-  //     await new Promise((resolve) => setTimeout(resolve, 1000))
-  //     setIsLoading(false)
-  //     await controls.start({
-  //       y: 0,
-  //       transition: { duration: 0.7 },
-  //     })
-  //   }
-
-  //   sequence()
-  // }, [controls])
-
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     // Force a re-render to update animations based on new window size
-  //     setIsLoading(false)
-  //   }
-
-  //   window.addEventListener("resize", handleResize)
-  //   return () => window.removeEventListener("resize", handleResize)
-  // }, [])
+  const checkmarkVariants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+      pathLength: 1,
+      opacity: 1,
+      transition: { duration: 1.5, ease: "easeInOut", delay: 0.5 },
+    },
+  }
 
   // Donation impact data
   const donationImpacts = [
@@ -159,29 +236,76 @@ const Donate = () => {
   // Save donation to Supabase
   const saveDonationToSupabase = async (paymentData) => {
     try {
-      const { data, error } = await supabase.from("donations").insert([
-        {
-          payment_id: paymentData.razorpay_payment_id,
-          amount: donationAmount === "custom" ? customAmount : donationAmount,
-          type: donationType,
-          donor_name: `${formData.firstName} ${formData.lastName}`,
-          donor_email: formData.email,
-          donor_phone: formData.phone || null,
-          payment_status: "completed",
-          donation_date: new Date().toISOString(),
-        },
-      ])
+      const finalAmount = donationAmount === "custom" ? customAmount : donationAmount
+      const donationRecord = {
+        payment_id: paymentData.razorpay_payment_id,
+        amount: finalAmount,
+        type: donationType,
+        donor_name: `${formData.firstName} ${formData.lastName}`,
+        donor_email: formData.email,
+        donor_phone: formData.phone || null,
+        payment_status: "completed",
+        donation_date: new Date().toISOString(),
+      }
+
+      const { data, error } = await supabase.from("donations").insert([donationRecord])
 
       if (error) {
         console.error("Error saving donation:", error)
         throw new Error(error.message)
       }
 
+      // Store donation data for PDF generation
+      setDonationData({
+        paymentId: paymentData.razorpay_payment_id,
+        amount: finalAmount,
+        type: donationType,
+        donorName: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        date: new Date().toISOString(),
+      })
+
       return data
     } catch (err) {
       console.error("Error in saveDonationToSupabase:", err)
       throw err
     }
+  }
+
+  // Handle PDF download
+  const handleDownloadPDF = () => {
+    if (!donationData) return
+
+    // Load jsPDF
+    const script = document.createElement("script")
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    script.onload = () => {
+      const doc = generateInvoicePDF(donationData)
+      doc.save(`Exodus-Donation-Receipt-${Date.now()}.pdf`)
+    }
+    document.head.appendChild(script)
+  }
+
+  // Handle email receipt
+  const handleEmailReceipt = () => {
+    if (!donationData) return
+
+    const subject = encodeURIComponent("Donation Receipt - Exodus Music Ministry")
+    const body = encodeURIComponent(`Dear ${donationData.donorName},
+
+Thank you for your generous donation of ₹${donationData.amount} to Exodus Music Ministry.
+
+Your donation will help us continue spreading God's love through music and worship.
+
+Payment ID: ${donationData.paymentId}
+Date: ${new Date(donationData.date).toLocaleDateString()}
+
+God bless you!
+
+Exodus Music Ministry Team`)
+
+    window.open(`mailto:${donationData.email}?subject=${subject}&body=${body}`)
   }
 
   // Handle Razorpay payment
@@ -219,8 +343,8 @@ const Donate = () => {
               razorpay_payment_id: response.razorpay_payment_id,
             })
 
-            // Show success message
-            setSuccess(true)
+            // Show success modal
+            setShowSuccessModal(true)
 
             // Reset form
             setFormData({
@@ -287,13 +411,146 @@ const Donate = () => {
     handlePayment()
   }
 
+  // Close success modal
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false)
+    setSuccess(false)
+    setDonationData(null)
+  }
+
   return (
     <>
       {/* NavBar Component */}
       <NavBar />
 
       <div className="overflow-x-hidden bg-indigo-950 text-white">
-        {/* Donation Form Section - Now the first section */}
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeSuccessModal}
+          >
+            <motion.div
+              className="bg-indigo-900 rounded-2xl p-8 max-w-md w-full border border-indigo-700 shadow-2xl"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Success Animation */}
+              <div className="text-center mb-6">
+                <motion.div
+                  className="w-20 h-20 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
+                >
+                  <motion.svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                      variants={checkmarkVariants}
+                      initial="hidden"
+                      animate="visible"
+                    />
+                  </motion.svg>
+                </motion.div>
+
+                <motion.h3
+                  className="text-2xl font-bold text-yellow-400 mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 0.5 }}
+                >
+                  Transaction Completed!
+                </motion.h3>
+
+                <motion.p
+                  className="text-indigo-100 mb-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2, duration: 0.5 }}
+                >
+                  Thank you for your generous donation of{" "}
+                  <span className="font-bold text-yellow-400">₹{donationData?.amount}</span>
+                </motion.p>
+
+                {donationData && (
+                  <motion.div
+                    className="bg-indigo-800/50 rounded-lg p-4 mb-6 text-left"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.4, duration: 0.5 }}
+                  >
+                    <p className="text-sm text-indigo-200 mb-1">
+                      <span className="font-medium">Payment ID:</span> {donationData.paymentId}
+                    </p>
+                    <p className="text-sm text-indigo-200 mb-1">
+                      <span className="font-medium">Date:</span> {new Date(donationData.date).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-indigo-200">
+                      <span className="font-medium">Type:</span>{" "}
+                      {donationData.type === "monthly" ? "Monthly" : "One-time"} Donation
+                    </p>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <motion.div
+                className="space-y-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6, duration: 0.5 }}
+              >
+                <button
+                  onClick={handleDownloadPDF}
+                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <span>Download Receipt (PDF)</span>
+                </button>
+
+                <button
+                  onClick={handleEmailReceipt}
+                  className="w-full bg-indigo-700 hover:bg-indigo-600 text-white py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span>Email Receipt</span>
+                </button>
+
+                <button
+                  onClick={closeSuccessModal}
+                  className="w-full bg-indigo-800 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition-all duration-300"
+                >
+                  Thank you 
+                </button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Donation Form Section */}
         <motion.section
           className="py-24 bg-gradient-to-b from-indigo-950 to-indigo-900 overflow-hidden relative"
           initial="hidden"
@@ -325,182 +582,195 @@ const Donate = () => {
                 transition={{ duration: 0.8 }}
               >
                 <div className="bg-indigo-800/80 backdrop-blur-sm p-10 rounded-2xl border border-indigo-700 shadow-2xl">
-                  {success ? (
-                    <div className="text-center py-10">
-                      <div className="text-6xl mb-6">🙏</div>
-                      <h3 className="text-2xl font-bold mb-4 text-yellow-400">Thank You for Your Donation!</h3>
-                      <p className="text-indigo-100 mb-8">
-                        Your generous contribution will help us continue our mission of spreading God's love through
-                        music.
-                      </p>
-                      <button
-                        onClick={() => setSuccess(false)}
-                        className="bg-indigo-700 hover:bg-indigo-600 text-white px-6 py-3 rounded-full font-bold shadow-lg"
-                      >
-                        Make Another Donation
-                      </button>
+                  <form onSubmit={handleDonateSubmit}>
+                    {/* Donation Type */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold mb-4">Donation Type</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <motion.button
+                          type="button"
+                          onClick={() => handleDonationTypeChange("one-time")}
+                          className={`p-4 rounded-lg border ${
+                            donationType === "one-time"
+                              ? "bg-yellow-400 text-indigo-950 border-yellow-500"
+                              : "bg-indigo-700/50 border-indigo-600 text-white"
+                          }`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          One-Time Donation
+                        </motion.button>
+                        <motion.button
+                          type="button"
+                          onClick={() => handleDonationTypeChange("monthly")}
+                          className={`p-4 rounded-lg border ${
+                            donationType === "monthly"
+                              ? "bg-yellow-400 text-indigo-950 border-yellow-500"
+                              : "bg-indigo-700/50 border-indigo-600 text-white"
+                          }`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Monthly Donation
+                        </motion.button>
+                      </div>
                     </div>
-                  ) : (
-                    <form onSubmit={handleDonateSubmit}>
 
-                      {/* Donation Amount */}
-                      <div className="mb-8">
-                        <h3 className="text-xl font-bold mb-4">Donation Amount</h3>
-                        <div className="grid grid-cols-3 gap-4 mb-4">
-                          {["100", "500", "1000", "2500", "5000", "10000"].map((amount) => (
-                            <motion.button
-                              key={amount}
-                              type="button"
-                              onClick={() => handleAmountSelect(amount)}
-                              className={`p-4 rounded-lg border ${
-                                donationAmount === amount
-                                  ? "bg-yellow-400 text-indigo-950 border-yellow-500"
-                                  : "bg-indigo-700/50 border-indigo-600 text-white"
-                              }`}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                            >
-                              ₹{amount}
-                            </motion.button>
-                          ))}
-                        </div>
-                        <div className="flex items-center space-x-4">
+                    {/* Donation Amount */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold mb-4">Donation Amount</h3>
+                      <div className="grid grid-cols-3 gap-4 mb-4">
+                        {["100", "500", "1000", "2500", "5000", "10000"].map((amount) => (
                           <motion.button
+                            key={amount}
                             type="button"
-                            onClick={() => handleAmountSelect("custom")}
+                            onClick={() => handleAmountSelect(amount)}
                             className={`p-4 rounded-lg border ${
-                              donationAmount === "custom"
+                              donationAmount === amount
                                 ? "bg-yellow-400 text-indigo-950 border-yellow-500"
                                 : "bg-indigo-700/50 border-indigo-600 text-white"
-                            } w-1/3`}
+                            }`}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
-                            Custom
+                            ₹{amount}
                           </motion.button>
-                          <div className="relative flex-1">
-                            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-300">
-                              ₹
-                            </span>
-                            <input
-                              type="number"
-                              value={customAmount}
-                              onChange={handleCustomAmountChange}
-                              placeholder="Enter amount"
-                              className="w-full px-8 py-4 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                            />
-                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <motion.button
+                          type="button"
+                          onClick={() => handleAmountSelect("custom")}
+                          className={`p-4 rounded-lg border ${
+                            donationAmount === "custom"
+                              ? "bg-yellow-400 text-indigo-950 border-yellow-500"
+                              : "bg-indigo-700/50 border-indigo-600 text-white"
+                          } w-1/3`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Custom
+                        </motion.button>
+                        <div className="relative flex-1">
+                          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-300">₹</span>
+                          <input
+                            type="number"
+                            value={customAmount}
+                            onChange={handleCustomAmountChange}
+                            placeholder="Enter amount"
+                            className="w-full px-8 py-4 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                          />
                         </div>
                       </div>
+                    </div>
 
-                      {/* Personal Information */}
-                      <div className="mb-8">
-                        <h3 className="text-xl font-bold mb-4">Your Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <label className="block text-sm font-medium text-indigo-100 mb-1">First Name*</label>
-                            <input
-                              type="text"
-                              name="firstName"
-                              value={formData.firstName}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-indigo-100 mb-1">Last Name*</label>
-                            <input
-                              type="text"
-                              name="lastName"
-                              value={formData.lastName}
-                              onChange={handleInputChange}
-                              required
-                              className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
-                            />
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium text-indigo-100 mb-1">Email Address*</label>
+                    {/* Personal Information */}
+                    <div className="mb-8">
+                      <h3 className="text-xl font-bold mb-4">Your Information</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium text-indigo-100 mb-1">First Name*</label>
                           <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
                             onChange={handleInputChange}
                             required
                             className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-indigo-100 mb-1">Phone Number</label>
+                          <label className="block text-sm font-medium text-indigo-100 mb-1">Last Name*</label>
                           <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
                             onChange={handleInputChange}
+                            required
                             className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
                           />
                         </div>
                       </div>
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-indigo-100 mb-1">Email Address*</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-indigo-100 mb-1">Phone Number</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-indigo-700/50 border border-indigo-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+                        />
+                      </div>
+                    </div>
 
-                      {/* Error message */}
-                      {error && (
-                        <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200">
-                          {error}
-                        </div>
+                    {/* Error message */}
+                    {error && (
+                      <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-200">
+                        {error}
+                      </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <motion.button
+                      type="submit"
+                      disabled={isProcessing}
+                      whileHover={{
+                        scale: isProcessing ? 1 : 1.05,
+                        boxShadow: isProcessing ? "none" : "0px 5px 20px rgba(250, 204, 21, 0.4)",
+                      }}
+                      whileTap={{ scale: isProcessing ? 1 : 0.95 }}
+                      className={`w-full ${
+                        isProcessing
+                          ? "bg-gray-500 cursor-not-allowed"
+                          : "bg-gradient-to-r from-yellow-500 to-yellow-400 hover:shadow-lg"
+                      } text-indigo-950 px-10 py-4 rounded-full text-xl font-bold tracking-wide shadow-lg relative`}
+                    >
+                      {isProcessing ? (
+                        <span className="flex items-center justify-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-950"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : donationType === "monthly" ? (
+                        "Donate Monthly"
+                      ) : (
+                        "Donate Now"
                       )}
+                    </motion.button>
 
-                      {/* Submit Button */}
-                      <motion.button
-                        type="submit"
-                        disabled={isProcessing}
-                        whileHover={{
-                          scale: isProcessing ? 1 : 1.05,
-                          boxShadow: isProcessing ? "none" : "0px 5px 20px rgba(250, 204, 21, 0.4)",
-                        }}
-                        whileTap={{ scale: isProcessing ? 1 : 0.95 }}
-                        className={`w-full ${
-                          isProcessing
-                            ? "bg-gray-500 cursor-not-allowed"
-                            : "bg-gradient-to-r from-yellow-500 to-yellow-400 hover:shadow-lg"
-                        } text-indigo-950 px-10 py-4 rounded-full text-xl font-bold tracking-wide shadow-lg relative`}
-                      >
-                        {isProcessing ? (
-                          <span className="flex items-center justify-center">
-                            <svg
-                              className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-950"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Processing...
-                          </span>
-                        ) : donationType === "monthly" ? (
-                          "Donate Monthly"
-                        ) : (
-                          "Donate Now"
-                        )}
-                      </motion.button>
-
-                      <p className="text-center text-indigo-300 text-sm mt-4">
-                        Your donation is secure and encrypted. You will receive a receipt via email.
-                      </p>
-                    </form>
-                  )}
+                    <p className="text-center text-indigo-300 text-sm mt-4">
+                      Your donation is secure and encrypted. You will receive a receipt via email.
+                    </p>
+                  </form>
                 </div>
               </motion.div>
 
@@ -609,15 +879,14 @@ const Donate = () => {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-center mt-16"
             >
-              <a href="#donate-form">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                >
-                  Make a Difference Today
-                </motion.button>
-              </a>
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
+                Make a Difference Today
+              </motion.button>
             </motion.div>
           </div>
         </motion.section>

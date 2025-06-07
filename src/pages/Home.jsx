@@ -772,7 +772,7 @@ const Home = () => {
               </motion.p>
 
               <motion.div className="flex flex-col md:flex-row justify-center gap-6">
-                <a href="/join-ministry">
+                <a href="/join-our-ministry">
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
                     whileTap={{ scale: 0.95 }}

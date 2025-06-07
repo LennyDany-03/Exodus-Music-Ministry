@@ -162,17 +162,6 @@ const Music = () => {
       url: "https://open.spotify.com",
     },
     {
-      name: "Apple Music",
-      icon: (
-        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M23.997 6.124c0-.738-.065-1.47-.24-2.19-.317-1.31-1.062-2.31-2.18-3.043C21.003.517 20.373.285 19.7.164c-.517-.093-1.038-.135-1.564-.15-.04-.003-.083-.01-.124-.013H5.988c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.004.958 1.04 1.88.448 3.208c-.207.458-.332.939-.384 1.442-.058.565-.07 1.132-.07 1.7v11.3c.01.567.022 1.14.081 1.706.084.852.34 1.643.827 2.35.64.942 1.523 1.612 2.6 2.02.8.307 1.63.448 2.483.482.963.036 1.93.023 2.896.023h10.751c.196-.016.392-.03.588-.052.701-.065 1.387-.211 2.028-.498 1.171-.52 2.038-1.325 2.574-2.47.263-.55.413-1.13.484-1.742.051-.437.065-.876.065-1.315V6.124zm-2.854 12.55c-.074.51-.21.98-.472 1.42-.338.56-.825.962-1.43 1.23-.35.157-.73.26-1.118.322-.57.087-1.144.1-1.72.1H6.59c-.077-.017-.155-.03-.232-.047-.457-.08-.902-.178-1.326-.354-.99-.414-1.65-1.078-1.974-2.1-.13-.42-.196-.845-.227-1.282-.033-.46-.04-.927-.04-1.4V7.89c.006-.37.012-.73.033-1.11.033-.51.1-1.01.262-1.495.366-1.08 1.02-1.9 2.082-2.414.422-.21.856-.353 1.307-.45.335-.07.67-.11 1.01-.133.13-.01.262-.016.394-.023h12.71c.4.004.79.013.118.023.33.02.656.056.98.126.89.197 1.668.6 2.26 1.3.345.41.582.873.722 1.4.17.625.172 1.26.175 1.892.007 2.31.007 4.618.002 6.93-.01 1.002-.03 2.01-.21 3z" />
-          <path d="M12 10.11c-1.982 0-3.584 1.602-3.584 3.584S10.018 17.278 12 17.278s3.584-1.602 3.584-3.584S13.982 10.11 12 10.11zm0 5.38c-.992 0-1.796-.804-1.796-1.796S11.008 11.898 12 11.898s1.796.804 1.796 1.796S12.992 15.49 12 15.49z" />
-          <path d="M17.733 9.108a.882.882 0 0 0-.882.882.882.882 0 0 0 .882.882.882.882 0 0 0 .882-.882.882.882 0 0 0-.882-.882z" />
-        </svg>
-      ),
-      url: "https://music.apple.com",
-    },
-    {
       name: "YouTube Music",
       icon: (
         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -677,7 +666,7 @@ const Music = () => {
           ))}
         </motion.section>
 
-        {/* Music Licensing Section */}
+        {/* Join our Community Section */}
         <motion.section
           className="py-32 relative overflow-hidden"
           initial={{ opacity: 0 }}
@@ -697,120 +686,111 @@ const Music = () => {
           </div>
 
           <div className="container mx-auto px-4 relative z-20">
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto text-center">
               <motion.div
-                className="bg-indigo-800/80 backdrop-blur-sm p-10 rounded-2xl border border-indigo-700 shadow-2xl"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">Music Licensing</h2>
-                  <div className="w-16 h-1 bg-yellow-400 mx-auto mb-4"></div>
-                  <p className="text-indigo-100">
-                    Interested in using our music for your church, event, or production?
-                  </p>
-                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Join Our Community</h2>
+                <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
+                <p className="text-xl md:text-2xl text-indigo-100 mb-12 leading-relaxed">
+                  Be part of our mission to spread God's love through music and worship. Whether you want to join our
+                  ministry team or partner with us in our mission, we welcome you with open arms.
+                </p>
+              </motion.div>
 
-                <div className="space-y-6 mb-8">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2, duration: 0.6 }}
-                    className="bg-indigo-700/50 p-6 rounded-xl border border-indigo-600"
-                  >
-                    <h3 className="text-xl font-bold mb-3 text-yellow-400">Church Worship</h3>
-                    <p className="text-indigo-100 mb-4">
-                      Our music is freely available for use in church worship services. We simply ask that you credit
-                      Exodus Music Ministry when displaying lyrics.
-                    </p>
-                    <a href="#" className="text-yellow-400 hover:underline inline-flex items-center">
-                      Learn More
-                      <svg
-                        className="ml-1 w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </a>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3, duration: 0.6 }}
-                    className="bg-indigo-700/50 p-6 rounded-xl border border-indigo-600"
-                  >
-                    <h3 className="text-xl font-bold mb-3 text-yellow-400">Media & Productions</h3>
-                    <p className="text-indigo-100 mb-4">
-                      For use in videos, films, podcasts, or other media productions, please contact us for licensing
-                      information and rates.
-                    </p>
-                    <a href="#" className="text-yellow-400 hover:underline inline-flex items-center">
-                      Contact for Licensing
-                      <svg
-                        className="ml-1 w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </a>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
-                    className="bg-indigo-700/50 p-6 rounded-xl border border-indigo-600"
-                  >
-                    <h3 className="text-xl font-bold mb-3 text-yellow-400">Custom Music</h3>
-                    <p className="text-indigo-100 mb-4">
-                      Need custom worship music for your event or project? Our team can create original compositions
-                      tailored to your specific needs.
-                    </p>
-                    <a href="#" className="text-yellow-400 hover:underline inline-flex items-center">
-                      Request Custom Music
-                      <svg
-                        className="ml-1 w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                      </svg>
-                    </a>
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  className="text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
+              <motion.div
+                className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+              >
+                <motion.a
+                  href="/join-our-ministry-form"
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0px 10px 30px rgba(250, 204, 21, 0.4)",
+                    y: -2,
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg flex items-center space-x-3 transition-all duration-300"
                 >
-                  <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0px 5px 20px rgba(250, 204, 21, 0.4)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-indigo-950 px-10 py-4 rounded-full text-lg font-bold tracking-wide shadow-lg"
-                  >
-                    Contact Our Licensing Team
-                  </motion.button>
-                </motion.div>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    ></path>
+                  </svg>
+                  <span>Join Our Ministry</span>
+                </motion.a>
+
+                <motion.a
+                  href="/partner-with-us"
+                  whileHover={{
+                    scale: 1.05,
+                    backgroundColor: "rgba(250, 204, 21, 0.1)",
+                    borderColor: "#FBBF24",
+                    y: -2,
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-transparent border-2 border-yellow-400 text-yellow-400 px-10 py-4 rounded-full text-lg font-bold tracking-wide flex items-center space-x-3 transition-all duration-300 hover:text-yellow-300"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                    ></path>
+                  </svg>
+                  <span>Partner With Us</span>
+                </motion.a>
+              </motion.div>
+
+              <motion.div
+                className="mt-12 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+              >
+                <p className="text-indigo-200 text-lg mb-4">
+                  "Come, let us sing for joy to the Lord; let us shout aloud to the Rock of our salvation."
+                </p>
+                <p className="text-yellow-400 font-semibold">- Psalm 95:1</p>
               </motion.div>
             </div>
           </div>
+
+          {/* Floating music notes */}
+          {[...Array(12)].map((_, index) => (
+            <motion.div
+              key={index}
+              className="absolute text-xl text-yellow-400 opacity-30"
+              style={{
+                left: Math.random() * 100 + "%",
+                top: Math.random() * 100 + "%",
+              }}
+              animate={{
+                y: [-20, -100],
+                opacity: [0, 0.6, 0],
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 8 + Math.random() * 10,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: Math.random() * 5,
+                ease: "easeOut",
+              }}
+            >
+              {["♪", "♫", "♬", "♩"][Math.floor(Math.random() * 4)]}
+            </motion.div>
+          ))}
         </motion.section>
 
         {/* Footer */}
@@ -910,8 +890,8 @@ const Music = () => {
                         borderColor: "#FBBF24",
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-10 h-10 rounded-full bg-indigo-800 hover:bg-yellow-400 
-                                flex items-center justify-center text-gray-300 hover:text-indigo-900 
+                      className="w-10 h-10 rounded-full bg-indigo-800 hover:bg-yellow-400
+                                flex items-center justify-center text-gray-300 hover:text-indigo-900
                                 border border-indigo-700 transition-all duration-300"
                       aria-label={social.name}
                     >

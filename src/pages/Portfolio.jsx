@@ -403,7 +403,7 @@ const Portfolio = () => {
             transition={{ delay: 1, duration: 0.7 }}
             className="mt-16 text-center"
           >
-            <Link to="/contact">
+            <a href="/contact">
               <motion.button
                 whileHover={{
                   scale: 1.05,
@@ -414,7 +414,7 @@ const Portfolio = () => {
               >
                 Contact Dr. Victor
               </motion.button>
-            </Link>
+            </a>
           </motion.div>
         </div>
       </div>
