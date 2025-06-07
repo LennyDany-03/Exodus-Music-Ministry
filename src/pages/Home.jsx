@@ -338,7 +338,7 @@ const Home = () => {
                 </motion.button>
               </a>
 
-              <a href="/join-ministry">
+              <a href="/join-our-ministry">
                 <motion.button
                   variants={buttonVariants}
                   whileHover="hover"
