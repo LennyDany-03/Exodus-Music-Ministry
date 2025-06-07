@@ -327,7 +327,7 @@ const Dashboard = () => {
               transition={{ delay: 0.1 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/image-upload-form" className="block h-full">
+              <a href="/image-upload-form" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -367,7 +367,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
 
             {/* Create Events */}
@@ -377,7 +377,7 @@ const Dashboard = () => {
               transition={{ delay: 0.2 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/create-event" className="block h-full">
+              <a href="/create-event" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -417,7 +417,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
 
             {/* Upload Music (Coming Soon) */}
@@ -478,7 +478,7 @@ const Dashboard = () => {
               transition={{ delay: 0.4 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/transaction-tracker" className="block h-full">
+              <a href="/transaction-tracker" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -518,7 +518,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
 
             {/* People Messages */}
@@ -528,7 +528,7 @@ const Dashboard = () => {
               transition={{ delay: 0.5 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/people-message" className="block h-full">
+              <a href="/people-message" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -568,7 +568,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
 
             {/* Host Event Requests */}
@@ -578,7 +578,7 @@ const Dashboard = () => {
               transition={{ delay: 0.6 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/host-event" className="block h-full">
+              <a href="/host-event" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -618,7 +618,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
             {/* Ministry Applications */}
             <motion.div
@@ -627,7 +627,7 @@ const Dashboard = () => {
               transition={{ delay: 0.7 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/ministry-applications" className="block h-full">
+              <a href="/ministry-applications" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -667,7 +667,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
             {/* Partnership Requests */}
             <motion.div
@@ -676,7 +676,7 @@ const Dashboard = () => {
               transition={{ delay: 0.8 }}
               whileHover={{ y: -5, scale: 1.02 }}
             >
-              <Link to="/partner-view" className="block h-full">
+              <a href="/partner-view" className="block h-full">
                 <div className="bg-indigo-900/50 backdrop-blur-sm rounded-xl p-6 border border-indigo-800 shadow-lg h-full flex flex-col">
                   <div className="bg-yellow-400/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <svg
@@ -716,7 +716,7 @@ const Dashboard = () => {
                     </svg>
                   </div>
                 </div>
-              </Link>
+              </a>
             </motion.div>
           </div>
 
