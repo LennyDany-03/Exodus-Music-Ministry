@@ -318,7 +318,7 @@ const Home = () => {
                 }}
                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
               >
-                MUSIC MINISTRY
+                MUSIC MINISTRYS
               </motion.span>
             </motion.h1>
 
@@ -426,7 +426,7 @@ const Home = () => {
                 </div>
 
                 <motion.div className="text-center md:text-left">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-2">Dr. Victor</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold mb-2">Dr. C Victor</h3>
                   <p className="text-yellow-400 text-lg mb-4">Founder & Director</p>
                   <p className="text-indigo-100 text-lg leading-relaxed max-w-lg">
                     With over 25 years of experience in music ministry, Victor has dedicated his life to using music as

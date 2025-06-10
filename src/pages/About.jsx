@@ -77,7 +77,7 @@ const About = () => {
   // Team members data
   const teamMembers = [
     {
-      name: "Dr. Victor",
+      name: "Dr. C Victor",
       role: "Founder & Director",
       bio: "With over 25 years of experience in music ministry, Victor has dedicated his life to using music as a powerful tool for worship and evangelism.",
       image: Victor,
