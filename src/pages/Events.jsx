@@ -31,7 +31,6 @@ const Events = () => {
         }
 
         if (data) {
-          console.log("Fetched events:", data)
           setEvents(data)
         }
       } catch (error) {
